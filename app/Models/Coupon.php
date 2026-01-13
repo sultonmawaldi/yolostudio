@@ -12,14 +12,17 @@ class Coupon extends Model
     protected $fillable = [
         'user_id',
         'code',
-        'discount_type',   // percent / fixed
-        'discount_value',
-        'status',          // unused / used
-        'expired_at',
+        'type',               // fixed / percentage
+        'value',              // nilai diskon
+        'minimum_cart_value', // minimal transaksi
+        'expiry_date',        // tanggal kadaluarsa
+        'active',             // 0 / 1
+        'status',             // unused / used / expired
     ];
 
     protected $casts = [
-        'expired_at' => 'datetime',
+        'expiry_date' => 'datetime',
+        'active' => 'boolean',
     ];
 
     /**
@@ -41,9 +44,34 @@ class Coupon extends Model
     /**
      * Cek apakah kupon masih valid
      */
-    public function isValid()
+    public function isValid(): bool
     {
-        return $this->status === 'unused' &&
-            (!$this->expired_at || $this->expired_at->isFuture());
+        return $this->active &&
+            $this->status === 'unused' &&
+            (!$this->expiry_date || $this->expiry_date->isFuture());
+    }
+
+    /**
+     * Tandai kupon sebagai digunakan
+     */
+    public function markAsUsed(): void
+    {
+        $this->update(['status' => 'used']);
+    }
+
+    /**
+     * Tandai kupon sebagai expired
+     */
+    public function markAsExpired(): void
+    {
+        $this->update(['status' => 'expired']);
+    }
+
+    /**
+     * Tandai kupon sebagai aktif kembali (jika perlu reset manual)
+     */
+    public function resetStatus(): void
+    {
+        $this->update(['status' => 'unused', 'active' => true]);
     }
 }

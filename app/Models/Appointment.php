@@ -25,4 +25,10 @@ class Appointment extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    // 🔥 WAJIB ADA
+    public function transaction()
+    {
+        return $this->hasOne(Transaction::class);
+    }
 }

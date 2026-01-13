@@ -343,6 +343,21 @@ return [
     ],
 ],
 
+[
+    'text' => 'Photo Results',
+    'icon' => 'fas fa-camera-retro',
+    'can'  => 'transactions.view | transactions.edit', // atau sesuaikan permission kamu
+    'submenu' => [
+        [
+            'text' => 'Manage Results',
+            'icon' => 'fas fa-images',
+            'route' => 'photo-results.index',
+            'can'  => 'transactions.view',
+        ],
+    ],
+],
+
+
 
         [
             'text' => 'Categories',

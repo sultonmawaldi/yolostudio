@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Gate;
 use Midtrans\Config;
 use App\Models\Transaction;
 use App\Observers\TransactionObserver;
+use Illuminate\Pagination\Paginator;
 
 
 class AppServiceProvider extends ServiceProvider
@@ -25,6 +26,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        
         // Super admin (id=1) otomatis punya semua permission
         Gate::before(function ($user, $ability) {
             return $user->id === 1 ? true : null;
@@ -41,5 +43,10 @@ class AppServiceProvider extends ServiceProvider
 
         // Daftarkan TransactionObserver
         Transaction::observe(TransactionObserver::class);
+
+        app()->setLocale(session('locale', config('app.locale')));
+
+        Paginator::useBootstrap();
+        
     }
 }

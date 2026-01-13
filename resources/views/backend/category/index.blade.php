@@ -1,171 +1,210 @@
 @extends('adminlte::page')
 
-@section('title', 'Add Category')
+@section('title', 'Daftar Kategori')
 
 @section('content_header')
-
-    <div class="container-fluid">
-        <div class="row ">
-            <div class="col-sm-6">
-                <h1 class="m-0">All Categories</h1>
-            </div>
-            <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-                    <li class="breadcrumb-item active">Category</li>
-                </ol>
-            </div>
-        </div>
-    </div>
-
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="fw-bold text-primary mb-0">
+        <i class="fas fa-layer-group me-2 text-primary"></i> Daftar Kategori
+    </h1>
+    <a href="{{ route('category.create') }}" class="btn btn-gradient-primary shadow-sm">
+        <i class="fas fa-plus me-1"></i> Tambah Kategori
+    </a>
+</div>
 @stop
 
 @section('content')
-
-    @if (count($errors) > 0)
-        <div class="alert alert-dismissable alert-danger mt-3">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            <strong>Whoops!</strong> There were some problems with your input.<br>
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-    @if (session('success'))
-        <div class="alert alert-success alert-dismissable">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            <strong>{{ session('success') }}</strong>
-        </div>
-    @endif
-
-    <div class="container-fluid">
-        <div class="row  justify-content-between">
-
-            <div class="col-md-12 ">
-                <h5><a href="{{ route('category.create') }}" class="btn btn-primary mb-1"><i class="fas fa-fw fa-plus "></i>
-                        Add New</a>
-                </h5>
-                <div class="card p-2">
-
-                    <div id="" class="card-body p-0">
-                        <table id="myTable" class="table table-striped projects">
-                            <thead>
-                                <tr>
-                                    <th style="width: 1%">
-                                        #
-                                    </th>
-                                    <th style="width: 20%">
-                                        Name
-                                    </th>
-                                    <th style="width: 20%">
-                                        Slug
-                                    </th>
-                                    <th style="width: 15%">
-                                        Service Count
-                                    </th>
-                                    <th style="width: 7%">
-                                        Status
-                                    </th>
-                                    <th style="width: 25%">Action
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($categories as $category)
-                                    <tr>
-                                        <td> {{ $loop->iteration }} </td>
-                                        <td>
-                                            <a>
-                                                {{ $category->title }}
-                                            </a>
-
-                                        </td>
-                                        <td>
-                                            <a>{{ $category->slug }}</a>
-                                        </td>
-                                        {{-- <td>
-
-                                            {{ $category->posts->count() }}
-                                        </td> --}}
-                                        <td>
-                                            {{ $category->services->count() }}
-                                        </td>
-                                        <td>
-                                            @if ($category->status)
-                                                <span class="badge badge-success">Active</span>
-                                            @else
-                                                <span class="badge badge-danger">In active</span>
-                                            @endif
-                                        </td>
-                                        <td class="project-actions text-right d-flex">
-
-                                            <div>
-                                                <a class="btn btn-info btn-sm ml-2"
-                                                    href="{{ route('category.edit', $category->id) }}">
-                                                    <i class="fas fa-pencil-alt">
-                                                    </i>
-                                                    Edit
-                                                </a>
-                                            </div>
-                                            <div>
-                                                <form action="{{ route('category.destroy', $category->id) }}"
-                                                    method="POST">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button
-                                                        onclick="return confirm('Category cannot be delted - Post attached');"
-                                                        class="btn btn-danger btn-sm ml-2">
-                                                        <i class="fas fa-trash"></i>
-                                                        Delete
-                                                        </a>
-                                                    </button>
-                                                </form>
-
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- /.card-body -->
-                </div>
-            </div>
-        </div>
+@if (session('success'))
+    <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-pill px-4" role="alert">
+        <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Tutup"></button>
     </div>
+@endif
+
+<div class="card border-0 shadow-lg rounded-4">
+    <div class="card-body table-responsive p-4">
+        <table id="categoryTable" class="table align-middle table-hover table-borderless">
+            <thead class="bg-gradient text-white" style="background: linear-gradient(90deg, #007bff, #00b4d8);">
+                <tr>
+                    <th>#</th>
+                    <th>Nama Kategori</th>
+                    <th>Slug</th>
+                    <th>Jumlah Layanan</th>
+                    <th>Status</th>
+                    <th class="text-center">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($categories as $category)
+                <tr class="bg-white shadow-sm-hover">
+                    <td class="fw-semibold text-muted">{{ $loop->iteration }}</td>
+                    <td class="fw-bold text-dark">{{ $category->title }}</td>
+                    <td>{{ $category->slug }}</td>
+                    <td>{{ $category->services->count() }}</td>
+                    <td>
+                        @php
+                            $badgeClass = $category->status ? 'bg-gradient-success' : 'bg-gradient-danger';
+                            $statusText = $category->status ? 'Aktif' : 'Tidak Aktif';
+                        @endphp
+                        <span class="badge text-white px-3 py-2 rounded-pill shadow-sm {{ $badgeClass }}">
+                            {{ $statusText }}
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <a href="{{ route('category.edit', $category->id) }}" class="btn btn-sm btn-outline-info">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form action="{{ route('category.destroy', $category->id) }}" method="POST" onsubmit="return confirm('Hapus kategori ini?')">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
 @stop
 
 @section('css')
+<style>
+/* === CARD & TABLE PREMIUM STYLE === */
+.card {
+    background: #ffffff;
+    border: none;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.05);
+}
 
+/* === TABLE === */
+.table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    background-color: #fff;
+    font-size: 0.95rem;
+}
+
+/* === HEADER === */
+.table thead th {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid rgba(0, 123, 255, 0.25);
+    text-align: center;
+    vertical-align: middle;
+    color: #fff;
+    padding: 14px 12px;
+    white-space: nowrap;
+}
+
+/* === BODY === */
+.table td {
+    vertical-align: middle !important;
+    text-align: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    border-right: 1px solid rgba(0, 0, 0, 0.03);
+    padding: 10px 12px;
+    color: #333;
+}
+.table td:last-child,
+.table th:last-child {
+    border-right: none;
+}
+.table tbody tr:hover {
+    background-color: #f7faff;
+    transition: 0.25s ease;
+}
+
+/* === BADGES === */
+.bg-gradient-success { background: linear-gradient(45deg, #28a745, #60d394); }
+.bg-gradient-danger { background: linear-gradient(45deg, #e74c3c, #ff7675); }
+
+/* === BUTTONS === */
+.btn-gradient-primary {
+    background: linear-gradient(90deg, #007bff, #00b4d8);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 0.5rem 1.25rem;
+    transition: 0.3s;
+}
+.btn-gradient-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+.btn-outline-info,
+.btn-outline-danger {
+    border-radius: 30px;
+    padding: 6px 10px;
+}
+
+/* === SEARCH INPUT PREMIUM === */
+.dataTables_filter {
+    text-align: right;
+}
+.dataTables_filter input {
+    border-radius: 50px !important;
+    padding: 0.5rem 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border: 1px solid #dee2e6;
+    transition: 0.3s;
+}
+.dataTables_filter input:focus {
+    box-shadow: 0 0 0 3px rgba(0,123,255,0.25);
+    border-color: #80bdff;
+}
+
+/* === Rounded Corners for Table === */
+.table thead th:first-child {
+    border-top-left-radius: 10px;
+}
+.table thead th:last-child {
+    border-top-right-radius: 10px;
+}
+
+.table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 10px;
+}
+.table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 10px;
+}
+
+/* Hilangkan overflow agar sudut tidak terpotong */
+.table {
+    overflow: hidden;
+    border-radius: 10px;
+}
+</style>
 @stop
 
 @section('js')
-    <script>
-        $('#title').on("change keyup paste click", function() {
-            var Text = $(this).val().trim();
-            Text = Text.toLowerCase();
-            Text = Text.replace(/[^a-zA-Z0-9]+/g, '-');
-            $('#slug').val(Text);
-        });
-    </script>
-    <script>
-        $(document).ready(function() {
-            $('#myTable').DataTable({
-                responsive: true
-            });
-
-        });
-    </script>
-
-    <script>
-        $(document).ready(function() {
-            $(".alert").delay(6000).slideUp(300);
-        });
-    </script>
+<script>
+$(function () {
+        $('#categoryTable').DataTable({
+        responsive: true,
+        paging: true,  // ✅ aktifkan pagination
+        info: true,    // ✅ tampilkan info jumlah data
+        pageLength: 10, // tampilkan 10 data per halaman
+        language: {
+            search: "",
+            searchPlaceholder: "Cari kategori...",
+            zeroRecords: "Tidak ada kategori ditemukan",
+            paginate: {
+                previous: "‹",
+                next: "›"
+            },
+            info: "Menampilkan _START_–_END_ dari _TOTAL_ kategori"
+        },
+        dom: "<'row mb-3'<'col-12 d-flex justify-content-end'f>>" + "rtip"
+    });
+    $(".alert").delay(4000).slideUp(300);
+});
+</script>
 @stop

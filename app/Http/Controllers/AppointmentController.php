@@ -4,138 +4,209 @@ namespace App\Http\Controllers;
 
 use App\Models\Appointment;
 use App\Models\Setting;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use App\Events\BookingCreated;
 use App\Events\StatusUpdated;
-use App\Models\Transaction;
-
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class AppointmentController extends Controller
 {
-
     public function index()
     {
-        $appointments = Appointment::latest()->get();
-        // dd($appointments); // for debugging only
+        $appointments = Appointment::orderBy('booking_date', 'asc')
+            ->orderBy('booking_start_time', 'asc')
+            ->get();
+
         return view('backend.appointment.index', compact('appointments'));
     }
 
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request) 
-{
-    $validated = $request->validate([
-        'user_id' => 'nullable|exists:users,id',
-        'employee_id' => 'required|exists:employees,id',
-        'service_id' => 'required|exists:services,id',
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|max:255',
-        'phone' => 'required|string|max:20',
-        'notes' => 'nullable|string',
-        'amount' => 'required|numeric',
-        'booking_date' => 'required|date',
-        'booking_time' => 'required',
-        'status' => 'required|in:Pending,Processing,Confirmed,Completed,Cancelled,Rescheduled',
-        'payment_status' => 'nullable|in:Pending,DP,Paid,Failed',
-        'people_count' => 'required|integer|min:1',
-        'payment_method' => 'nullable|string',
-        'total_amount' => 'nullable|numeric',
-        'midtrans_order_id' => 'nullable|string',
-    ]);
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'user_id' => 'nullable|exists:users,id',
+            'employee_id' => 'required|exists:employees,id',
+            'service_id' => 'required|exists:services,id',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|string|max:20',
+            'notes' => 'nullable|string',
+            'amount' => 'required|numeric',
+            'booking_date' => 'required|date',
+            'booking_start_time' => 'required',
+            'booking_end_time' => 'required',
+            'status' => 'required|in:Pending,Processing,Confirmed,Completed,Cancelled,Rescheduled',
+            'payment_status' => 'nullable|in:Pending,DP,Paid,Failed',
+            'people_count' => 'required|integer|min:1',
+            'payment_method' => 'nullable|string',
+            'total_amount' => 'nullable|numeric',
+            'midtrans_order_id' => 'nullable|string',
+            'coupon_id' => 'nullable|exists:coupons,id',
+        ]);
 
-    // Tentukan user_id
-    if(auth()->check()) {
-        $user = auth()->user();
-        $validated['user_id'] = ($user->hasRole('admin') || $user->hasRole('moderator') || $user->hasRole('employee'))
-            ? null
-            : $user->id;
-    } else {
-        $validated['user_id'] = null; // guest
+        // Tentukan user_id
+        if (auth()->check()) {
+            $user = auth()->user();
+            $validated['user_id'] = ($user->hasRole('admin') || $user->hasRole('moderator') || $user->hasRole('employee'))
+                ? null
+                : $user->id;
+        } else {
+            $validated['user_id'] = null;
+        }
+
+        // Generate booking_id & transaction_code
+        $validated['booking_id'] = 'BK-' . now()->format('Ymd') . '-' . strtoupper(Str::random(8));
+        $transactionCode = 'TRX-' . now()->format('Ymd') . '-' . strtoupper(Str::random(8));
+
+        // Simpan appointment
+        $appointment = Appointment::create([
+            'user_id' => $validated['user_id'],
+            'employee_id' => $validated['employee_id'],
+            'service_id' => $validated['service_id'],
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'],
+            'notes' => $validated['notes'] ?? null,
+            'amount' => $validated['amount'],
+            'booking_date' => $validated['booking_date'],
+            'booking_start_time' => $validated['booking_start_time'],
+            'booking_end_time' => $validated['booking_end_time'],
+            'status' => $validated['status'],
+            'people_count' => $validated['people_count'],
+            'booking_id' => $validated['booking_id'],
+        ]);
+
+        // Simpan transaksi
+        $transaction = Transaction::create([
+            'user_id' => $validated['user_id'],
+            'appointment_id' => $appointment->id,
+            'transaction_code' => $transactionCode,
+            'amount' => $validated['amount'],
+            'total_amount' => $validated['total_amount'] ?? $validated['amount'],
+            'payment_status' => $validated['payment_status'] ?? 'Pending',
+            'payment_method' => $validated['payment_method'] ?? null,
+            'midtrans_order_id' => $validated['midtrans_order_id'] ?? null,
+            'coupon_id' => $validated['coupon_id'] ?? null,
+        ]);
+
+        try {
+            $qrName = $transactionCode . '.png';
+            $qrFolder = public_path('qrcodes');
+
+            if (!file_exists($qrFolder)) {
+                mkdir($qrFolder, 0777, true);
+            }
+
+            $qrPath = $qrFolder . '/' . $qrName;
+            $qrUrl  = url('qrcodes/' . $qrName);
+
+            // Gunakan backend PNG tanpa imagick
+            $pngData = QrCode::format('png')
+                ->size(300)
+                ->margin(1)
+                ->generate($transactionCode);
+
+            file_put_contents($qrPath, $pngData);
+
+            $transaction->update([
+                'qr_url' => $qrUrl,
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('QR Code generation error: ' . $e->getMessage());
+        }
+
+
+
+        // Kirim WhatsApp
+        $this->sendWhatsappNotification($appointment);
+
+        // Event
+        event(new BookingCreated($appointment));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Appointment booked successfully!',
+            'booking_id' => $appointment->booking_id,
+            'qr_url' => $transaction->qr_url ?? null,
+            'transaction_code' => $transactionCode,
+            'appointment' => $appointment
+        ]);
     }
 
-    // Generate booking_id unik
-    $validated['booking_id'] = 'BK-' . strtoupper(uniqid());
 
-    // Simpan data appointment
-    $appointment = Appointment::create([
-        'user_id' => $validated['user_id'],
-        'employee_id' => $validated['employee_id'],
-        'service_id' => $validated['service_id'],
-        'name' => $validated['name'],
-        'email' => $validated['email'],
-        'phone' => $validated['phone'],
-        'notes' => $validated['notes'] ?? null,
-        'amount' => $validated['amount'],
-        'booking_date' => $validated['booking_date'],
-        'booking_time' => $validated['booking_time'],
-        'status' => $validated['status'],
-        'people_count' => $validated['people_count'],
-        'booking_id' => $validated['booking_id'],
-    ]);
+    private function sendWhatsappNotification(Appointment $appointment)
+    {
+        try {
+            $token = env('FONNTE_TOKEN');
+            if (!$token) return;
 
-    // Simpan transaksi di tabel transactions
-    Transaction::create([
-        'user_id' => $validated['user_id'],
-        'appointment_id' => $appointment->id,
-        'transaction_code' => 'TRX-' . strtoupper(uniqid()),
-        'amount' => $validated['amount'],
-        'total_amount' => $validated['total_amount'] ?? $validated['amount'],
-        'payment_status' => $validated['payment_status'] ?? 'Pending',
-        'payment_method' => $validated['payment_method'] ?? null,
-        'midtrans_order_id' => $validated['midtrans_order_id'] ?? null,
-    ]);
+            $phone = preg_replace('/^0/', '62', $appointment->phone);
 
-    // Event booking baru
-    event(new BookingCreated($appointment));
+            $transaction = $appointment->transaction;
+            $qrUrl = $transaction->qr_url ?? '-';
+            $trxCode = $transaction->transaction_code ?? '-';
 
-    return response()->json([
-        'success' => true,
-        'message' => 'Appointment booked successfully!',
-        'booking_id' => $appointment->booking_id,
-        'appointment' => $appointment
-    ]);
-}
+            $serviceName = optional($appointment->service)->title ?? 'Layanan';
+            $total = number_format($appointment->amount, 0, ',', '.');
+
+            $tanggal = \Carbon\Carbon::parse($appointment->booking_date)
+                ->translatedFormat('l, d M Y');
+
+            $start = date('H:i', strtotime($appointment->booking_start_time));
+            $end   = date('H:i', strtotime($appointment->booking_end_time));
+
+            $message =
+                "🌸 *Booking Berhasil – Yolo Studio* 🌸\n\n" .
+                "Halo *{$appointment->name}* ✨\n" .
+                "Terima kasih sudah booking di *Yolo Studio*.\n\n" .
+                "📅 *Tanggal:* {$tanggal}\n" .
+                "⏰ *Jam:* {$start} – {$end} WIB\n" .
+                "📸 *Layanan:* {$serviceName}\n" .
+                "👥 *Jumlah Orang:* {$appointment->people_count}\n" .
+                "💰 *Total:* Rp{$total}\n\n" .
+                "🔳 *QR Code Check-in*\n{$qrUrl}\n\n" .
+                "🔐 *Kode Booking:* {$trxCode}\n\n" .
+                "📌 Tunjukkan QR atau kode ini saat check-in.\n" .
+                "Jika QR tidak muncul, cukup sebutkan kodenya.\n\n" .
+                "Sampai jumpa! 💕\n" .
+                "*Tim Yolo Studio*";
+
+            Http::withHeaders([
+                'Authorization' => $token,
+            ])->post('https://api.fonnte.com/send', [
+                'target' => $phone,
+                'message' => $message,
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('WhatsApp error: ' . $e->getMessage());
+        }
+    }
 
 
 
-
-    /**
-     * Display the specified resource.
-     */
     public function show(Appointment $appointment)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Appointment $appointment)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Appointment $appointment)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Appointment $appointment)
     {
         //
@@ -156,5 +227,4 @@ class AppointmentController extends Controller
 
         return redirect()->back()->with('success', 'Appointment status updated successfully.');
     }
-
 }

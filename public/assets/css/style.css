@@ -30,7 +30,7 @@ body {
 
 .booking-steps {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     padding: 20px;
     background-color: #f1f3f9;
 }
@@ -41,7 +41,8 @@ body {
     align-items: center;
     position: relative;
     z-index: 1;
-    margin-right: 20px;
+    width: 120px; /* atau 110px / 130px, sesuaikan */
+    text-align: center;
 }
 
 .step-number {
@@ -102,6 +103,18 @@ body {
     border-top: 1px solid #e3e6f0;
     display: flex;
     justify-content: space-between;
+}
+
+@media (min-width: 992px) {
+    .booking-steps {
+        justify-content: center;
+        gap: 50px; /* tetap seperti sebelumnya */
+    }
+
+    /* Geser step pertama sedikit ke kiri */
+    .booking-steps .step:first-child {
+        margin-left: -60px; /* ubah nilai ini sesuai selera: -20px, -25px, -40px */
+    }
 }
 
 .category-card,

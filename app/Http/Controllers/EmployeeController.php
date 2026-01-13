@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use Illuminate\Http\Request;
+use App\Models\Category;
+use App\Models\Service;
+
 
 class EmployeeController extends Controller
 {
@@ -12,8 +15,13 @@ class EmployeeController extends Controller
      */
     public function index()
     {
-        //
+        $employees = Employee::with('user')->get();
+
+        return response()->json([
+            'employees' => $employees
+        ]);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -78,5 +86,31 @@ class EmployeeController extends Controller
 
         $employee->update($data);
         return back()->withSuccess('Profile has been updated successfullly!');
+    }
+
+    public function categories(Employee $employee)
+    {
+        $categories = Category::whereHas('services', function ($q) use ($employee) {
+            $q->whereHas('employees', function ($e) use ($employee) {
+                $e->where('employees.id', $employee->id);
+            });
+        })->get();
+
+        return response()->json([
+            'categories' => $categories
+        ]);
+    }
+
+    public function servicesByCategory(Employee $employee, $categoryId)
+    {
+        $services = $employee->services()
+            ->where('category_id', $categoryId)
+            ->with('category')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'services' => $services
+        ]);
     }
 }

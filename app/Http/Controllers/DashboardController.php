@@ -22,23 +22,25 @@ class DashboardController extends Controller
          * ===========================================================
          */
         if ($user->hasRole('admin')) {
-            $appointments = Appointment::with(['employee.user', 'service', 'user'])->get();
+            $appointments = Appointment::with(['employee.user', 'service', 'user'])
+                ->orderBy('booking_date', 'asc')
+                ->orderBy('booking_start_time', 'asc')
+                ->get();
 
             $appointments = $appointments->map(function ($appointment) {
                 try {
-                    if (!str_contains($appointment->booking_time ?? '', '-')) {
-                        throw new \Exception("Invalid time format");
+                    $bookingDate = Carbon::parse($appointment->booking_date);
+
+                    // Pastikan start dan end time ada
+                    if (!$appointment->booking_start_time || !$appointment->booking_end_time) {
+                        throw new \Exception("Missing start or end time");
                     }
 
-                    $bookingDate = Carbon::parse($appointment->booking_date);
-                    [$startTime, $endTime] = array_map('trim', explode('-', $appointment->booking_time));
+                    // Parsing start & end datetime
+                    $startDateTime = Carbon::parse($bookingDate->format('Y-m-d') . ' ' . $appointment->booking_start_time);
+                    $endDateTime = Carbon::parse($bookingDate->format('Y-m-d') . ' ' . $appointment->booking_end_time);
 
-                    $startDateTime = Carbon::createFromFormat('h:i A', $startTime)
-                        ->setDate($bookingDate->year, $bookingDate->month, $bookingDate->day);
-
-                    $endDateTime = Carbon::createFromFormat('h:i A', $endTime)
-                        ->setDate($bookingDate->year, $bookingDate->month, $bookingDate->day);
-
+                    // Jika end time lebih kecil dari start (lewat tengah malam)
                     if ($endDateTime->lt($startDateTime)) {
                         $endDateTime->addDay();
                     }
@@ -77,17 +79,14 @@ class DashboardController extends Controller
          * ===========================================================
          */
 
-        // Ambil semua transaksi milik user
         $transactions = Transaction::where('user_id', $user->id)
             ->orderByDesc('created_at')
             ->get();
 
-        // Ambil semua kupon milik user (aktif & reward)
         $coupons = Coupon::where('user_id', $user->id)
             ->where('active', 1)
             ->get();
 
-        // Hitung kupon yang sudah digunakan
         $usedCoupons = Coupon::where('user_id', $user->id)
             ->where('status', 'used')
             ->count();

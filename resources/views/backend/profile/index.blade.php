@@ -1100,7 +1100,7 @@ if ($usingOldInput) {
             ['monday',
             'tuesday',
             'wednesday',
-            'thusrday',
+            'thursday',
             'friday',
             'saturday',
             'sunday',].forEach(function(day) {

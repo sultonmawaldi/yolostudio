@@ -2,22 +2,15 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\LoginWithPhoneRequest;
 use App\Models\User;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
-use Hash;
 
 class LoginController extends Controller
 {
-    use AuthenticatesUsers;
-
-    /**
-     * Default redirect after login (will be overridden in redirectTo()).
-     *
-     * @var string
-     */
     protected $redirectTo = '/dashboard';
 
     public function __construct()
@@ -27,66 +20,61 @@ class LoginController extends Controller
         $this->middleware('throttle:3,1')->only('login');
     }
 
-    protected function attemptLogin(Request $request)
+    public function showLoginForm()
     {
-        $credentials = $this->credentials($request);
+        return view('auth.login');
+    }
 
-        // Retrieve user by email
-        $user = User::where('email', $credentials['email'])->first();
+    public function login(LoginWithPhoneRequest $request)
+    {
+        $phone = $this->normalizePhone($request->phone);
 
-        if (!$user || !Hash::check($credentials['password'], $user->password)) {
-            return false;
+        $user = User::where('phone', $phone)->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            throw ValidationException::withMessages([
+                'phone' => ['Nomor HP atau kata sandi salah.'],
+            ]);
         }
 
         if (!$user->status) {
             throw ValidationException::withMessages([
-                'email' => [trans('Your account access is disabled')],
+                'phone' => ['Akses akun Anda dinonaktifkan.'],
             ]);
         }
 
-        return $this->guard()->attempt(
-            $credentials,
-            $request->filled('remember')
-        );
+        Auth::login($user, $request->filled('remember'));
+
+        // Kirim notifikasi ke WhatsApp jika perlu
+        // $this->sendWhatsappLoginNotification($user);
+
+        return redirect()->intended($this->redirectTo($user));
     }
 
-    /**
-     * Redirect users after login based on role.
-     */
-    protected function redirectTo()
+    protected function normalizePhone(string $phone): string
     {
-        $user = auth()->user();
-
-        if ($user->hasRole('member')) {
-            return '/'; // frontend dashboard/profile
-        }
-
-        // default for admin, employee, moderator
-        return '/dashboard'; // backend
+        $phone = preg_replace('/\D+/', '', $phone);
+        return '+62' . $phone; // Karena UI +62 ditampilkan
     }
 
-    protected function authenticated(Request $request, $user)
+    protected function redirectTo($user)
     {
-        if ($user->hasRole('member')) {
-            session()->flash('login_success', 'Hai ' . $user->name . ', selamat datang kembali!');
-            return redirect()->route('home');
-        }
-
-        return redirect()->route('dashboard');
+        return $user->hasRole('member') ? route('home') : route('dashboard');
     }
 
-    public function logout(Request $request)
+    public function logout()
     {
-        $this->guard()->logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        Auth::logout();
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
+        return redirect()->route('login');
+    }
 
-        if ($response = $this->loggedOut($request)) {
-            return $response;
-        }
-
-        return $request->wantsJson()
-            ? response()->json([], 204)
-            : redirect()->route('login');
+    protected function sendWhatsappLoginNotification($user)
+    {
+        $phone = $user->phone;
+        $message = "Halo {$user->name}, Anda baru saja login.";
+        // Integrasi API WhatsApp bisa dipanggil di sini
+        // Example: WA::sendMessage($phone, $message);
     }
 }

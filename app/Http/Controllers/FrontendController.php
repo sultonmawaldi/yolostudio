@@ -15,140 +15,166 @@ use View;
 
 class FrontendController extends Controller
 {
-
     public function __construct()
     {
         $setting = Setting::firstOrFail();
         view()->share('setting', $setting);
-
     }
 
-    public function index()
+    public function booking()
     {
-        $categories = Category::with([
-            'services' => function($query) {
-                $query->where('status', 1) // Only active services
-                    ->with('employees'); // Load all employees for each service
-            }
-        ])->where('status', 1)->get();
+        $categories = Category::where('status', 1)->get();
 
-        $employees = Employee::with('services')->with('user')->get();
+        $employees = Employee::with('user')
+            ->whereHas('user', fn($q) => $q->where('status', 1))
+            ->get();
 
-        return view('frontend.index', compact('categories','employees'));
+        return view('frontend.booking', compact('categories', 'employees'));
     }
 
 
-       public function getServices($id)
-{
-    $services = Service::with('category')->where('category_id', $id)->get();
+    public function getServicesByEmployeeAndCategory(
+        Employee $employee,
+        Category $category
+    ) {
+        $services = $employee->services()
+            ->where('category_id', $category->id)
+            ->where('status', 1)
+            ->with('category')
+            ->get();
 
-    return response()->json([
-        'success'  => true,
-        'services' => $services
-    ]);
-}
+        return response()->json([
+            'success'  => true,
+            'services' => $services
+        ]);
+    }
+
 
 
     public function getEmployees(Request $request, Service $service)
     {
+        // Ambil employee dari relasi service -> employee (pivot sesuai konteks service)
         $employees = $service->employees()
-            ->whereHas('user', function ($query) {
-                $query->where('status', 1);
-            })
-            ->with('user') // Eager load user details
-            ->get();
+            ->whereHas('user', fn($q) => $q->where('status', 1))
+            ->with('user')
+            ->get()
+            ->transform(function ($employee) {
+
+                // Pivot ini DIJAMIN hanya untuk service ini
+                $pivot = $employee->pivot;
+
+                $employee->pivot_data = [
+                    'duration' => $pivot->duration ?? $employee->slot_duration,
+                    'break_duration' => $pivot->break_duration ?? $employee->break_duration,
+                ];
+
+                return $employee;
+            });
 
         if ($employees->isEmpty()) {
             return response()->json([
                 'success' => false,
-                'message' => 'No employees available for this service'
+                'message' => 'No employees available for this service',
             ]);
         }
 
         return response()->json([
             'success' => true,
             'employees' => $employees,
-            'service' => $service
+            'service' => $service,
+        ]);
+    }
+
+
+    public function getCategoriesByEmployee(Employee $employee)
+    {
+        $categories = Category::whereHas('services', function ($q) use ($employee) {
+            $q->whereHas('employees', function ($e) use ($employee) {
+                $e->where('employees.id', $employee->id);
+            });
+        })
+            ->where('status', 1)
+            ->get();
+
+        return response()->json([
+            'categories' => $categories
         ]);
     }
 
 
 
-
     public function getEmployeeAvailability(Employee $employee, $date = null)
     {
-        // Use current date if not provided
         $date = $date ? Carbon::parse($date) : now();
 
-        // Validate slot duration exists
-        if (!$employee->slot_duration) {
-            return response()->json(['error' => 'Slot duration not set for this employee'], 400);
-        }
-
         try {
-            // Function to ensure proper time formatting
-            function formatTimeRange($timeRange) {
-                // Handle appointment format (e.g., "06:00 AM - 06:30 AM")
+            // ---------------- Format waktu (helper)
+            $formatTimeRange = function ($timeRange) {
                 if (str_contains($timeRange, 'AM') || str_contains($timeRange, 'PM')) {
                     $timeRange = str_replace([' AM', ' PM', ' '], '', $timeRange);
                 }
-
                 $times = explode('-', $timeRange);
                 $formattedTimes = array_map(function ($time) {
                     $parts = explode(':', $time);
                     $hours = str_pad(trim($parts[0]), 2, '0', STR_PAD_LEFT);
                     return $hours . ':' . $parts[1];
                 }, $times);
-
                 return implode('-', $formattedTimes);
-            }
+            };
 
-            // Process holidays expections
-            $holidaysExceptions = $employee->holidays->mapWithKeys(function ($holiday) {
+            // ---------------- Holiday exceptions
+            $holidaysExceptions = $employee->holidays->mapWithKeys(function ($holiday) use ($formatTimeRange) {
                 $hours = !empty($holiday->hours)
-                    ? collect($holiday->hours)->map(function ($timeRange) {
-                        return formatTimeRange($timeRange);
-                    })->toArray()
+                    ? collect($holiday->hours)->map(fn($timeRange) => $formatTimeRange($timeRange))->toArray()
                     : [];
-
                 return [$holiday->date => $hours];
             })->toArray();
 
-            // using spatie opening hours package to process data and expections
+            // ---------------- Opening hours
             $openingHours = OpeningHours::create(array_merge(
-                $employee->days,
+                $employee->days ?? [],
                 ['exceptions' => $holidaysExceptions]
             ));
 
-            // Get available time ranges for the requested date
             $availableRanges = $openingHours->forDate($date);
 
-            // If no availability for this date
             if ($availableRanges->isEmpty()) {
                 return response()->json(['available_slots' => []]);
             }
 
-            // Generate time slots - NOW PASSING THE EMPLOYEE ID
+            // ---------------- Ambil pivot berdasarkan service_id
+            $serviceId = request()->get('service_id');
+            $pivot = $serviceId
+                ? $employee->services()->where('service_id', $serviceId)->first()?->pivot
+                : null;
+
+            // ---------------- Fallback durasi
+            $slotDuration  = $pivot->duration ?? $employee->slot_duration ?? 15; // fallback default 15 menit
+            $breakDuration = $pivot->break_duration ?? $employee->break_duration ?? 0;
+
+            // ---------------- Generate slot pakai durasi pivot-aware
             $slots = $this->generateTimeSlots(
                 $availableRanges,
-                $employee->slot_duration,
-                $employee->break_duration ?? 0,
+                $slotDuration,
+                $breakDuration,
                 $date,
-                $employee->id  // This is the crucial addition
+                $employee->id
             );
 
             return response()->json([
-                'employee_id' => $employee->id,
-                'date' => $date->toDateString(),
+                'employee_id'     => $employee->id,
+                'date'            => $date->toDateString(),
                 'available_slots' => $slots,
-                'slot_duration' => $employee->slot_duration,
-                'break_duration' => $employee->break_duration,
+                'slot_duration'   => $slotDuration,
+                'break_duration'  => $breakDuration,
+                'pivot_duration'  => $pivot->duration ?? null,
+                'pivot_break'     => $pivot->break_duration ?? null,
             ]);
-
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error processing availability: ' . $e->getMessage()], 500);
         }
     }
+
 
 
     protected function generateTimeSlots($availableRanges, $slotDuration, $breakDuration, $date, $employeeId)
@@ -157,18 +183,16 @@ class FrontendController extends Controller
         $now = now();
         $isToday = $date->isToday();
 
-        // Get existing appointments for this date and employee
+        // Ambil appointment dengan kolom start & end time baru
         $existingAppointments = Appointment::where('booking_date', $date->toDateString())
             ->where('employee_id', $employeeId)
-            ->whereNotIn('status', ['Cancelled']) // Exclude cancelled/ here could add more status to make expection
-            ->get(['booking_time']);
+            ->whereNotIn('status', ['Cancelled'])
+            ->get(['booking_start_time', 'booking_end_time']);
 
-        // Convert existing appointments to time ranges we can compare against
         $bookedSlots = $existingAppointments->map(function ($appointment) {
-            $times = explode(' - ', $appointment->booking_time);
             return [
-                'start' => Carbon::createFromFormat('g:i A', trim($times[0]))->format('H:i'),
-                'end' => Carbon::createFromFormat('g:i A', trim($times[1]))->format('H:i')
+                'start' => $appointment->booking_start_time,
+                'end'   => $appointment->booking_end_time,
             ];
         })->toArray();
 
@@ -176,18 +200,12 @@ class FrontendController extends Controller
             $start = Carbon::parse($date->toDateString() . ' ' . $range->start()->format('H:i'));
             $end = Carbon::parse($date->toDateString() . ' ' . $range->end()->format('H:i'));
 
-            // Skip if the entire range is in the past (only for today)
-            if ($isToday && $end->lte($now)) {
-                continue;
-            }
+            if ($isToday && $end->lte($now)) continue;
 
             $currentSlotStart = clone $start;
 
-            // If today and current slot start is in the past, adjust to current time
             if ($isToday && $currentSlotStart->lt($now)) {
                 $currentSlotStart = clone $now;
-
-                // Round up to nearest slot interval
                 $minutes = $currentSlotStart->minute;
                 $remainder = $minutes % $slotDuration;
                 if ($remainder > 0) {
@@ -198,7 +216,6 @@ class FrontendController extends Controller
             while ($currentSlotStart->copy()->addMinutes($slotDuration)->lte($end)) {
                 $slotEnd = $currentSlotStart->copy()->addMinutes($slotDuration);
 
-                // Check if this slot conflicts with any existing booking
                 $isAvailable = true;
                 foreach ($bookedSlots as $bookedSlot) {
                     $bookedStart = Carbon::parse($date->toDateString() . ' ' . $bookedSlot['start']);
@@ -210,19 +227,16 @@ class FrontendController extends Controller
                     }
                 }
 
-                // Only add slots that are available and in the future (for today)
                 if ($isAvailable && (!$isToday || $slotEnd->gt($now))) {
                     $slots[] = [
                         'start' => $currentSlotStart->format('H:i'),
-                        'end' => $slotEnd->format('H:i'),
+                        'end'   => $slotEnd->format('H:i'),
                         'display' => $currentSlotStart->format('g:i A') . ' - ' . $slotEnd->format('g:i A'),
                     ];
                 }
 
-                // Add break duration if specified
                 $currentSlotStart->addMinutes($slotDuration + $breakDuration);
 
-                // Check if next slot would exceed end time
                 if ($currentSlotStart->copy()->addMinutes($slotDuration)->gt($end)) {
                     break;
                 }
@@ -231,6 +245,4 @@ class FrontendController extends Controller
 
         return $slots;
     }
-
-
 }

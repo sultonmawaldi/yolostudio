@@ -19,36 +19,17 @@
     <div class="{{ $auth_type ?? 'login' }}-box">
 
         {{-- Logo --}}
-        <div class="{{ $auth_type ?? 'login' }}-logo">
-            <a href="{{ $dashboard_url }}">
-
-                {{-- Logo Image --}}
-                @if (config('adminlte.auth_logo.enabled', false))
-                    <img src="{{ asset(config('adminlte.auth_logo.img.path')) }}"
-                         alt="{{ config('adminlte.auth_logo.img.alt') }}"
-                         @if (config('adminlte.auth_logo.img.class', null))
-                            class="{{ config('adminlte.auth_logo.img.class') }}"
-                         @endif
-                         @if (config('adminlte.auth_logo.img.width', null))
-                            width="{{ config('adminlte.auth_logo.img.width') }}"
-                         @endif
-                         @if (config('adminlte.auth_logo.img.height', null))
-                            height="{{ config('adminlte.auth_logo.img.height') }}"
-                         @endif>
-                @else
-                    <img src="{{ asset(config('adminlte.logo_img')) }}"
-                         alt="{{ config('adminlte.logo_img_alt') }}" height="50">
-                @endif
-
-                {{-- Logo Label --}}
-                {!! config('adminlte.logo', '<b>Admin</b>LTE') !!}
-
-            </a>
-        </div>
+<div class="{{ $auth_type ?? 'login' }}-logo text-center mb-3">
+    <a href="{{ route('home') }}" title="Kembali ke Halaman Utama">
+        <img src="{{ asset('uploads/images/logohitam.webp') }}" 
+             alt="Logo"
+             style="max-width: 300px; max-height: 120px; width:auto; height:auto; transition: transform 0.2s ease;">
+    </a>
+</div>
 
         {{-- Card Box --}}
         <div class="card {{ config('adminlte.classes_auth_card', 'card-outline card-primary') }}">
-
+            
             {{-- Card Header --}}
             @hasSection('auth_header')
                 <div class="card-header {{ config('adminlte.classes_auth_header', '') }}">

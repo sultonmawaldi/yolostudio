@@ -19,7 +19,7 @@ class ProfileController extends Controller
             'monday',
             'tuesday',
             'wednesday',
-            'thusrday',
+            'thursday',
             'friday',
             'saturday',
             'sunday',

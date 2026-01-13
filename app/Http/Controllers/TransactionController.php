@@ -7,13 +7,17 @@ use App\Models\Appointment;
 use App\Models\Coupon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Midtrans\Snap;
 use Midtrans\Config;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class TransactionController extends Controller
 {
     /**
-     * Daftar transaksi member
+     * ============================
+     * MEMBER DASHBOARD
+     * ============================
      */
     public function memberIndex()
     {
@@ -24,11 +28,15 @@ class TransactionController extends Controller
             ->get();
 
         $coupons = Coupon::where('user_id', $user->id)->get();
-        $usedCoupons = Coupon::where('user_id', $user->id)
-            ->where('status', 'used')
-            ->count();
+        $usedCoupons = $coupons->where('status', 'used')->count();
+        $newCouponMessage = session('new_coupon');
 
-        return view('frontend.member.dashboard', compact('transactions', 'coupons', 'usedCoupons'));
+        return view('frontend.member.dashboard', compact(
+            'transactions',
+            'coupons',
+            'usedCoupons',
+            'newCouponMessage'
+        ));
     }
 
     public function memberShow(Transaction $transaction)
@@ -38,13 +46,18 @@ class TransactionController extends Controller
     }
 
     /**
-     * Daftar transaksi admin
+     * ============================
+     * ADMIN LIST
+     * ============================
      */
     public function index()
     {
-        $transactions = Transaction::with('appointment.service', 'appointment.employee.user')
-            ->latest()
-            ->get();
+        $transactions = Transaction::with(
+            'appointment.service',
+            'appointment.employee.user'
+        )
+        ->latest()
+        ->get();
 
         return view('backend.transactions.index', compact('transactions'));
     }
@@ -56,7 +69,9 @@ class TransactionController extends Controller
     }
 
     /**
-     * Simpan transaksi baru (Admin/Member)
+     * ============================
+     * STORE TRANSACTION + QR
+     * ============================
      */
     public function store(Request $request)
     {
@@ -69,28 +84,66 @@ class TransactionController extends Controller
         ]);
 
         $user = Auth::user();
+        $validated['user_id'] = $user->id;
+        $validated['transaction_code'] =
+            'TRX-' . now()->format('Ymd') . '-' . strtoupper(Str::random(8));
+        $validated['payment_status'] = 'Pending';
 
-        // ✅ Validasi kupon hanya untuk user ini & status unused
+        // ====== DISKON KUPON ======
         if (!empty($validated['coupon_id'])) {
             $coupon = Coupon::where('id', $validated['coupon_id'])
-                ->where('user_id', $user->id)
+                ->where(function ($q) use ($user) {
+                    $q->where('user_id', $user->id)
+                      ->orWhereNull('user_id');
+                })
                 ->where('status', 'unused')
                 ->first();
 
             if (!$coupon) {
                 return back()->withErrors(['coupon_id' => 'Kupon tidak valid atau sudah digunakan.']);
             }
+
+            $validated['total_amount'] -= $coupon->value;
         }
 
-        $validated['user_id'] = $user->id;
-        $validated['transaction_code'] = 'TRX-' . strtoupper(uniqid());
-        $validated['payment_status'] = 'Pending';
+        $transaction = Transaction::create($validated);
 
-        Transaction::create($validated);
+        /**
+         * ==============================
+         * QR CODE GENERATOR — SAFE MODE
+         * ==============================
+         */
+        try {
+            $qrDir = public_path('qrcodes');
+            if (!file_exists($qrDir)) {
+                mkdir($qrDir, 0777, true);
+            }
 
-        return redirect()->route('transactions.index')->with('success', 'Transaction created successfully.');
+            $qrPath = 'qrcodes/' . $transaction->transaction_code . '.png';
+            $fullPath = public_path($qrPath);
+
+            $png = QrCode::format('png')
+                ->size(300)
+                ->errorCorrection('H')
+                ->generate($transaction->transaction_code);
+
+            file_put_contents($fullPath, $png);
+
+            $transaction->update(['qr_url' => $qrPath]);
+
+        } catch (\Exception $e) {
+            \Log::error('QR Generation Error: ' . $e->getMessage());
+        }
+
+        return redirect()->route('member.dashboard')
+            ->with('success', 'Transaksi berhasil dibuat!');
     }
 
+    /**
+     * ============================
+     * EDIT / UPDATE
+     * ============================
+     */
     public function edit(Transaction $transaction)
     {
         $appointments = Appointment::with('service', 'employee.user')->get();
@@ -107,63 +160,23 @@ class TransactionController extends Controller
             'coupon_id' => 'nullable|exists:coupons,id',
         ]);
 
-        $user = Auth::user();
-
-        // ✅ Validasi kupon saat update
-        if (!empty($validated['coupon_id'])) {
-            $coupon = Coupon::where('id', $validated['coupon_id'])
-                ->where('user_id', $user->id)
-                ->where('status', 'unused')
-                ->first();
-
-            if (!$coupon) {
-                return back()->withErrors(['coupon_id' => 'Kupon tidak valid atau sudah digunakan.']);
-            }
-        }
-
         $transaction->update($validated);
 
-        return redirect()->route('transactions.index')->with('success', 'Transaction updated successfully.');
+        return redirect()->route('transactions.index')
+            ->with('success', 'Transaksi berhasil diperbarui!');
     }
 
     public function destroy(Transaction $transaction)
     {
         $transaction->delete();
-        return redirect()->route('transactions.index')->with('success', 'Transaction deleted successfully.');
+        return redirect()->route('transactions.index')
+            ->with('success', 'Transaksi berhasil dihapus!');
     }
 
     /**
-     * Pelunasan via Midtrans
-     */
-    public function payRemainingMidtrans(Transaction $transaction)
-    {
-        Config::$serverKey = config('midtrans.server_key');
-        Config::$isProduction = config('midtrans.is_production');
-        Config::$isSanitized = config('midtrans.is_sanitized');
-        Config::$is3ds = config('midtrans.is_3ds');
-
-        $params = [
-            'transaction_details' => [
-                'order_id' => $transaction->transaction_code,
-                'gross_amount' => $transaction->total_amount - $transaction->amount,
-            ],
-            'customer_details' => [
-                'first_name' => $transaction->appointment->name,
-                'email' => $transaction->appointment->email ?? 'noemail@test.com',
-            ]
-        ];
-
-        $snapToken = Snap::getSnapToken($params);
-
-        $transaction->update([
-            'midtrans_order_id' => $transaction->transaction_code,
-        ]);
-
-        return view('backend.transactions.pay_midtrans', compact('transaction', 'snapToken'));
-    }
-
-    /**
-     * Pelunasan via Cash
+     * ============================
+     * PAY REMAINING (ADMIN)
+     * ============================
      */
     public function payRemainingCash(Transaction $transaction)
     {
@@ -177,37 +190,107 @@ class TransactionController extends Controller
             $transaction->appointment->update(['status' => 'Confirmed']);
         }
 
-        return redirect()->route('transactions.index')->with('success', 'Pelunasan tunai berhasil.');
+        // Generate QR jika belum ada
+        if (empty($transaction->qr_url)) {
+            try {
+                $qrDir = public_path('qrcodes');
+                if (!file_exists($qrDir)) {
+                    mkdir($qrDir, 0777, true);
+                }
+
+                $qrPath = 'qrcodes/' . $transaction->transaction_code . '.png';
+                $fullPath = public_path($qrPath);
+
+                $png = QrCode::format('png')
+                    ->size(300)
+                    ->errorCorrection('H')
+                    ->generate($transaction->transaction_code);
+
+                file_put_contents($fullPath, $png);
+
+                $transaction->update(['qr_url' => $qrPath]);
+            } catch (\Exception $e) {
+                \Log::error("QR Generation Failed: " . $e->getMessage());
+            }
+        }
+
+        return redirect()->route('member.dashboard')
+            ->with('success', 'Pelunasan tunai berhasil.');
     }
 
     /**
-     * Update status transaksi (callback Midtrans)
+     * ============================
+     * MIDTRANS (member)
+     * ============================
      */
-    public function updateStatus(Request $request, Transaction $transaction)
+    public function memberPayRemainingMidtrans(Transaction $transaction)
     {
-        try {
-            $validated = $request->validate([
-                'midtrans_response' => 'required'
+        $user = Auth::user();
+
+        if ($transaction->user_id !== $user->id) abort(403);
+
+        if ($transaction->payment_status === 'Paid') {
+            return redirect()->route('member.transactions.index')
+                ->with('info', 'Transaksi sudah lunas.');
+        }
+
+        Config::$serverKey = config('midtrans.server_key');
+        Config::$isProduction = config('midtrans.is_production');
+
+        $params = [
+            'transaction_details' => [
+                'order_id' => $transaction->transaction_code,
+                'gross_amount' => $transaction->total_amount - $transaction->amount,
+            ],
+            'customer_details' => [
+                'first_name' => $user->name,
+                'email' => $user->email,
+            ],
+            'callbacks' => [
+                'finish' => route('member.payment.finish', $transaction->id),
+            ]
+        ];
+
+        $snapToken = Snap::getSnapToken($params);
+
+        return view('frontend.member.transactions.pay_remaining', compact(
+            'transaction',
+            'snapToken'
+        ));
+    }
+
+    /**
+     * ============================
+     * MIDTRANS CALLBACK
+     * ============================
+     */
+    public function paymentFinish(Request $request, Transaction $transaction)
+    {
+        $status = $request->get('transaction_status');
+        $orderId = $request->get('order_id');
+
+        if ($transaction->transaction_code !== $orderId) {
+            return redirect()->route('member.dashboard', ['info' => 'notfound']);
+        }
+
+        if (in_array($status, ['capture','settlement'])) {
+            $transaction->update([
+                'payment_status' => 'Paid',
+                'amount' => $transaction->total_amount,
             ]);
 
-            if ($transaction->payment_status === 'DP') {
-                $transaction->payment_status = 'Paid';
-                $transaction->midtrans_response = json_encode($validated['midtrans_response'], JSON_INVALID_UTF8_IGNORE);
-                $transaction->save();
-
-                if ($transaction->appointment && $transaction->appointment->status === 'Processing') {
-                    $transaction->appointment->status = 'Confirmed';
-                    $transaction->appointment->save();
-                }
-
-                return response()->json(['success' => true]);
-            }
-
-            return response()->json(['success' => false, 'message' => 'Transaksi bukan DP atau sudah lunas']);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json(['success' => false, 'message' => $e->errors()]);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            return redirect()->route('member.dashboard', [
+                'paid' => 'true',
+                'transaction_code' => $transaction->transaction_code
+            ]);
         }
+
+        if ($status === 'pending') {
+            $transaction->update(['payment_status' => 'DP']);
+            return redirect()->route('member.dashboard', ['pending' => 'true']);
+        }
+
+        $transaction->update(['payment_status' => 'Failed']);
+        return redirect()->route('member.dashboard', ['failed' => 'true']);
     }
 }

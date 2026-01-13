@@ -21,11 +21,13 @@ class Transaction extends Model
         'payment_result',
         'payload',
         'coupon_id',
+        'qr_url',
     ];
 
     protected $casts = [
         'payment_result' => 'array',
         'payload' => 'array',
+        'public_token_expires_at' => 'datetime',
     ];
 
     /**
@@ -43,6 +45,7 @@ class Transaction extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+    
 
     /**
      * Relasi ke kupon (jika ada)
@@ -67,4 +70,20 @@ class Transaction extends Model
     {
         return $query->where('payment_status', 'DP');
     }
+
+    public function photoResults()
+{
+    return $this->hasMany(PhotoResult::class, 'transaction_id');
+}
+
+protected static function booted()
+{
+    static::creating(function ($transaction) {
+        $transaction->public_token = bin2hex(random_bytes(8));
+        $transaction->public_token_expires_at = now()->addDays(7); // aktif 7 hari
+    });
+}
+
+
+    
 }

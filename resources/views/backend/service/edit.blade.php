@@ -174,7 +174,24 @@
                             </div>
                         </div>
                         <div class="card-body">
-                          <div class="row">
+                        <div class="row">
+
+                            <!-- MIN PEOPLE (dipindah ke kiri) -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="mb-0" for="min_people">Min People</label>
+                                    <input class="form-control" type="number" name="min_people" id="min_people" min="1" placeholder="Min number of people"
+                                        value="{{ old('min_people', 1) }}">
+                                    <p class="mb-0 text-muted small">Minimum number of people allowed for this service</p>
+                                    @error('min_people')
+                                        <span class="text-danger">
+                                            {{ $message }}
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <!-- MAX PEOPLE (dipindah ke kanan) -->
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="mb-0" for="max_people">Max People</label>
@@ -188,23 +205,11 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="mb-0" for="min_people">Min People</label>
-                                    <input class="form-control" type="number" name="min_people" id="min_people" min="1" placeholder="Min number of people"
-                                        value="{{ old('min_people', 1) }}">
-                                    <p class="mb-0 text-muted small">Maximum number of people allowed for this service</p>
-                                    @error('min_people')
-                                        <span class="text-danger">
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
 
-                          </div>
                         </div>
-                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card-body -->
+
                     </div>
                     
                     <div class="card card-light">

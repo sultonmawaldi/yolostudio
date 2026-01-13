@@ -1,210 +1,230 @@
 @extends('adminlte::page')
 
-@section('title', 'All Users')
+@section('title', 'Daftar Pengguna')
 
 @section('content_header')
-    <div class="row mb-2">
-        <div class="col-sm-6">
-            <h1>All Users</h1>
-        </div>
-        <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="{{ route('user.create') }}">+ Add New</a> |</li>
-                <li class=""> &nbsp; <a href="{{ route('user.trash') }}">View Trash</a></li>
-            </ol>
-        </div>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="fw-bold text-primary mb-0">
+        <i class="fas fa-users me-2 text-primary"></i> Daftar Pengguna
+    </h1>
+    <div>
+        <a href="{{ route('user.create') }}" class="btn btn-gradient-primary shadow-sm me-2">
+            <i class="fas fa-plus me-1"></i> Tambah Pengguna
+        </a>
+        <a href="{{ route('user.trash') }}" class="btn btn-outline-secondary shadow-sm">
+            <i class="fas fa-trash-alt me-1"></i> Lihat Sampah
+        </a>
     </div>
+</div>
 @stop
 
 @section('content')
-    <section class="content">
-        <div class="container-fluid">
-            @if (count($errors) > 0)
-            <div class="alert alert-dismissable alert-danger mt-3">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <strong>Whoops!</strong> There were some problems with your input.<br>
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissable">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <strong>{{ session('success') }}</strong>
-            </div>
-        @endif
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card py-2 px-2">
+@if (session('success'))
+    <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-pill px-4" role="alert">
+        <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
 
-                        <div class="card-body p-0">
-                            <table id="myTable" class="table table-striped projects ">
-                                <thead>
-                                    <tr>
-                                        <th style="width: 1%">
-                                            #
-                                        </th>
-                                        <th style="width: 10%">
-                                            Name
-                                        </th>
-                                        <th style="width: 10%">
-                                            Email
-                                        </th>
-                                        <th style="width: 10%">
-                                            Image
-                                        </th>
-                                        <th style="width: 10%">
-                                            Role
-                                        </th>
-                                        <th style="width: 6%">
-                                            Status
-                                        </th>
-
-                                        <th style="width: 5%">
-                                            Action
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($users as $user)
-                                        <tr>
-                                            <td>
-                                                {{ $loop->iteration }}
-                                            </td>
-                                            <td>
-                                                <a>
-                                                    {{ $user->name }}
-                                                </a>
-                                                <br>
-                                                <small>
-                                                    {{ $user->created_at->diffForHumans() }}
-                                                </small>
-                                            </td>
-                                             <td>{{ $user->email }}
-                                            </td>
-                                            <td>
-                                               <img style="width:50px;" class="rounded-pill" src="{{ $user->profileImage() }}" alt="">
-                                            </td>
-                                            <td>
-                                                @foreach ($user->getRoleNames() as $role)
-                                                    {{ ucfirst($role) }}@if(!$loop->last),@endif
-                                                @endforeach
-                                            </td>
-
-                                            <td class="project-state">
-                                                @if ($user->status)
-                                                    <span class="badge badge-success">Active</span>
-                                                @else
-                                                    <span class="badge badge-danger">In-Active</span>
-                                                @endif
-                                            </td>
-                                            <td class="project-actions text-right d-flex justify-content-between">
-
-                                                <div>
-                                                    <a class="btn btn-info btn-sm"
-                                                        href="{{ route('user.edit', $user->id) }}">
-                                                        <i class="fas fa-pencil-alt">
-                                                        </i>
-                                                        Edit
-                                                    </a>
-                                                </div>
-                                                <div>
-                                                    <form action="{{ route('user.destroy', $user->id) }}"
-                                                        method="post">
-                                                        @csrf
-                                                        @method('delete')
-                                                        <button
-                                                            onclick="return confirm('Are you sure you want to delete this item?');"
-                                                            type="submit" class="btn btn-danger btn-sm">
-                                                            <i class="fas fa-trash">
-                                                            </i>
-                                                            Trash
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-
-                        </div>
-                        <!-- /.card-body -->
-                    </div>
-                </div>
-                <!-- /.col -->
-
-            </div>
-            <!-- /.row -->
-        </div><!-- /.container-fluid -->
-    </section>
+<div class="card border-0 shadow-lg rounded-4">
+    <div class="card-body table-responsive p-4">
+        <table id="userTable" class="table align-middle table-hover table-borderless">
+            <thead class="bg-gradient text-white" style="background: linear-gradient(90deg, #007bff, #00b4d8);">
+                <tr>
+                    <th>#</th>
+                    <th>Nama</th>
+                    <th>Email</th>
+                    <th>Foto</th>
+                    <th>Peran</th>
+                    <th>Status</th>
+                    <th class="text-center">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($users as $user)
+                    @php
+                        $status = $user->status ? 'Aktif' : 'Tidak Aktif';
+                        $badgeClass = $user->status ? 'bg-gradient-success' : 'bg-gradient-danger';
+                    @endphp
+                    <tr class="bg-white shadow-sm-hover">
+                        <td class="fw-semibold text-muted text-center">{{ $loop->iteration }}</td>
+                        <td class="fw-bold text-dark">
+                            {{ $user->name }}<br>
+                            <small class="text-muted">{{ $user->created_at->translatedFormat('d M Y') }}</small>
+                        </td>
+                        <td>{{ $user->email }}</td>
+                        <td class="text-center">
+                            <img src="{{ $user->profileImage() }}" 
+                                 class="rounded-circle shadow-sm" 
+                                 style="width: 50px; height: 50px; object-fit: cover;">
+                        </td>
+                        <td>
+                            @forelse ($user->getRoleNames() as $role)
+                                <span class="badge bg-gradient-info text-white px-3 py-1">{{ ucfirst($role) }}</span>
+                            @empty
+                                <span class="badge bg-gradient-secondary">Tanpa Peran</span>
+                            @endforelse
+                        </td>
+                        <td>
+                            <span class="badge text-white px-3 py-2 rounded-pill shadow-sm {{ $badgeClass }}">
+                                {{ $status }}
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <div class="btn-group">
+                                <a href="{{ route('user.edit', $user->id) }}" class="btn btn-sm btn-outline-info">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form action="{{ route('user.destroy', $user->id) }}" method="POST"
+                                      onsubmit="return confirm('Yakin ingin memindahkan pengguna ini ke sampah?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
 @stop
 
 @section('css')
+<style>
+/* === CARD & TABLE STYLE PREMIUM === */
+.card {
+    background: #ffffff;
+    border: none;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.05);
+}
 
+/* === TABLE === */
+.table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    background-color: #fff;
+    font-size: 0.95rem;
+}
+
+/* === HEADER === */
+.table thead th {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid rgba(0, 123, 255, 0.25);
+    text-align: center;
+    vertical-align: middle;
+    color: #fff;
+    padding: 14px 12px;
+    white-space: nowrap;
+}
+
+/* === BODY === */
+.table td {
+    vertical-align: middle !important;
+    text-align: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    border-right: 1px solid rgba(0, 0, 0, 0.03);
+    padding: 10px 12px;
+    color: #333;
+}
+
+.table td:last-child, .table th:last-child {
+    border-right: none;
+}
+
+.table tbody tr:hover {
+    background-color: #f7faff;
+    transition: 0.25s ease;
+}
+
+/* === BADGE GRADIENT === */
+.bg-gradient-success { background: linear-gradient(45deg, #28a745, #60d394); }
+.bg-gradient-info { background: linear-gradient(45deg, #17a2b8, #5bc0de); }
+.bg-gradient-danger { background: linear-gradient(45deg, #e74c3c, #ff7675); }
+.bg-gradient-secondary { background: linear-gradient(45deg, #95a5a6, #bdc3c7); }
+
+/* === BUTTONS === */
+.btn-gradient-primary {
+    background: linear-gradient(90deg, #007bff, #00b4d8);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 0.5rem 1.25rem;
+    transition: 0.3s;
+}
+.btn-gradient-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+.btn-outline-info, .btn-outline-danger {
+    border-radius: 30px;
+    padding: 6px 10px;
+}
+
+/* === SEARCH INPUT === */
+.dataTables_filter {
+    text-align: right;
+}
+.dataTables_filter input {
+    border-radius: 50px !important;
+    padding: 0.5rem 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border: 1px solid #dee2e6;
+    transition: 0.3s;
+}
+.dataTables_filter input:focus {
+    box-shadow: 0 0 0 3px rgba(0,123,255,0.25);
+    border-color: #80bdff;
+}
+
+/* === Rounded Corners for Table === */
+.table thead th:first-child {
+    border-top-left-radius: 10px;
+}
+.table thead th:last-child {
+    border-top-right-radius: 10px;
+}
+
+.table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 10px;
+}
+.table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 10px;
+}
+
+/* Hilangkan overflow agar sudut tidak terpotong */
+.table {
+    overflow: hidden;
+    border-radius: 10px;
+}
+</style>
 @stop
 
 @section('js')
-
-    {{-- hide notifcation --}}
-    <script>
-        $(document).ready(function() {
-            $(".alert").delay(6000).slideUp(300);
-        });
-    </script>
-
-    <script>
-        $(document).ready(function() {
-            $('#myTable').DataTable({
-                responsive: true
-            });
-
-        });
-    </script>
-
-
-    {{-- Sucess and error notification alert --}}
-    <script>
-        $(document).ready(function() {
-        // show error message
-        @if ($errors->any())
-            //var errorMessage = @json($errors->any()); // Get the first validation error message
-            var Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 5500
-            });
-
-            Toast.fire({
-                icon: 'error',
-                title: 'There are form validation errors. Please fix them.'
-            });
-        @endif
-
-        // success message
-        @if (session('success'))
-            var successMessage = @json(session('success')); // Get the first sucess message
-            var Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 5500
-            });
-
-            Toast.fire({
-                icon: 'success',
-                title: successMessage
-            });
-        @endif
-
-        });
-    </script>
-@endsection
+<script>
+$(function () {
+    $('#userTable').DataTable({
+        responsive: true,
+        language: {
+            search: "",
+            searchPlaceholder: "Cari nama atau email pengguna...",
+            paginate: {
+                next: "›",
+                previous: "‹"
+            },
+            info: "Menampilkan _START_–_END_ dari _TOTAL_ pengguna"
+        },
+        dom: "<'row mb-3'<'col-12 d-flex justify-content-end'f>>" + "rtip"
+    });
+    $(".alert").delay(4000).slideUp(300);
+});
+</script>
+@stop

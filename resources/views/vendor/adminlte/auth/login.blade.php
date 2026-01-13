@@ -1,3 +1,4 @@
+{{-- ✅ LOGIN PAGE NO HP --}}
 @extends('adminlte::auth.auth-page', ['auth_type' => 'login'])
 
 @section('adminlte_css_pre')
@@ -18,100 +19,325 @@
     @php( $password_reset_url = $password_reset_url ? url($password_reset_url) : '' )
 @endif
 
-@section('auth_header', __('adminlte::adminlte.login_message'))
+@section('auth_header')
+<div class="text-center mb-4">
+    <h2 class="fw-bold mb-2 text-gradient kalcer-heading">
+    ✦ Selamat Datang! ✦
+</h2>
+
+    <p class="mb-4 fw-light" 
+       style="font-size:1rem; color:#6c757d; letter-spacing:0.5px; line-height:1.5;">
+        Masuk dengan nomor HP-mu dan mulai sesi fotomu ✨
+    </p>
+</div>
+
+
+@stop
 
 @section('auth_body')
-@if (count($errors) > 0)
-<div class="alert alert-dismissable alert-danger mt-3">
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-    </button>
-    <strong>Whoops!</strong> There were some problems with your input.<br>
-    <ul>
-        @foreach ($errors->all() as $error)
-            <li>{{ $error }}</li>
-        @endforeach
-    </ul>
+<form action="{{ $login_url }}" method="POST" novalidate>
+    @csrf
+
+        {{-- PHONE FIELD --}}
+<div class="input-group mb-3 shadow-sm">
+    <div class="input-group-prepend">
+        <span class="input-group-text border-0 d-flex align-items-center" 
+              style="background-color: rgba(255, 255, 255, 0.35); border-radius: .5rem 0 0 .5rem;">
+            <img src="https://flagcdn.com/w20/id.png" alt="ID" style="width:20px; height:auto; margin-right:8px;">
+            +62
+        </span>
+    </div>
+    <input type="tel"
+           name="phone"
+           id="phone"
+           class="form-control border-0 @error('phone') is-invalid @enderror"
+           placeholder="Nomor HP / Whatsapp"
+           value="{{ old('phone') }}"
+           inputmode="numeric"
+           pattern="[0-9]{9,13}"
+           maxlength="13"
+           required
+           autofocus
+           style="border-radius: 0 .5rem .5rem 0;">
+    @error('phone')
+        <span class="invalid-feedback d-block px-2">
+            <strong>{{ $message }}</strong>
+        </span>
+    @enderror
 </div>
-@endif
-    <form action="{{ $login_url }}" method="post">
-        @csrf
 
-        {{-- Email field --}}
-        <div class="input-group mb-3">
-            <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
-                   value="{{ old('email') }}" placeholder="{{ __('adminlte::adminlte.email') }}" autofocus>
+{{-- PASSWORD FIELD --}}
+<div class="input-group mb-3 shadow-sm">
+    <input type="password"
+           name="password"
+           id="password"
+           class="form-control border-0 @error('password') is-invalid @enderror"
+           placeholder="Kata Sandi"
+           required
+           style="border-radius: .5rem 0 0 .5rem;">
+    <div class="input-group-append">
+        <button type="button" id="toggle-password" 
+                class="btn btn-light border-0 text-secondary px-3"
+                style="border-radius: 0 .5rem .5rem 0;">
+            <i class="fas fa-eye"></i>
+        </button>
+    </div>
+    @error('password')
+        <span class="invalid-feedback d-block px-2">
+            <strong>{{ $message }}</strong>
+        </span>
+    @enderror
+</div>
 
-            <div class="input-group-append">
-                <div class="input-group-text">
-                    <span class="fas fa-envelope {{ config('adminlte.classes_auth_icon', '') }}"></span>
-                </div>
-            </div>
 
-            @error('email')
-                <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                </span>
-            @enderror
+    {{-- SUBMIT BUTTON --}}
+    <button type="submit" class="btn btn-gradient w-100 rounded-pill shadow-sm py-2 mt-4 mb-2">
+        <i class="fas fa-sign-in-alt me-1"></i> Masuk
+    </button>
+
+    {{-- REMEMBER ME --}}
+    <div class="mb-0">
+        <div class="icheck-primary">
+            <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
+            <label for="remember" class="text-muted">Ingat saya</label>
         </div>
-
-        {{-- Password field --}}
-        <div class="input-group mb-3">
-            <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
-                   placeholder="{{ __('adminlte::adminlte.password') }}">
-
-            <div class="input-group-append">
-                <div class="input-group-text">
-                    <span class="fas fa-lock {{ config('adminlte.classes_auth_icon', '') }}"></span>
-                </div>
-            </div>
-
-            @error('password')
-                <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                </span>
-            @enderror
-        </div>
-
-        {{-- Login field --}}
-        <div class="row">
-            <div class="col-7">
-                <div class="icheck-primary" title="{{ __('adminlte::adminlte.remember_me_hint') }}">
-                    <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-
-                    <label for="remember">
-                        {{ __('adminlte::adminlte.remember_me') }}
-                    </label>
-                </div>
-            </div>
-
-            <div class="col-5">
-                <button type=submit class="btn btn-block {{ config('adminlte.classes_auth_btn', 'btn-flat btn-primary') }}">
-                    <span class="fas fa-sign-in-alt"></span>
-                    {{ __('adminlte::adminlte.sign_in') }}
-                </button>
-            </div>
-        </div>
-
-    </form>
+    </div>
+</form>
 @stop
 
 @section('auth_footer')
-    {{-- Password reset link --}}
+<div class="text-center mt-3">
     @if($password_reset_url)
-        <p class="my-0">
-            <a href="{{ $password_reset_url }}">
-                {{ __('adminlte::adminlte.i_forgot_my_password') }}
-            </a>
-        </p>
+        <p class="mb-1"><a href="{{ $password_reset_url }}" class="text-decoration-none text-secondary"><i class="fas fa-unlock-alt me-1"></i> Lupa kata sandi?</a></p>
     @endif
-
-    {{-- Register link --}}
     @if($register_url)
-        <p class="my-0">
-            <a href="{{ $register_url }}">
-                {{ __('adminlte::adminlte.register_a_new_membership') }}
-            </a>
-        </p>
+        <p class="mb-0 text-muted">Belum punya akun? <a href="{{ $register_url }}" class="text-decoration-none text-primary fw-semibold">Daftar Sekarang</a></p>
     @endif
+</div>
+@stop
+
+@push('css')
+<style>
+body.login-page {
+    background: linear-gradient(135deg, rgba(102,166,255,0.7), rgba(137,247,254,0.7)), 
+                url('{{ asset("uploads/images/bg-login.jpg") }}') center/cover no-repeat;
+    background-image: url("https://www.transparenttextures.com/patterns/xv.png");
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    overflow-y: auto; /* scroll aktif di layar kecil */
+}
+
+/* Login Box - ukuran tetap */
+.login-box {
+    width: 100%;
+    max-width: 400px; /* tetap, tidak responsive */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    margin-top: 0;
+}
+
+/* Logo */
+.login-logo img {
+    width: auto;
+    max-width: 120px; /* tetap */
+    height: auto;
+    margin-bottom: 15px;
+}
+
+/* Card transparan & blur */
+.card {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 1.8rem;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+    border: none;
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+/* Card Header */
+.card .card-header {
+    text-align: center;
+    background: transparent;
+    border-bottom: none;
+    color: #fff;
+    padding: 15px 0;
+}
+
+/* Card Body transparan */
+.card .card-body {
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px 0;
+}
+
+/* Card Footer tetap di dalam card */
+.card .card-footer {
+    background: transparent;
+    border-top: none;
+    text-align: center;
+    padding: 15px 0;
+    color: #fff;
+}
+
+/* Hapus ikon mata bawaan browser */
+input::-ms-reveal,
+input::-ms-clear {
+    display: none !important;
+}
+
+/* Footer selalu ikut scroll */
+.login-box {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Responsive kecil untuk scroll saja */
+@media (max-height: 667px) { /* iPhone SE */
+    body.login-page {
+        justify-content: flex-start; /* biar scroll muncul */
+    }
+}
+
+@media (max-height: 600px) { /* Nest Hub */
+    body.login-page {
+        justify-content: flex-start;
+    }
+}
+
+/* Tombol Masuk lebih kecil & Kalcer aesthetic */
+.btn-gradient {
+    background: linear-gradient(90deg, #6abfe3, #7873f5); /* gradient Kalcer-style */
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.9rem;         /* lebih kecil dari default */
+    padding: 0.45rem 1.2rem;   /* vertical lebih compact, horizontal tetap nyaman */
+    transition: all 0.3s;
+    backdrop-filter: blur(10px);
+    border-radius: 50px;       /* tetap rounded-pill */
+    border: none;
+}
+
+/* Hover / focus effect */
+.btn-gradient:hover,
+.btn-gradient:focus {
+    transform: scale(1.03);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    color: #fff;
+}
+
+/* Font & style Kalcer vibes */
+.kalcer-heading {
+    font-family: 'Poppins', 'Montserrat', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    line-height: 1.2;
+    background: #0b1292;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* === Input Transparan Putih Cerah === */
+.form-control {
+    background: rgba(255, 255, 255, 0.4) !important; /* lebih terang dan jelas */
+    color: #000 !important; /* teks hitam agar kontras di atas putih */
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    border-radius: 50px;
+    padding: 0.65rem 1.2rem;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    backdrop-filter: blur(8px); /* efek kaca lembut */
+    -webkit-backdrop-filter: blur(8px);
+}
+
+/* Placeholder lebih terlihat tapi tetap lembut */
+.form-control::placeholder {
+    color: rgba(0, 0, 0, 0.5);
+    font-weight: 400;
+}
+
+/* Fokus input lebih cerah */
+.form-control:focus {
+    background: rgba(255, 255, 255, 0.6) !important;
+    border-color: rgba(255, 255, 255, 0.9) !important;
+    box-shadow: 0 0 12px rgba(255,255,255,0.5);
+    color: #000;
+}
+
+/* Input group transparan */
+.input-group-text {
+    background: rgba(255, 255, 255, 0.35) !important;
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    color: #000 !important;
+    backdrop-filter: blur(8px);
+}
+
+/* Tombol toggle mata */
+#toggle-password {
+    background: rgba(255, 255, 255, 0.35) !important;
+    color: rgba(0,0,0,0.7);
+    border: 1px solid rgba(255,255,255,0.5) !important;
+    border-left: none;
+    transition: all 0.3s;
+    backdrop-filter: blur(8px);
+}
+
+#toggle-password:hover {
+    background: rgba(255, 255, 255, 0.55) !important;
+    color: #000;
+}
+
+/* Validasi error transparan */
+.is-invalid {
+    border-color: rgba(255, 77, 77, 0.9) !important;
+    background: rgba(255, 77, 77, 0.25) !important;
+}
+
+.invalid-feedback {
+    color: #cc0000;
+    font-weight: 400;
+}
+
+
+</style>
+@endpush
+
+
+@section('adminlte_js')
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const phoneInput = document.getElementById("phone");
+    const passwordInput = document.getElementById("password");
+    const togglePassword = document.getElementById("toggle-password");
+
+    phoneInput.addEventListener("input", function () {
+        this.value = this.value.replace(/\D/g, '');
+        if (this.value.startsWith('0')) this.value = this.value.substring(1);
+    });
+
+    togglePassword.addEventListener("click", function () {
+        const type = passwordInput.type === "password" ? "text" : "password";
+        passwordInput.type = type;
+        this.innerHTML = type === "password" 
+            ? '<i class="fas fa-eye"></i>' 
+            : '<i class="fas fa-eye-slash"></i>';
+    });
+});
+</script>
 @stop

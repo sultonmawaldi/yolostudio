@@ -197,11 +197,13 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <div class="custom-control custom-switch">
-                                    <!-- If user has the employee or moderator role, check the checkbox -->
-                                    <input type="checkbox" class="custom-control-input" id="is_employee"
-                                        name="is_employee" @if ($user->employee == true) checked @endif>
-                                    <label class="custom-control-label" for="is_employee">Is Employee</label>
-                                </div>
+                                <!-- ✅ Hidden input memastikan nilai selalu terkirim -->
+                                <input type="hidden" name="is_employee" value="0">
+                                <input type="checkbox" class="custom-control-input" id="is_employee"
+                                    name="is_employee" value="1"
+                                    {{ old('is_employee') ? 'checked' : '' }}>
+                                <label class="custom-control-label" for="is_employee">Is Employee</label>
+                            </div>
                             </div>
                         </div>
                     </div>
@@ -237,6 +239,9 @@
                                             @error('service')
                                                 <small class="text-danger"><strong>{{ $message }}</strong></small>
                                             @enderror
+                                            <div id="service-details-container" class="mt-4">
+                                            {{-- Akan diisi dinamis oleh JS --}}
+                                        </div>
                                         </div>
 
                                         <div class="col-xs-12 col-sm-12 col-md-12 mb-3">
@@ -602,7 +607,7 @@ if ($usingOldInput) {
             ['monday',
             'tuesday',
             'wednesday',
-            'thusrday',
+            'thursday',
             'friday',
             'saturday',
             'sunday',].forEach(function(day) {
@@ -675,7 +680,56 @@ if ($usingOldInput) {
         });
     </script>
 
+@push('js')
+<script>
+$(document).ready(function () {
+    const serviceDetailsContainer = $('#service-details-container');
+    const services = @json($services);
 
+    // Ketika user memilih service
+    $('#service').on('change', function () {
+        const selectedServices = $(this).val() || [];
+        serviceDetailsContainer.empty();
+
+        selectedServices.forEach(serviceId => {
+            const service = services.find(s => s.id == serviceId);
+            if (!service) return;
+
+            // Template HTML untuk setiap service
+            const serviceBlock = `
+                <div class="card shadow-sm mb-3 border border-secondary">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3 text-primary">
+                            <i class="fas fa-concierge-bell"></i> ${service.title}
+                        </h5>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label>Duration (minutes)</label>
+                                <select name="service_duration[${service.id}]" class="form-control">
+                                    <option value="">Select Duration</option>
+                                    ${[5,10,15,20,30,45,60].map(v => `<option value="${v}">${v}</option>`).join('')}
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label>Break Duration (minutes)</label>
+                                <select name="service_break_duration[${service.id}]" class="form-control">
+                                    <option value="">No Break</option>
+                                    ${[5,10,15,20,25,30].map(v => `<option value="${v}">${v}</option>`).join('')}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            serviceDetailsContainer.append(serviceBlock);
+        });
+    });
+});
+</script>
+@endpush
 
 
 @stop

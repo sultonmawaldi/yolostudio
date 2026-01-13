@@ -5,43 +5,44 @@ namespace App\Observers;
 use App\Models\Transaction;
 use App\Models\Coupon;
 use Illuminate\Support\Str;
+use App\Events\CouponGenerated;
 
 class TransactionObserver
 {
     /**
-     * Event saat transaksi dibuat
+     * Event ketika transaksi baru dibuat
      */
     public function created(Transaction $transaction)
     {
-        $this->handlePaidTransaction($transaction);
+        $this->handleSuccessfulTransaction($transaction);
     }
 
     /**
-     * Event saat transaksi diupdate
+     * Event ketika transaksi diupdate
      */
     public function updated(Transaction $transaction)
     {
-        // Kalau status berubah menjadi "Paid"
-        if ($transaction->wasChanged('payment_status') && $transaction->payment_status === 'Paid') {
-            $this->handlePaidTransaction($transaction);
+        if (
+            $transaction->wasChanged('payment_status') &&
+            in_array($transaction->payment_status, ['Paid', 'DP', 'Cash'])
+        ) {
+            $this->handleSuccessfulTransaction($transaction);
         }
     }
 
     /**
-     * Logic saat transaksi sukses Paid
+     * Logika reward & kupon
      */
-    protected function handlePaidTransaction(Transaction $transaction)
+    protected function handleSuccessfulTransaction(Transaction $transaction)
     {
         $user = $transaction->user;
-
         if (!$user) {
             return;
         }
 
-        // ✅ Jika transaksi pakai kupon, tandai kupon sebagai used
+        // ✅ Jika transaksi pakai kupon → tandai kupon used
         if ($transaction->coupon_id) {
             $coupon = $transaction->coupon;
-
             if (
                 $coupon &&
                 $coupon->status === 'unused' &&
@@ -51,21 +52,27 @@ class TransactionObserver
             }
         }
 
-        // ✅ Hitung total transaksi Paid user
-        $paidCount = $user->transactions()->where('payment_status', 'Paid')->count();
+        // ✅ Hitung total transaksi sukses (Paid, DP, Cash) yang tidak pakai kupon
+        $successfulCount = $user->transactions()
+            ->whereIn('payment_status', ['Paid', 'DP', 'Cash'])
+            ->whereNull('coupon_id')
+            ->count();
 
-        // ✅ Berikan kupon reward setiap kelipatan 3
-        if ($paidCount > 0 && $paidCount % 3 === 0) {
-            Coupon::create([
+        // ✅ Generate kupon baru setiap kelipatan 3 transaksi
+        if ($successfulCount > 0 && $successfulCount % 3 === 0) {
+            $coupon = Coupon::create([
                 'user_id'            => $user->id,
                 'code'               => 'REWARD-' . strtoupper(Str::random(6)),
-                'type'               => 'fixed', // bisa juga percent
-                'value'              => 50000, // contoh diskon Rp 50.000
+                'type'               => 'fixed',
+                'value'              => 50000,
                 'minimum_cart_value' => 100000,
                 'expiry_date'        => now()->addDays(30),
                 'active'             => 1,
                 'status'             => 'unused',
             ]);
+
+            // 🔥 Trigger event untuk listener
+            event(new CouponGenerated($coupon));
         }
     }
 }

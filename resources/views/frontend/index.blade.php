@@ -33,7 +33,7 @@
     <header class="header-section">
         <nav class="navbar navbar-expand-lg navbar-light">
             <div class="container">
-                <a class="navbar-brand" href="#">
+                <a class="navbar-brand" href="{{ route('home') }}">
                     <i class="bi bi-calendar-check"></i> AppointEase
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -56,7 +56,7 @@
     <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" id="navbarProfileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
         <img src="{{ Auth::user()->profile_picture ?? 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) }}" 
              alt="Avatar" 
-             class="rounded-circle border border-2" 
+             class="rounded-circle border-2" 
              width="32" height="32">
         <span class="fw-semibold">{{ Auth::user()->name }}</span>
     </a>
@@ -323,8 +323,7 @@
     <button class="btn btn-primary" type="button" id="apply-coupon">Gunakan</button>
   </div>
 
-  <!-- hidden input untuk dikirim ke backend -->
-  <input type="hidden" name="coupon_id" id="coupon_id">
+
 
   <div class="form-text text-success d-none" id="coupon-success-msg">
     Kupon berhasil diterapkan!
@@ -385,6 +384,7 @@
                     <input type="hidden" id="total_amount" name="total_amount" value="0">
                     <input type="hidden" id="payment_status" name="payment_status" value="">
                     <input type="hidden" id="midtrans_order_id" name="midtrans_order_id" value="">
+                    <input type="hidden" name="coupon_id" id="coupon_id">
 
                     <div class="row g-3">
                         <div class="col-md-6">
@@ -415,6 +415,8 @@
             <input type="hidden" id="total_amount" name="total_amount" value="0">
             <input type="hidden" id="payment_status" name="payment_status" value="">
             <input type="hidden" id="midtrans_order_id" name="midtrans_order_id" value="">
+            <!-- hidden input untuk dikirim ke backend -->
+            <input type="hidden" name="coupon_id" id="coupon_id">
 
             <input type="hidden" id="customer-name" value="{{ auth()->user()->name }}">
             <input type="hidden" id="customer-email" value="{{ auth()->user()->email }}">
@@ -436,6 +438,7 @@
                 <input type="hidden" id="total_amount" name="total_amount" value="0">
                 <input type="hidden" id="payment_status" name="payment_status" value="">
                 <input type="hidden" id="midtrans_order_id" name="midtrans_order_id" value="">
+                <input type="hidden" name="coupon_id" id="coupon_id">
 
                 <div class="row g-3">
                     <div class="col-md-6">
@@ -473,20 +476,6 @@
   </button>
 </div>
 </div>
-
-<!-- Footer -->
-<footer class="mt-5">
-  <div class="container pb-2">
-    <div class="row text-center">
-      <span class="small text-muted">Designed & Developed by 
-        <a target="_blank" href="https://www.vfixtechnology.com" class="text-decoration-none text-primary fw-medium">
-          VFIX TECHNOLOGY
-        </a>
-      </span>
-    </div>
-  </div>
-</footer>
-
 
 
     <!-- Success Modal -->
@@ -785,9 +774,9 @@
 
                 // Update next button text
                 if (bookingState.currentStep === 5) {
-                    $("#next-step").html('Confirm Booking <i class="bi bi-check-circle"></i>');
+                    $("#next-step").html('Konfirmasi Booking <i class="bi bi-check-circle"></i>');
                 } else {
-                    $("#next-step").html('Next <i class="bi bi-arrow-right"></i>');
+                    $("#next-step").html('Selanjutnya <i class="bi bi-arrow-right"></i>');
                 }
             }
 
@@ -1428,14 +1417,14 @@ function saveBooking(data) {
     });
 }
 
-// ✅ Submit booking
+
+// ✅ Function untuk submit booking
 function submitBooking() {
     const form = $('#customer-info-form');
     const csrfToken = form.find('input[name="_token"]').val();
 
-    // 🔹 ambil metode pembayaran dari input form
     const paymentMethod = $('#payment-method').val(); // dp / full
-    const totalAmount = parseInt(document.getElementById("summary-price").textContent.replace(/[^0-9]/g, ''), 10);
+    const totalAmount = parseInt($("#summary-price").text().replace(/[^0-9]/g, ''), 10);
 
     const dpAmount = bookingState.selectedService.dp_amount || Math.round(totalAmount / 2);
     const paymentAmount = paymentMethod === 'dp' ? dpAmount : totalAmount;
@@ -1448,26 +1437,34 @@ function submitBooking() {
         phone: $('#customer-phone').val(),
         notes: $('#customer-notes').val(),
         amount: paymentAmount,
-        total_amount: totalAmount,
-        people_count: parseInt(document.getElementById("people-count").textContent, 10),
+        total_amount: totalAmount, // ✅ sudah dipotong diskon
+        people_count: parseInt($("#people-count").text(), 10),
         booking_date: bookingState.selectedDate,
         booking_time: bookingState.selectedTime.start || bookingState.selectedTime,
         _token: csrfToken
     };
 
-    // Tambahkan user_id kalau login
+    // 🔹 Masukkan user_id kalau login
     if (typeof currentAuthUser !== 'undefined' && currentAuthUser) {
         bookingData.user_id = currentAuthUser.id;
     }
 
+    // 🔹 Masukkan coupon_id kalau ada
+    const couponId = $("#coupon_id").val();
+    if (couponId) {
+        bookingData.coupon_id = couponId;
+    }
+
+    console.log("Booking data dikirim:", bookingData); // ✅ Debug, pastikan coupon_id ada
+
     const nextBtn = $("#next-step");
     nextBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Processing...');
 
-    // 🔹 Jika role = admin/moderator/employee → langsung simpan booking (cash/manual)
+    // 🔹 Jika role admin/moderator/employee → langsung cash/manual
     if (typeof currentAuthUser !== 'undefined' && currentAuthUser &&
-        (currentAuthUser.role === 'admin' || currentAuthUser.role === 'moderator' || currentAuthUser.role === 'employee')) {
+        (['admin', 'moderator', 'employee'].includes(currentAuthUser.role))) {
 
-        bookingData.payment_method = 'Cash'; // Manual
+        bookingData.payment_method = 'Cash';
 
         if (paymentMethod === 'dp') {
             bookingData.payment_status = 'DP';
@@ -1481,7 +1478,7 @@ function submitBooking() {
         return;
     }
 
-    // 🔹 Jika role = member atau guest → pakai Midtrans
+    // 🔹 Jika role member/guest → Midtrans
     bookingData.payment_method = 'Midtrans';
     bookingData.status = 'Confirmed';
     bookingData.payment_status = (paymentMethod === 'dp') ? 'DP' : 'Paid';
@@ -1534,12 +1531,15 @@ function submitBooking() {
 
 
 
+
+
         });
     </script>
 
     @if ($setting->footer)
         {!! $setting->footer !!}
     @endif
+
 <script>
   const summaryPriceEl   = document.getElementById("summary-price");
   const originalPriceEl  = document.getElementById("original-price");
@@ -1559,8 +1559,8 @@ function submitBooking() {
   const couponErrorMsg   = document.getElementById("coupon-error-msg");
   const couponIdHidden   = document.getElementById("coupon_id");
 
-  let basePrice = 0;         
-  let discountValue = 0;     
+  let basePrice = 0;
+  let discountValue = 0;
 
   function formatRupiah(number) {
     return new Intl.NumberFormat('id-ID', {
@@ -1623,16 +1623,13 @@ function submitBooking() {
         body: JSON.stringify({ code })
       });
 
-      if (!response.ok) throw new Error("Kupon tidak valid");
-
       const data = await response.json();
 
-      // cek response dari backend
-      if (!data.id) {
-        throw new Error("Kupon tidak valid atau bukan milik Anda");
+      if (!response.ok || !data.id) {
+        throw new Error(data.message || "Kupon tidak valid atau sudah digunakan.");
       }
 
-      // hitung diskon
+      // ✅ Hitung diskon
       if (data.type === "percent") {
         discountValue = Math.round(basePrice * (data.value / 100));
       } else if (data.type === "fixed") {
@@ -1641,16 +1638,18 @@ function submitBooking() {
         discountValue = 0;
       }
 
-      // set hidden coupon_id agar ikut ke form transaksi
+      // ✅ Set hidden coupon_id agar terkirim ke TransactionController
       couponIdHidden.value = data.id;
 
+      couponSuccessMsg.textContent = `Kupon berhasil diterapkan: ${code}`;
       couponSuccessMsg.classList.remove("d-none");
       couponErrorMsg.classList.add("d-none");
-      updatePaymentSummary();
 
+      updatePaymentSummary();
     } catch (error) {
       couponIdHidden.value = ""; // reset kalau gagal
       couponSuccessMsg.classList.add("d-none");
+      couponErrorMsg.textContent = error.message || "Kupon tidak valid.";
       couponErrorMsg.classList.remove("d-none");
       console.error("Error validasi kupon:", error);
     }
@@ -1668,9 +1667,8 @@ function submitBooking() {
 
   if (paymentMethodEl) {
     paymentMethodEl.addEventListener('change', () => {
-      couponInput.value = '';
+      // ❌ Jangan reset coupon_id supaya tetap terkirim ke backend
       discountValue = 0;
-      couponIdHidden.value = '';
       couponSuccessMsg.classList.add('d-none');
       couponErrorMsg.classList.add('d-none');
       updatePaymentSummary();
@@ -1680,15 +1678,16 @@ function submitBooking() {
   const prevStepBtn = document.getElementById('prev-step');
   if (prevStepBtn) {
     prevStepBtn.addEventListener('click', () => {
-      couponInput.value = '';
+      // ❌ Jangan reset coupon_id
       discountValue = 0;
-      couponIdHidden.value = '';
       couponSuccessMsg.classList.add('d-none');
       couponErrorMsg.classList.add('d-none');
       updatePaymentSummary();
     });
   }
 </script>
+
+
 
 
 <script>
@@ -1767,5 +1766,5 @@ function submitBooking() {
     </style>
 @endif
 
-
 </html>
+

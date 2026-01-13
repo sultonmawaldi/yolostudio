@@ -13,9 +13,10 @@ class CouponController extends Controller
      */
     public function index()
     {
-        $coupons = Coupon::with('user')->orderByDesc('created_at')->paginate(10);
-        return view('backend.coupons.index', compact('coupons'));
+    $coupons = Coupon::with('user')->orderByDesc('created_at')->get();
+    return view('backend.coupons.index', compact('coupons'));
     }
+
 
     /**
      * Tampilkan form tambah kupon.

@@ -16,6 +16,7 @@
         "laravel/ui": "^4.6",
         "midtrans/midtrans-php": "^2.6",
         "rappasoft/laravel-authentication-log": "^5.0",
+        "simplesoftwareio/simple-qrcode": "4.2",
         "spatie/laravel-permission": "^6.21 || ^7.0",
         "spatie/opening-hours": "^4.1"
     },

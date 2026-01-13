@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Session;
 use App\Models\Coupon;
 
 // Controllers
@@ -20,18 +22,42 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\MidtransController;
+use App\Http\Controllers\PhotoResultController;
 
 Auth::routes();
 
 // ==========================
 // FRONTEND (GUEST)
 // ==========================
-Route::get('/', [FrontendController::class, 'index'])->name('home');
+
+Route::get('/', function () {
+    return view('frontend.home');
+})->name('home');
+
+Route::get('/booking', [FrontendController::class, 'booking'])->name('booking');
+
+Route::get('/employees', [EmployeeController::class, 'index']); // ✅ TAMBAH INI
+
 
 // Layanan & karyawan
-Route::get('/categories/{id}/services', [FrontendController::class, 'getServices']);
 Route::get('/services/{service}/employees', [FrontendController::class, 'getEmployees'])->name('get.employees');
-Route::get('/employees/{employee}/availability/{date?}', [FrontendController::class, 'getEmployeeAvailability'])->name('employee.availability');
+Route::get(
+    '/employees/{employee}/availability/{date}',
+    [FrontendController::class, 'getEmployeeAvailability']
+)->name('employee.availability');
+
+Route::get(
+    '/employees/{employee}/categories',
+    [FrontendController::class, 'getCategoriesByEmployee']
+);
+
+Route::get(
+    '/employees/{employee}/categories/{category}/services',
+    [FrontendController::class, 'getServicesByEmployeeAndCategory']
+);
+
+
+
 
 // Booking & appointment
 Route::post('/bookings', [AppointmentController::class, 'store'])->name('bookings.store');
@@ -45,13 +71,28 @@ Route::middleware(['auth'])->group(function () {
     // MEMBER ROUTES
     // ==========================
     Route::middleware(['role:member'])->group(function () {
-        Route::get('/member/dashboard', [UserController::class, 'dashboard'])->name('member.dashboard');
+
+        Route::get('/member/dashboard', [TransactionController::class, 'memberIndex'])->name('member.dashboard');
         Route::get('/member/profile', fn() => view('frontend.member.profile'))->name('member.profile');
 
-        // transaksi khusus member
-        Route::get('/member/transactions', [TransactionController::class, 'memberIndex'])->name('member.transactions');
-        Route::get('/member/transactions/{transaction}', [TransactionController::class, 'memberShow'])->name('member.transactions.show');
+        // ======= Transaksi Member =======
+        Route::prefix('member/transactions')->name('member.transactions.')->group(function () {
+
+            // Daftar transaksi
+            Route::get('/', [TransactionController::class, 'memberIndex'])->name('index');
+
+            // Detail transaksi
+            Route::get('/{transaction}', [TransactionController::class, 'memberShow'])
+                ->whereNumber('transaction')
+                ->name('show');
+
+            // Pelunasan via Midtrans
+            Route::get('/{transaction}/pay-remaining', [TransactionController::class, 'memberPayRemainingMidtrans'])
+                ->whereNumber('transaction')
+                ->name('pay_remaining');
+        });
     });
+
 
     // ==========================
     // ADMIN & MODERATOR ROUTES
@@ -116,41 +157,86 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/transactions/{transaction}/pay-remaining', [TransactionController::class, 'payRemainingMidtrans'])->name('transactions.pay_remaining');
         Route::post('/transactions/{transaction}/update-status', [TransactionController::class, 'updateStatus'])->name('transactions.updateStatus');
         Route::post('/transactions/{transaction}/cash-payment', [TransactionController::class, 'payRemainingCash'])->name('transactions.cash_payment');
-        Route::get('/transactions/history', [TransactionController::class, 'history'])->name('transactions.history');
     });
 
     // ======= Testing =======
     Route::get('test', fn(Request $request) => view('test', ['request' => $request]));
     Route::post('test', fn(Request $request) => dd($request->all())->toArray())->name('test');
+
+    // ======= Photo Result =======
+    Route::get('/backend/photo-results', [PhotoResultController::class, 'index'])->name('photo-results.index');
+    Route::post('/backend/photo-results/upload', [PhotoResultController::class, 'store'])->name('photo-results.store');
+    Route::delete('/backend/photo-results/{id}', [PhotoResultController::class, 'destroy'])->name('photo-results.destroy');
+    Route::get('/backend/photo-results/send/{transactionId}', [PhotoResultController::class, 'sendToWhatsApp'])->name('photo-results.send');
+
+    Route::post('/backend/photo-results/regenerate-link/{transaction}', [PhotoResultController::class, 'regenerateLink'])
+        ->name('photo-results.regenerate-link');
+    Route::delete('/photo-results/{transaction}/destroy-all', [PhotoResultController::class, 'destroyAll'])
+        ->name('photo-results.destroy-all');
 });
+
+
+// ==========================
+// PHOTO RESULTS PUBLIC
+// ==========================
+// Halaman publik hasil foto
+Route::get('/photo-result/{token}', [PhotoResultController::class, 'showPublic'])
+    ->name('photo-result.public');
+
+// Download file hasil foto
+Route::get('/photo-results/download/{photoResult}/{token}', [PhotoResultController::class, 'download'])
+    ->name('photo-results.download');
+
+// Download semua hasil foto dalam 1 zip
+Route::get('/photo-results/download-all/{token}', [PhotoResultController::class, 'downloadAll'])
+    ->name('photo-results.downloadAll');
+
+// Kirim WA otomatis
+Route::post('/photo-results/{transaction}/send-wa', [PhotoResultController::class, 'sendWhatsappFonnte'])
+    ->name('photo-results.send-wa');
+
+
+
 
 // ==========================
 // PAYMENT & MIDTRANS
 // ==========================
 Route::post('/midtrans/token', [PaymentController::class, 'getSnapToken']);
 Route::post('/midtrans/notification', [MidtransController::class, 'notificationHandler']);
-Route::post('/midtrans/callback', [TransactionController::class, 'callback'])->name('midtrans.callback');
+Route::post('/midtrans/callback/{transaction}', [TransactionController::class, 'updateStatus'])->name('midtrans.callback');
+Route::get('/member/payment/finish/{transaction}', [TransactionController::class, 'paymentFinish'])
+    ->name('member.payment.finish');
 
-// ==========================
-// COUPON VALIDATION
-// ==========================
 Route::post('/validate-coupon', function (Request $request) {
+    if (!auth()->check()) {
+        return response()->json([
+            'message' => 'Kupon hanya untuk member.'
+        ], 403); // 403 Forbidden
+    }
+
     $request->validate([
         'code' => 'required|string',
     ]);
 
+    $userId = auth()->id();
+
     $coupon = Coupon::where('code', strtoupper($request->code))
-        ->where('user_id', auth()->id()) // ✅ hanya milik user login
         ->where('active', true)
+        ->where('status', 'unused')
+        ->where(function ($q) use ($userId) {
+            $q->where('user_id', $userId)
+                ->orWhereNull('user_id');
+        })
         ->where(function ($q) {
             $q->whereNull('expiry_date')
-              ->orWhere('expiry_date', '>=', now());
+                ->orWhere('expiry_date', '>=', now());
         })
-        ->where('status', 'unused') // ✅ pastikan belum dipakai
         ->first();
 
     if (!$coupon) {
-        return response()->json(['message' => 'Kupon tidak valid atau tidak tersedia.'], 404);
+        return response()->json([
+            'message' => 'Kupon tidak valid atau tidak tersedia.'
+        ], 404);
     }
 
     return response()->json([
@@ -160,7 +246,12 @@ Route::post('/validate-coupon', function (Request $request) {
     ]);
 });
 
-// ==========================
-// TRANSAKSI FRONTEND
-// ==========================
-Route::post('/transactions/store', [TransactionController::class, 'store'])->name('transactions.store');
+
+
+Route::get('/locale/{lang}', function ($lang) {
+    if (in_array($lang, ['en', 'id'])) {
+        Session::put('locale', $lang);
+        App::setLocale($lang);
+    }
+    return redirect()->back();
+});
