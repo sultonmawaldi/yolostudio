@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 use App\Events\BookingCreated;
 use App\Events\StatusUpdated;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use App\Models\Addon;
 
 class AppointmentController extends Controller
 {
@@ -18,10 +19,24 @@ class AppointmentController extends Controller
     {
         $appointments = Appointment::orderBy('booking_date', 'asc')
             ->orderBy('booking_start_time', 'asc')
+            ->with('addons') // pastikan eager load
             ->get();
+
+        // Tambahkan addonData untuk setiap appointment
+        $appointments->each(function ($appointment) {
+            $appointment->addonData = $appointment->addons->map(function ($a) {
+                return [
+                    'name' => $a->name,
+                    'qty' => $a->pivot->qty,
+                    'price' => $a->pivot->price,
+                    'subtotal' => $a->pivot->subtotal,
+                ];
+            });
+        });
 
         return view('backend.appointment.index', compact('appointments'));
     }
+
 
 
     public function create()
@@ -39,7 +54,7 @@ class AppointmentController extends Controller
             'email' => 'required|email|max:255',
             'phone' => 'required|string|max:20',
             'notes' => 'nullable|string',
-            'amount' => 'required|numeric',
+            'amount' => 'nullable',
             'booking_date' => 'required|date',
             'booking_start_time' => 'required',
             'booking_end_time' => 'required',
@@ -50,6 +65,12 @@ class AppointmentController extends Controller
             'total_amount' => 'nullable|numeric',
             'midtrans_order_id' => 'nullable|string',
             'coupon_id' => 'nullable|exists:coupons,id',
+            'background_id' => 'nullable|exists:service_backgrounds,id',
+            'slot_group_id' => 'required|exists:slot_groups,id',
+            'addons' => 'nullable|array',
+            'addons.*.id' => 'required|exists:addons,id',
+            'addons.*.price' => 'nullable',
+            'addons.*.qty' => 'required|integer|min:1',
         ]);
 
         // Tentukan user_id
@@ -65,6 +86,28 @@ class AppointmentController extends Controller
         // Generate booking_id & transaction_code
         $validated['booking_id'] = 'BK-' . now()->format('Ymd') . '-' . strtoupper(Str::random(8));
         $transactionCode = 'TRX-' . now()->format('Ymd') . '-' . strtoupper(Str::random(8));
+
+        // Cek bentrok slot sebelum simpan
+        $current = \Carbon\Carbon::parse($validated['booking_start_time']);
+        $slotEnd = \Carbon\Carbon::parse($validated['booking_end_time']);
+
+        $isBooked = Appointment::where('employee_id', $validated['employee_id'])
+            ->where('slot_group_id', $validated['slot_group_id'])
+            ->where('booking_date', $validated['booking_date'])
+            ->whereNotIn('status', ['Cancelled'])
+            ->where(function ($q) use ($current, $slotEnd) {
+                $q->where('booking_start_time', '<', $slotEnd->format('H:i:s'))
+                    ->where('booking_end_time', '>', $current->format('H:i:s'));
+            })
+            ->exists();
+
+        if ($isBooked) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Slot sudah dibooking. Silakan pilih waktu lain.'
+            ], 422);
+        }
+
 
         // Simpan appointment
         $appointment = Appointment::create([
@@ -82,7 +125,24 @@ class AppointmentController extends Controller
             'status' => $validated['status'],
             'people_count' => $validated['people_count'],
             'booking_id' => $validated['booking_id'],
+            'background_id' => $request->background_id,
+            'slot_group_id' => $validated['slot_group_id'],
         ]);
+
+        if ($request->filled('addons')) {
+            foreach ($request->addons as $addon) {
+                if (($addon['qty'] ?? 0) > 0) {
+                    $addonModel = Addon::findOrFail($addon['id']);
+
+                    $appointment->addons()->attach($addonModel->id, [
+                        'price' => $addonModel->price,
+                        'qty' => $addon['qty'],
+                        'subtotal' => $addonModel->price * $addon['qty'],
+                    ]);
+                }
+            }
+        }
+
 
         // Simpan transaksi
         $transaction = Transaction::create([
@@ -204,13 +264,24 @@ class AppointmentController extends Controller
 
     public function update(Request $request, Appointment $appointment)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|string|max:20',
+            'notes' => 'nullable|string',
+            'people_count' => 'required|integer|min:1',
+            'payment_method' => 'nullable|string',
+        ]);
+
+        $appointment->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Appointment updated successfully',
+            'appointment' => $appointment
+        ]);
     }
 
-    public function destroy(Appointment $appointment)
-    {
-        //
-    }
 
     public function updateStatus(Request $request)
     {
@@ -226,5 +297,35 @@ class AppointmentController extends Controller
         event(new StatusUpdated($appointment));
 
         return redirect()->back()->with('success', 'Appointment status updated successfully.');
+    }
+
+    public function reschedule(Request $request, Appointment $appointment)
+    {
+        $request->validate([
+            'new_date' => 'required|date',
+            'new_start_time' => 'required',
+            'new_end_time' => 'required'
+        ]);
+
+        $appointment->update([
+            'booking_date' => $request->new_date,
+            'booking_start_time' => $request->new_start_time,
+            'booking_end_time' => $request->new_end_time,
+            'status' => 'Confirmed'
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Booking berhasil di-reschedule'
+        ]);
+    }
+
+
+
+
+
+    public function destroy(Appointment $appointment)
+    {
+        //
     }
 }

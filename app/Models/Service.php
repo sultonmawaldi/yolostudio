@@ -9,10 +9,27 @@ class Service extends Model
 {
     use SoftDeletes;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'category_id',
+        'name',
+        'price',
+        'description',
+        'min_people',
+        'max_people',
+        'extra_price_per_person',
+        'status',
+    ];
+
+    protected $casts = [
+        'price' => 'integer',
+        'min_people' => 'integer',
+        'max_people' => 'integer',
+        'extra_price_per_person' => 'integer',
+        'status' => 'boolean',
+    ];
 
     /**
-     * Relasi ke kategori layanan
+     * Kategori layanan
      */
     public function category()
     {
@@ -20,7 +37,7 @@ class Service extends Model
     }
 
     /**
-     * Relasi ke appointment (booking)
+     * Booking / appointment
      */
     public function appointments()
     {
@@ -28,16 +45,34 @@ class Service extends Model
     }
 
     /**
-     * Relasi ke employee melalui pivot employee_service
-     * - duration: durasi sesi per service
-     * - break_duration: waktu istirahat/persiapan
-     * - slot_duration: opsional jika tiap service punya slot berbeda
+     * Employee yang bisa handle service
      */
     public function employees()
-{
-    return $this->belongsToMany(Employee::class)
-        ->withPivot('duration', 'break_duration')
-        ->withTimestamps();
-}
+    {
+        return $this->belongsToMany(Employee::class)
+            ->withPivot('duration', 'break_duration')
+            ->withTimestamps();
+    }
 
+    /**
+     * Addon yang tersedia untuk service ini
+     */
+    public function addons()
+    {
+        return $this->belongsToMany(Addon::class, 'addon_service')
+            ->withTimestamps()
+            ->where('addons.is_active', true);
+    }
+
+    public function backgrounds()
+    {
+        return $this->hasMany(ServiceBackground::class)
+            ->where('is_active', true)
+            ->orderBy('sort_order');
+    }
+
+    public function activeBackgrounds()
+    {
+        return $this->hasMany(ServiceBackground::class)->where('is_active', true);
+    }
 }

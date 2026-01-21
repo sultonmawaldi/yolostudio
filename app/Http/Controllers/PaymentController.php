@@ -6,155 +6,182 @@ use Illuminate\Http\Request;
 use Midtrans\Snap;
 use Midtrans\Config;
 use Illuminate\Support\Str;
+use App\Models\Coupon;
 
 class PaymentController extends Controller
 {
     public function getSnapToken(Request $request)
     {
-        // ⚙️ Midtrans Config
-        Config::$serverKey = config('midtrans.server_key');
-        Config::$isProduction = config('midtrans.is_production', false);
-        Config::$isSanitized = true;
-        Config::$is3ds = true;
 
-        // 🆔 Order ID profesional
+        $request->validate([
+            'name'  => 'required|string|min:3',
+            'email' => 'required|email',
+            'phone' => 'required|string|min:8',
+        ]);
+        /**
+         * ===============================
+         * MIDTRANS CONFIG
+         * ===============================
+         */
+        Config::$serverKey    = config('midtrans.server_key');
+        Config::$isProduction = config('midtrans.is_production', false);
+        Config::$isSanitized  = true;
+        Config::$is3ds        = true;
+
+        /**
+         * ===============================
+         * ORDER ID
+         * ===============================
+         */
         $orderId = 'ORDER-' . date('Ymd') . '-' . strtoupper(Str::random(8));
 
-        // 🔢 Ambil data dari request
-        $additionalPeople = (int) ($request->additional_people ?? 0);
-        $extraPricePerPerson = (int) ($request->extra_price_per_person ?? 0);
-        $dpAmount = (int) ($request->dp_amount ?? 0);
-        $totalAmount = (int) ($request->total_amount ?? 0);
-        $serviceTitle = $request->service_title ?? 'Layanan';
-        $paymentType = $request->payment_type ?? 'full';
-        $couponId = $request->coupon_id ?? null;
+        /**
+         * ===============================
+         * REQUEST DATA
+         * ===============================
+         */
+        $paymentType   = $request->payment_type ?? 'full';
+        $serviceTitle  = $request->service_title ?? 'Layanan';
+        $servicePrice  = (int) ($request->service_price ?? 0);
+        $totalAmount   = (int) ($request->total_amount ?? 0);
+        $dpAmount      = (int) ($request->dp_amount ?? 0);
+        $discountAmount = (int) ($request->discount_amount ?? 0);
+
+        /**
+         * ===============================
+         * KUPON
+         * ===============================
+         */
         $couponCode = 'KUPON';
 
-        if ($couponId) {
-            // Ambil kode kupon asli dari database
-            $coupon = \App\Models\Coupon::find($couponId);
+        if ($request->coupon_id) {
+            $coupon = Coupon::find($request->coupon_id);
             if ($coupon) {
-                $couponCode = $coupon->code; // kode kupon asli
-                $discountAmount = $coupon->discount_amount; // optional, jika ingin override
+                $couponCode = $coupon->code;
             }
         }
-        $discountAmount = (int) ($request->discount_amount ?? $request->input('discount-amount', 0));
 
-        // 🧮 Perhitungan dasar
-        $additionalTotal = $additionalPeople * $extraPricePerPerson;
-        $totalAfterDiscount = max(0, $totalAmount - $discountAmount);
         $items = [];
+        $sisaPayment = 0;
 
-                // 💳 === MODE DP ===
+        /**
+         * ===============================
+         * MODE DP
+         * ===============================
+         */
         if ($paymentType === 'dp') {
-            // Item utama (DP yang benar-benar dibayar)
+
             $items[] = [
-                'id' => 'ITEM-' . strtoupper(uniqid()),
-                'price' => $dpAmount, // hanya DP dibayar
+                'id'       => 'DP-' . strtoupper(uniqid()),
+                'price'    => max(1000, $dpAmount),
                 'quantity' => 1,
-                'name' => "DP - {$serviceTitle}"
+                'name'     => "DP - {$serviceTitle}",
             ];
 
-            // Tampilkan potongan kupon dulu (untuk UI)
             if ($discountAmount > 0) {
                 $items[] = [
-                    'id' => 'INFO-DISC-' . strtoupper($couponCode ?? 'COUPON') . '-' . strtoupper(uniqid()),
-                    'price' => 0, // hanya informasi
+                    'id'       => 'DISC-' . strtoupper($couponCode) . '-' . strtoupper(uniqid()),
+                    'price'    => -abs($discountAmount),
                     'quantity' => 1,
-                    'name' => "Potongan Kupon ({$couponCode}): - Rp" . number_format($discountAmount, 0, ',', '.')
+                    'name'     => "Potongan Kupon ({$couponCode})",
                 ];
             }
 
-            // Hitung & tampilkan sisa pembayaran
+            $totalAfterDiscount = max(0, $totalAmount - $discountAmount);
             $sisaPayment = max(0, $totalAfterDiscount - $dpAmount);
-            $items[] = [
-                'id' => 'INFO-SISA-' . strtoupper(uniqid()),
-                'price' => 0, // tidak dihitung Midtrans
-                'quantity' => 1,
-                'name' => "Sisa Pembayaran: Rp " . number_format($sisaPayment, 0, ',', '.')
-            ];
 
-            // Hanya DP yang dibayar ke Midtrans
             $grossAmount = max(1000, $dpAmount);
         }
 
-        // 💳 === MODE FULL PAYMENT ===
+        /**
+         * ===============================
+         * MODE FULL PAYMENT
+         * ===============================
+         */
         else {
-            $servicePrice = max(0, $totalAmount - $additionalTotal);
 
+            if ($servicePrice <= 0) {
+                return response()->json([
+                    'error' => 'Service price invalid'
+                ], 422);
+            }
+
+            // Layanan utama
             $items[] = [
-                'id' => 'ITEM-' . strtoupper(uniqid()),
-                'price' => $servicePrice,
+                'id'       => 'SERVICE-' . strtoupper(uniqid()),
+                'price'    => $servicePrice,
                 'quantity' => 1,
-                'name' => $serviceTitle
+                'name'     => $serviceTitle,
             ];
 
-            if ($additionalPeople > 0) {
-                $items[] = [
-                    'id' => 'ITEM-' . strtoupper(uniqid()),
-                    'price' => $extraPricePerPerson,
-                    'quantity' => $additionalPeople,
-                    'name' => "Tambahan Orang"
-                ];
+            // Addons
+            $addons = $request->addons ?? [];
+
+            if (is_array($addons)) {
+                foreach ($addons as $addon) {
+                    if (
+                        isset($addon['name'], $addon['price'], $addon['qty']) &&
+                        (int) $addon['price'] > 0 &&
+                        (int) $addon['qty'] > 0
+                    ) {
+                        $items[] = [
+                            'id'       => 'ADDON-' . strtoupper(uniqid()),
+                            'price'    => (int) $addon['price'],
+                            'quantity' => (int) $addon['qty'],
+                            'name'     => $addon['name'],
+                        ];
+                    }
+                }
             }
 
+            // Diskon
             if ($discountAmount > 0) {
                 $items[] = [
-                    'id' => 'DISC-' . strtoupper($couponCode) . '-' . strtoupper(uniqid()),
-                    'price' => -$discountAmount,
+                    'id'       => 'DISC-' . strtoupper($couponCode) . '-' . strtoupper(uniqid()),
+                    'price'    => -abs($discountAmount),
                     'quantity' => 1,
-                    'name' => "Potongan Kupon ({$couponCode})"
+                    'name'     => "Potongan Kupon ({$couponCode})",
                 ];
             }
 
-            $sisaPayment = 0;
-            $grossAmount = max(1000, $totalAfterDiscount);
+            $grossAmount = max(1000, array_sum(array_map(
+                fn($item) => ((int) $item['price']) * ((int) $item['quantity']),
+                $items
+            )));
         }
 
-        // 🔖 Custom field tambahan
-        // 🔖 Custom field tambahan (string rapi)
-$customField = sprintf(
-    "Sisa: Rp%s | Total Layanan: Rp%s | Tambahan Orang: %d (Rp%s) | Diskon: Rp%s | Kupon: %s",
-    number_format($sisaPayment, 0, ',', '.'),
-    number_format($totalAmount, 0, ',', '.'),
-    $additionalPeople,
-    number_format($additionalTotal, 0, ',', '.'),
-    number_format($discountAmount, 0, ',', '.'),
-    strtoupper($couponCode)
-);
-
-
-        // 🧾 Payload ke Midtrans
+        /**
+         * ===============================
+         * MIDTRANS PAYLOAD
+         * ===============================
+         */
         $payload = [
             'transaction_details' => [
-                'order_id' => $orderId,
-                'gross_amount' => $grossAmount, // hanya DP yang dibayar
+                'order_id'     => $orderId,
+                'gross_amount' => $grossAmount,
             ],
             'item_details' => $items,
             'customer_details' => [
-                'first_name' => $request->name ?? 'Guest',
-                'email' => $request->email ?? 'noemail@example.com',
-                'phone' => $request->phone ?? '-',
+                'first_name' => $request->name,
+                'email'      => $request->email,
+                'phone'      => $request->phone,
             ],
-            'custom_field1' => $customField
         ];
 
         try {
             $snapToken = Snap::getSnapToken($payload);
 
             return response()->json([
-                'token' => $snapToken,
-                'order_id' => $orderId,
-                'gross_amount' => $grossAmount,
-                'discount_amount' => $discountAmount,
-                'sisa_payment' => $sisaPayment,
-                'total_after_discount' => $totalAfterDiscount
+                'token'                  => $snapToken,
+                'order_id'               => $orderId,
+                'gross_amount'           => $grossAmount,
+                'discount_amount'        => $discountAmount,
+                'sisa_payment'           => $sisaPayment,
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'error' => 'Failed to generate token',
+                'error'   => 'Failed to generate token',
                 'message' => $e->getMessage(),
-                'payload' => $payload
             ], 500);
         }
     }

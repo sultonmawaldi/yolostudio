@@ -23,6 +23,7 @@ use App\Http\Controllers\CouponController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\MidtransController;
 use App\Http\Controllers\PhotoResultController;
+use App\Http\Controllers\ServiceBackgroundController;
 
 Auth::routes();
 
@@ -35,6 +36,10 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/booking', [FrontendController::class, 'booking'])->name('booking');
+
+Route::get('/services/{service}/addons', [FrontendController::class, 'getServiceAddons']);
+Route::get('/services/{service}/backgrounds', [ServiceBackgroundController::class, 'index']);
+
 
 Route::get('/employees', [EmployeeController::class, 'index']); // ✅ TAMBAH INI
 
@@ -61,6 +66,21 @@ Route::get(
 
 // Booking & appointment
 Route::post('/bookings', [AppointmentController::class, 'store'])->name('bookings.store');
+
+Route::post(
+    '/appointments/{appointment}/cancel',
+    [AppointmentController::class, 'cancel']
+)->name('appointments.cancel');
+
+Route::post(
+    '/appointments/{appointment}/reschedule',
+    [AppointmentController::class, 'reschedule']
+)->name('appointments.reschedule');
+
+Route::get('/appointments/{appointment}/reschedule/availability', [FrontendController::class, 'getAvailabilityForReschedule'])
+    ->name('appointments.reschedule.availability');
+
+
 
 // ==========================
 // AUTHENTICATED ROUTES

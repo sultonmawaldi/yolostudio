@@ -31,11 +31,14 @@ class Employee extends Model
      * - slot_duration: opsional (kalau nanti mau per-service juga)
      */
     public function services()
-{
-    return $this->belongsToMany(Service::class)
-        ->withPivot('duration', 'break_duration')
-        ->withTimestamps();
-}
+    {
+        return $this->belongsToMany(Service::class)
+            ->using(EmployeeService::class)
+            ->withPivot('duration', 'break_duration', 'slot_group_id')
+            ->withTimestamps();
+    }
+
+
 
 
     /**
@@ -52,5 +55,10 @@ class Employee extends Model
     public function appointments()
     {
         return $this->hasMany(Appointment::class);
+    }
+
+    public function slotGroups()
+    {
+        return $this->hasMany(SlotGroup::class);
     }
 }

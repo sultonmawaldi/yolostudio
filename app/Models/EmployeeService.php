@@ -11,9 +11,13 @@ class EmployeeService extends Pivot
     protected $fillable = [
         'employee_id',
         'service_id',
+        'slot_group_id',
         'duration',
         'break_duration',
-        'slot_duration', // optional jika dipakai
     ];
-}
 
+    public function slotGroup()
+    {
+        return $this->belongsTo(SlotGroup::class, 'slot_group_id');
+    }
+}

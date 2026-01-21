@@ -11,6 +11,10 @@ class Appointment extends Model
 
     protected $guarded = [];
 
+    // ======================
+    // RELASI UTAMA
+    // ======================
+
     public function service()
     {
         return $this->belongsTo(Service::class);
@@ -26,9 +30,29 @@ class Appointment extends Model
         return $this->belongsTo(User::class);
     }
 
-    // 🔥 WAJIB ADA
     public function transaction()
     {
         return $this->hasOne(Transaction::class);
+    }
+
+    public function background()
+    {
+        return $this->belongsTo(ServiceBackground::class);
+    }
+
+    public function timeSlot()
+    {
+        return $this->belongsTo(TimeSlot::class);
+    }
+
+    // ======================
+    // ADDONS (BEST PRACTICE)
+    // ======================
+
+    public function addons()
+    {
+        return $this->belongsToMany(Addon::class, 'appointment_addons')
+            ->withPivot(['price', 'qty', 'subtotal'])
+            ->withTimestamps();
     }
 }

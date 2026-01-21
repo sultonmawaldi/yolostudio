@@ -509,31 +509,71 @@ body {
     background: #77778f;
 }
 
+/* ===============================
+   TIME SLOT BASE
+================================ */
 .time-slot {
+    position: relative; /* WAJIB untuk ceklis */
     cursor: pointer;
     transition: all 0.2s ease;
+
     border: 1.2px solid var(--primary-color);
     border-radius: 25px;
     padding: 8px 12px;
-    margin: 0; /* margin diganti dengan gap di parent */
+    margin: 0;
     text-align: center;
-    color: var(--primary-color);
 
-    width: 200px; /* tetap sama */
-    flex: 0 0 auto; /* jangan mengecilkan atau membesar */
+    color: var(--primary-color);
+    background-color: transparent;
+
+    width: 200px;
+    flex: 0 0 auto;
     box-sizing: border-box;
 }
 
+/* ===============================
+   HOVER (TETAP ASLI)
+================================ */
 .time-slot:hover {
     background-color: var(--primary-color);
 }
 
+/* ===============================
+   SELECTED (TETAP ASLI + CEKLIS)
+================================ */
 .time-slot.selected {
     background-color: var(--primary-color);
     color: white;
     border-color: var(--primary-color);
 }
 
+/* TANDA CEKLIS */
+.time-slot.selected::after {
+    content: "✓";
+    position: absolute;
+    top: -6px;
+    right: -6px;
+
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+
+    background-color: #22c55e;
+    color: white;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-shadow: 0 4px 10px rgba(34, 197, 94, 0.45);
+}
+
+/* ===============================
+   DISABLED
+================================ */
 .time-slot.disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -776,29 +816,116 @@ body {
 }
 
 .btn-modern {
-        width: 30px;
-        height: 30px;
-        font-size: 1.2rem;
-        border-radius: 6px;
-        border: 1px solid var(--primary-color);
-        color: var(--primary-color);
-        background-color: transparent;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s ease-in-out;
-        cursor: pointer;
-    }
+    width: 30px;
+    height: 30px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 8px;
 
-    .btn-modern:hover {
-        background-color: var(--primary-color);
-        color: #ffffff;
-        border-color: var(--primary-color);
-    }
+    background-color: var(--primary-color);
+    color: #ffffff;
+    border: none;
 
-    .btn-modern:active {
-        transform: scale(0.95);
-    }
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition:
+        transform 0.15s ease,
+        background-color 0.15s ease,
+        opacity 0.15s ease;
+
+    cursor: pointer;
+}
+
+/* Hover */
+.btn-modern:hover {
+    opacity: 0.9;
+}
+
+/* Active (klik) */
+.btn-modern:active {
+    transform: scale(0.92);
+}
+
+/* Focus (keyboard / accessibility) */
+.btn-modern:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.6);
+    outline-offset: 2px;
+}
+
+/* Disabled */
+.btn-modern:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+
+/* ===============================
+   BACKGROUND PICKER – BASE
+================================ */
+.background-item {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    border-radius: 14px;
+    cursor: pointer;
+    border: 2px solid #ccc; /* border default untuk light mode */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+}
+
+/* Hover – subtle feedback */
+.background-item:hover {
+    transform: scale(1.04);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+}
+
+/* ===============================
+   SELECTED STATE
+================================ */
+.background-item.selected {
+    border: 2px solid var(--primary-color);
+    transform: scale(1.08);
+    outline: 2px solid var(--primary-color);
+    outline-offset: 4px;
+    box-shadow:
+        0 10px 24px rgba(37, 99, 235, 0.35),
+        0 0 0 4px rgba(37, 99, 235, 0.15);
+}
+
+/* Check icon (visual confirmation) */
+.background-item.selected::after {
+    content: "✓";
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 22px;
+    height: 22px;
+    background: var(--primary-color);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.45);
+}
+
+.bg-name {
+    font-size: 0.8rem;      /* sedikit lebih besar */
+    font-weight: 600;       /* lebih tebal */
+    text-align: center;
+    color: #333;            /* light mode */
+    margin-top: 12px;        /* jarak konsisten */
+    word-break: break-word;
+}
+
 /* ===================== DARK MODE TOGGLE SUPPORT ===================== */
 html.dark body {
     background-color: #1e1e2f;
@@ -1099,20 +1226,47 @@ html.dark #time-slots-container {
     color: #fff !important; /* teks slot waktu tetap putih */
 }
 
+/* ===============================
+   DARK MODE — TIME SLOT
+================================ */
 html.dark .time-slot {
-    background-color: #2b2b3b !important; /* slot hitam */
-    color: #fff !important; /* teks putih */
+    background-color: #2b2b3b !important; /* slot gelap */
+    color: #e5e7eb !important;           /* teks soft white */
     border-color: #6a11cb !important;
-    box-shadow: 0 0 6px #6a11cb33;
+
+    box-shadow: 0 0 6px rgba(106, 17, 203, 0.2);
     transition: all 0.25s ease;
 }
 
+/* HOVER & SELECTED (SATU WARNA, SATU RASA) */
 html.dark .time-slot:hover,
 html.dark .time-slot.selected {
     background-color: #6a11cb !important;
-    color: #fff !important;
-    box-shadow: 0 0 8px #6a11cb, 0 0 12px #6a11cb66;
+    color: #ffffff !important;
+    border-color: #6a11cb !important;
+
+    box-shadow:
+        0 0 8px rgba(106, 17, 203, 0.8),
+        0 0 14px rgba(106, 17, 203, 0.45);
 }
+
+/* CEKLIS — DARK MODE */
+html.dark .time-slot.selected::after {
+    background-color: #facc15;
+    color: #000;
+    box-shadow:
+        0 0 6px rgba(250, 204, 21, 0.6),   /* kuning lebih terang */
+        0 0 10px rgba(250, 204, 21, 0.35); /* kuning lebih lembut */
+}
+
+/* DISABLED */
+html.dark .time-slot.disabled {
+    background-color: #1e1e2e !important;
+    color: #6b7280 !important;
+    border-color: #374151 !important;
+    box-shadow: none;
+}
+
 
 html.dark #time-slots-container::-webkit-scrollbar {
     width: 8px;
@@ -1273,4 +1427,66 @@ body.swal2-shown {
     overflow: unset !important; /* jangan ubah overflow body */
     padding-right: 0 !important; /* hilangkan padding kompensasi */
     margin-right: 0 !important; /* cegah loncat ke kiri */
+}
+
+/* ===============================
+   DARK MODE – MINIMAL BUTTON
+================================ */
+html.dark .btn-modern {
+    background-color: #6a11cb;   /* ungu primary dark (tetap) */
+    color: #000;                 /* icon tetap */
+    border: none;
+
+    transition:
+        transform 0.15s ease,
+        filter 0.15s ease,
+        opacity 0.15s ease;
+}
+
+/* Hover */
+html.dark .btn-modern:hover {
+    filter: brightness(1.1);
+}
+
+/* Active */
+html.dark .btn-modern:active {
+    transform: scale(0.92);
+}
+
+/* Focus (aksesibilitas, tetap minimal) */
+html.dark .btn-modern:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
+}
+
+/* Disabled */
+html.dark .btn-modern:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+
+/* ===============================
+   DARK MODE SUPPORT
+================================ */
+html.dark .background-item:hover {
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6);
+}
+
+html.dark .background-item.selected {
+    border: 2px solid #facc15;
+    outline-color: #facc15; 
+    box-shadow:
+        0 10px 24px rgba(250, 204, 21, 0.45),
+        0 0 0 4px rgba(250, 204, 21, 0.25);
+}
+
+html.dark .background-item.selected::after {
+    background: #facc15;
+    color: #1e293b;
+}
+
+html.dark .bg-name {
+    color: #fff;          /* nama putih di dark mode */
+    /* margin-top tetap 6px agar jarak sama dengan light mode */
 }
