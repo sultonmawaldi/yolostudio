@@ -31,13 +31,15 @@ class TransactionController extends Controller
         $usedCoupons = $coupons->where('status', 'used')->count();
         $newCouponMessage = session('new_coupon');
 
-        return view('frontend.member.dashboard', compact(
+        // ✅ Ganti view dari dashboard ke transactions.index
+        return view('frontend.member.transactions.index', compact(
             'transactions',
             'coupons',
             'usedCoupons',
             'newCouponMessage'
         ));
     }
+
 
     public function memberShow(Transaction $transaction)
     {
@@ -56,8 +58,8 @@ class TransactionController extends Controller
             'appointment.service',
             'appointment.employee.user'
         )
-        ->latest()
-        ->get();
+            ->latest()
+            ->get();
 
         return view('backend.transactions.index', compact('transactions'));
     }
@@ -94,7 +96,7 @@ class TransactionController extends Controller
             $coupon = Coupon::where('id', $validated['coupon_id'])
                 ->where(function ($q) use ($user) {
                     $q->where('user_id', $user->id)
-                      ->orWhereNull('user_id');
+                        ->orWhereNull('user_id');
                 })
                 ->where('status', 'unused')
                 ->first();
@@ -130,7 +132,6 @@ class TransactionController extends Controller
             file_put_contents($fullPath, $png);
 
             $transaction->update(['qr_url' => $qrPath]);
-
         } catch (\Exception $e) {
             \Log::error('QR Generation Error: ' . $e->getMessage());
         }
@@ -180,11 +181,15 @@ class TransactionController extends Controller
      */
     public function payRemainingCash(Transaction $transaction)
     {
+        // Load services agar observer bisa hitung points
+        $transaction->load('services');
+
         $transaction->update([
             'payment_status' => 'Paid',
             'amount' => $transaction->total_amount,
             'payment_method' => 'Cash'
         ]);
+
 
         if ($transaction->appointment) {
             $transaction->appointment->update(['status' => 'Confirmed']);
@@ -270,16 +275,19 @@ class TransactionController extends Controller
         $orderId = $request->get('order_id');
 
         if ($transaction->transaction_code !== $orderId) {
-            return redirect()->route('member.dashboard', ['info' => 'notfound']);
+            return redirect()->route('member.transactions.index', ['info' => 'notfound']);
         }
 
-        if (in_array($status, ['capture','settlement'])) {
+        if (in_array($status, ['capture', 'settlement'])) {
+            // Load services agar observer bisa hitung points
+            $transaction->load('services');
+
             $transaction->update([
                 'payment_status' => 'Paid',
                 'amount' => $transaction->total_amount,
             ]);
 
-            return redirect()->route('member.dashboard', [
+            return redirect()->route('member.transactions.index', [
                 'paid' => 'true',
                 'transaction_code' => $transaction->transaction_code
             ]);
@@ -287,10 +295,10 @@ class TransactionController extends Controller
 
         if ($status === 'pending') {
             $transaction->update(['payment_status' => 'DP']);
-            return redirect()->route('member.dashboard', ['pending' => 'true']);
+            return redirect()->route('member.transactions.index', ['pending' => 'true']);
         }
 
         $transaction->update(['payment_status' => 'Failed']);
-        return redirect()->route('member.dashboard', ['failed' => 'true']);
+        return redirect()->route('member.transactions.index', ['failed' => 'true']);
     }
 }

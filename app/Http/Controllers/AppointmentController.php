@@ -87,26 +87,7 @@ class AppointmentController extends Controller
         $validated['booking_id'] = 'BK-' . now()->format('Ymd') . '-' . strtoupper(Str::random(8));
         $transactionCode = 'TRX-' . now()->format('Ymd') . '-' . strtoupper(Str::random(8));
 
-        // Cek bentrok slot sebelum simpan
-        $current = \Carbon\Carbon::parse($validated['booking_start_time']);
-        $slotEnd = \Carbon\Carbon::parse($validated['booking_end_time']);
 
-        $isBooked = Appointment::where('employee_id', $validated['employee_id'])
-            ->where('slot_group_id', $validated['slot_group_id'])
-            ->where('booking_date', $validated['booking_date'])
-            ->whereNotIn('status', ['Cancelled'])
-            ->where(function ($q) use ($current, $slotEnd) {
-                $q->where('booking_start_time', '<', $slotEnd->format('H:i:s'))
-                    ->where('booking_end_time', '>', $current->format('H:i:s'));
-            })
-            ->exists();
-
-        if ($isBooked) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Slot sudah dibooking. Silakan pilih waktu lain.'
-            ], 422);
-        }
 
 
         // Simpan appointment
@@ -144,9 +125,9 @@ class AppointmentController extends Controller
         }
 
 
-        // Simpan transaksi
+        // 1️⃣ Buat transaction awal (Pending dulu boleh)
         $transaction = Transaction::create([
-            'user_id' => $validated['user_id'],
+            'user_id' => $appointment->user_id,
             'appointment_id' => $appointment->id,
             'transaction_code' => $transactionCode,
             'amount' => $validated['amount'],
@@ -157,31 +138,55 @@ class AppointmentController extends Controller
             'coupon_id' => $validated['coupon_id'] ?? null,
         ]);
 
-        try {
-            $qrName = $transactionCode . '.png';
-            $qrFolder = public_path('qrcodes');
-
-            if (!file_exists($qrFolder)) {
-                mkdir($qrFolder, 0777, true);
-            }
-
-            $qrPath = $qrFolder . '/' . $qrName;
-            $qrUrl  = url('qrcodes/' . $qrName);
-
-            // Gunakan backend PNG tanpa imagick
-            $pngData = QrCode::format('png')
-                ->size(300)
-                ->margin(1)
-                ->generate($transactionCode);
-
-            file_put_contents($qrPath, $pngData);
-
-            $transaction->update([
-                'qr_url' => $qrUrl,
+        // 2️⃣ Attach service ke transaction
+        $service = $appointment->service;
+        if ($service) {
+            $transaction->services()->attach($service->id, [
+                'price' => $service->price,
+                'qty' => 1,
+                'subtotal' => $service->price,
             ]);
+        }
+
+        // 3️⃣ Reload relasi services supaya observer bisa baca reward_points
+        $transaction->load('services');
+
+        // 4️⃣ Jika payment_status = Paid, trigger observer manual supaya reward points langsung jalan
+        if (($validated['payment_status'] ?? null) === 'Paid') {
+            $transaction->touch(); // triggers updated event
+        }
+
+
+
+
+        try {
+            /*
+    $qrName = $transactionCode . '.png';
+    $qrFolder = public_path('qrcodes');
+
+    if (!file_exists($qrFolder)) {
+        mkdir($qrFolder, 0777, true);
+    }
+
+    $qrPath = $qrFolder . '/' . $qrName;
+    $qrUrl  = url('qrcodes/' . $qrName);
+
+    // Gunakan backend PNG tanpa imagick
+    $pngData = QrCode::format('png')
+        ->size(300)
+        ->margin(1)
+        ->generate($transactionCode);
+
+    file_put_contents($qrPath, $pngData);
+
+    $transaction->update([
+        'qr_url' => $qrUrl,
+    ]);
+    */
         } catch (\Exception $e) {
             \Log::error('QR Code generation error: ' . $e->getMessage());
         }
+
 
 
 

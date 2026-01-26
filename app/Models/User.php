@@ -22,6 +22,7 @@ class User extends Authenticatable
         'status',
         'image',
         'role_uid',
+        'points',
     ];
 
     protected $hidden = [
@@ -108,13 +109,19 @@ class User extends Authenticatable
      */
     public function profileImage()
     {
-        $userImage = $this->image;
-
-        if (!empty($userImage)) {
-            return asset('uploads/images/profile/' . $userImage);
-        } else {
-            return asset('vendor/adminlte/dist/img/gravtar.jpg');
+        // Cek apakah user punya gambar dan file ada di public/uploads/images/profile/
+        if ($this->image && file_exists(public_path('uploads/images/profile/' . $this->image))) {
+            return asset('uploads/images/profile/' . $this->image);
         }
+
+        // Fallback default AdminLTE gravatar
+        $defaultGravatar = public_path('vendor/adminlte/dist/img/gravatar.jpg');
+        if (file_exists($defaultGravatar)) {
+            return asset('vendor/adminlte/dist/img/gravatar.jpg');
+        }
+
+        // Fallback terakhir ke UI Avatar jika default AdminLTE tidak ada
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=fff&color=3b82f6';
     }
 
     /**
@@ -129,5 +136,9 @@ class User extends Authenticatable
         } else {
             return asset('vendor/adminlte/dist/img/gravtar.jpg');
         }
+    }
+    public function pointLogs()
+    {
+        return $this->hasMany(PointLog::class);
     }
 }

@@ -1,84 +1,89 @@
 @extends('adminlte::page')
 
-@section('title', 'Daftar Kupon')
+@section('title', 'Service Background')
 
 @section('content_header')
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h1 class="fw-bold text-primary mb-0">
-            <i class="fas fa-ticket-alt me-2 text-primary"></i> Daftar Kupon
+            <i class="fas fa-palette me-2"></i> Service Background
         </h1>
-        <a href="{{ route('coupons.create') }}" class="btn btn-gradient-primary shadow-sm">
-            <i class="fas fa-plus me-1"></i> Tambah Kupon
+        <a href="{{ route('service-backgrounds.create') }}" class="btn btn-gradient-primary shadow-sm">
+            <i class="fas fa-plus me-1"></i> Tambah Background
         </a>
     </div>
 @stop
 
 @section('content')
     @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-pill px-4" role="alert">
+        <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-pill px-4">
             <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
     <div class="card border-0 shadow-lg rounded-4">
         <div class="card-body table-responsive p-4">
-            <table id="couponTable" class="table align-middle table-hover table-borderless">
-                <thead class="bg-gradient text-white" style="background: linear-gradient(90deg, #007bff, #00b4d8);">
+            <table id="backgroundTable" class="table align-middle table-hover table-borderless">
+                <thead class="bg-gradient text-white" style="background: linear-gradient(90deg,#007bff,#00b4d8);">
                     <tr>
                         <th>#</th>
-                        <th>Kode</th>
-                        <th>Jenis</th>
-                        <th>Nilai</th>
-                        <th>Minimal Transaksi</th>
-                        <th>Kadaluarsa</th>
-                        <th>Aktif</th>
+                        <th>Service ID</th>
+                        <th>Nama</th>
+                        <th>Value</th>
+                        <th>Preview</th>
                         <th>Status</th>
-                        <th>User</th>
                         <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($coupons as $coupon)
+                    @foreach ($backgrounds as $bg)
                         <tr class="bg-white shadow-sm-hover">
                             <td class="fw-semibold text-muted">{{ $loop->iteration }}</td>
-                            <td class="fw-bold text-dark">{{ $coupon->code }}</td>
-                            <td>{{ ucfirst($coupon->type) }}</td>
-                            <td>
-                                @if ($coupon->type === 'fixed')
-                                    Rp {{ number_format($coupon->value, 0, ',', '.') }}
-                                @else
-                                    {{ $coupon->value }}%
-                                @endif
+
+                            {{-- SERVICE ID --}}
+                            <td class="fw-bold">
+                                {{ $bg->service_id ?? '-' }}
                             </td>
-                            <td>
-                                {{ $coupon->minimum_cart_value ? 'Rp ' . number_format($coupon->minimum_cart_value, 0, ',', '.') : '-' }}
-                            </td>
-                            <td>{{ $coupon->expiry_date ? \Carbon\Carbon::parse($coupon->expiry_date)->format('d M Y') : '-' }}
-                            </td>
+
+                            <td>{{ $bg->name }}</td>
+
+                            <td class="text-muted">{{ $bg->value }}</td>
+
+                            {{-- PREVIEW --}}
                             <td>
                                 <span
-                                    class="badge text-white px-3 py-2 rounded-pill shadow-sm {{ $coupon->active ? 'bg-gradient-success' : 'bg-gradient-secondary' }}">
-                                    {{ $coupon->active ? 'Aktif' : 'Nonaktif' }}
-                                </span>
+                                    style="
+                                    display:inline-block;
+                                    width:32px;
+                                    height:32px;
+                                    border-radius:6px;
+                                    background: {{ $bg->value }};
+                                    border:1px solid #ddd;
+                                "></span>
                             </td>
+
+                            {{-- STATUS --}}
                             <td>
                                 <span
-                                    class="badge text-white px-3 py-2 rounded-pill shadow-sm {{ $coupon->status === 'unused' ? 'bg-gradient-info' : 'bg-gradient-danger' }}">
-                                    {{ $coupon->status === 'unused' ? 'Belum Digunakan' : 'Sudah Digunakan' }}
+                                    class="badge text-white px-3 py-2 rounded-pill
+                                    {{ $bg->is_active ? 'bg-gradient-success' : 'bg-gradient-secondary' }}">
+                                    {{ $bg->is_active ? 'Aktif' : 'Nonaktif' }}
                                 </span>
                             </td>
-                            <td>{{ $coupon->user ? $coupon->user->name : 'Semua User' }}</td>
+
+                            {{-- AKSI --}}
                             <td class="text-center">
                                 <div class="btn-group">
-                                    <a href="{{ route('coupons.edit', $coupon) }}" class="btn btn-sm btn-outline-info">
+                                    <a href="{{ route('service-backgrounds.edit', $bg) }}"
+                                        class="btn btn-sm btn-outline-info">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form action="{{ route('coupons.destroy', $coupon) }}" method="POST"
-                                        onsubmit="return confirm('Yakin ingin menghapus kupon ini?')"
-                                        style="display:inline;">
-                                        @csrf @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+
+                                    <form action="{{ route('service-backgrounds.destroy', $bg) }}" method="POST"
+                                        onsubmit="return confirm('Yakin hapus background ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-sm btn-outline-danger">
                                             <i class="fas fa-trash-alt"></i>
                                         </button>
                                     </form>
@@ -231,22 +236,18 @@
 @section('js')
     <script>
         $(function() {
-            $('#couponTable').DataTable({
+            $('#backgroundTable').DataTable({
                 responsive: true,
-                paging: true,
                 pageLength: 10,
                 lengthChange: false,
                 language: {
                     search: "",
-                    searchPlaceholder: "Cari kupon...",
-                    paginate: {
-                        next: "›",
-                        previous: "‹"
-                    },
-                    info: "Menampilkan _START_–_END_ dari _TOTAL_ kupon"
+                    searchPlaceholder: "Cari background...",
+                    info: "Menampilkan _START_–_END_ dari _TOTAL_ background"
                 },
-                dom: "<'row mb-3'<'col-12 d-flex justify-content-end'f>>" + "rtip"
+                dom: "<'row mb-3'<'col-12 d-flex justify-content-end'f>>rtip"
             });
+
             $(".alert").delay(4000).slideUp(300);
         });
     </script>

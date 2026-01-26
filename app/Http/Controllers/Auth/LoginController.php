@@ -45,11 +45,9 @@ class LoginController extends Controller
 
         Auth::login($user, $request->filled('remember'));
 
-        // Kirim notifikasi ke WhatsApp jika perlu
-        // $this->sendWhatsappLoginNotification($user);
-
-        return redirect()->intended($this->redirectTo($user));
+        return redirect($this->redirectTo($user));
     }
+
 
     protected function normalizePhone(string $phone): string
     {
@@ -59,8 +57,18 @@ class LoginController extends Controller
 
     protected function redirectTo($user)
     {
-        return $user->hasRole('member') ? route('home') : route('dashboard');
+        if ($user->hasRole(['admin', 'moderator', 'employee'])) {
+            return route('dashboard');
+        }
+
+        if ($user->hasRole('member')) {
+            return route('home');
+        }
+
+        Auth::logout();
+        abort(403, 'Role tidak dikenali.');
     }
+
 
     public function logout()
     {

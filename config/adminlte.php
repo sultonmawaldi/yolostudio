@@ -330,32 +330,32 @@ return [
 
         ],
         [
-    'text' => 'Transactions',
-    'icon' => 'fas fa-receipt',
-    'can'  => 'transactions.view | transactions.create | transactions.edit | transactions.delete',
-    'submenu' => [
-        [
-            'text' => 'View All',
-            'icon' => 'fas fa-fw fa-eye',
-            'route' => 'transactions.index',
-            'can'   => 'transactions.view'
+            'text' => 'Transactions',
+            'icon' => 'fas fa-receipt',
+            'can'  => 'transactions.view | transactions.create | transactions.edit | transactions.delete',
+            'submenu' => [
+                [
+                    'text' => 'View All',
+                    'icon' => 'fas fa-fw fa-eye',
+                    'route' => 'transactions.index',
+                    'can'   => 'transactions.view'
+                ],
+            ],
         ],
-    ],
-],
 
-[
-    'text' => 'Photo Results',
-    'icon' => 'fas fa-camera-retro',
-    'can'  => 'transactions.view | transactions.edit', // atau sesuaikan permission kamu
-    'submenu' => [
         [
-            'text' => 'Manage Results',
-            'icon' => 'fas fa-images',
-            'route' => 'photo-results.index',
-            'can'  => 'transactions.view',
+            'text' => 'Photo Results',
+            'icon' => 'fas fa-camera-retro',
+            'can'  => 'transactions.view | transactions.edit', // atau sesuaikan permission kamu
+            'submenu' => [
+                [
+                    'text' => 'Manage Results',
+                    'icon' => 'fas fa-images',
+                    'route' => 'photo-results.index',
+                    'can'  => 'transactions.view',
+                ],
+            ],
         ],
-    ],
-],
 
 
 
@@ -403,54 +403,97 @@ return [
             ],
         ],
         [
-            'text'    => 'Services',
-            'url'  => 'service*',
-            'icon'    => 'fas fa-fw fa-briefcase',
-            'can'  => 'services.view | services.create | services.edit | services.delete',
+            'text'  => 'Services',
+            'icon'  => 'fas fa-fw fa-briefcase',
+            'can'   => 'services.view | services.create | services.edit | services.delete',
+            'active' => ['service.*'], // ✅ PENTING
             'submenu' => [
-
                 [
-                    'text' => 'Create Service',
-                    'icon'    => 'fas fa-fw fa-plus',
-                    'route'  => 'service.create',
-                    'can'    => 'services.create'
+                    'text'  => 'Create Service',
+                    'icon'  => 'fas fa-fw fa-plus',
+                    'route' => 'service.create',
+                    'can'   => 'services.create',
                 ],
                 [
-                    'text' => 'View All',
-                    'icon'    => 'fas fa-fw fa-eye',
-                    'route'  => 'service.index',
-                    'can'    => 'services.view'
+                    'text'  => 'View All',
+                    'icon'  => 'fas fa-fw fa-eye',
+                    'route' => 'service.index',
+                    'can'   => 'services.view',
                 ],
                 [
-                    'text' => 'View Trash',
-                    'icon'    => 'fas fa-fw fa-trash',
-                    'route'  => 'service.trash',
-                    'can'    => 'services.view'
+                    'text'  => 'View Trash',
+                    'icon'  => 'fas fa-fw fa-trash',
+                    'route' => 'service.trash',
+                    'can'   => 'services.view',
                 ],
-
             ],
         ],
+
+
+        [
+            'text' => 'Addons',
+            'icon' => 'fas fa-puzzle-piece',
+            'can'  => 'addons.view',
+            'submenu' => [
+                [
+                    'text' => 'Add New Addon',
+                    'icon' => 'fas fa-plus',
+                    'route' => 'addons.create',
+                    'can'  => 'addons.create',
+                ],
+                [
+                    'text' => 'View All Addons',
+                    'icon' => 'fas fa-eye',
+                    'route' => 'addons.index',
+                    'can'  => 'addons.view',
+                ],
+            ],
+        ],
+
+
+
         // ** Tambahan menu Coupons **
-    [
-        'text' => 'Coupons',
-        'route' => 'coupons.index',
-        'icon' => 'fas fa-ticket-alt',
-        'can'  => 'coupons.view',
-        'submenu' => [
-            [
-                'text' => 'Add New Coupon',
-                'icon' => 'fas fa-plus',
-                'route' => 'coupons.create',
-                'can'  => 'coupons.create',
-            ],
-            [
-                'text' => 'View All Coupons',
-                'icon' => 'fas fa-eye',
-                'route' => 'coupons.index',
-                'can'  => 'coupons.view',
+        [
+            'text' => 'Coupons',
+            'route' => 'coupons.index',
+            'icon' => 'fas fa-ticket-alt',
+            'can'  => 'coupons.view',
+            'submenu' => [
+                [
+                    'text' => 'Add New Coupon',
+                    'icon' => 'fas fa-plus',
+                    'route' => 'coupons.create',
+                    'can'  => 'coupons.create',
+                ],
+                [
+                    'text' => 'View All Coupons',
+                    'icon' => 'fas fa-eye',
+                    'route' => 'coupons.index',
+                    'can'  => 'coupons.view',
+                ],
             ],
         ],
-    ],
+
+        [
+            'text' => 'Service Background',
+            'icon' => 'fas fa-palette',
+            'can'  => 'service-backgrounds.view',
+            'submenu' => [
+                [
+                    'text' => 'Add New Background',
+                    'icon' => 'fas fa-plus',
+                    'route' => 'service-backgrounds.create',
+                    'can'  => 'service-backgrounds.create',
+                ],
+                [
+                    'text' => 'View All Backgrounds',
+                    'icon' => 'fas fa-eye',
+                    'route' => 'service-backgrounds.index',
+                    'can'  => 'service-backgrounds.view',
+                ],
+            ],
+        ],
+
         [
             'text' => 'profile',
             'route' => 'profile',

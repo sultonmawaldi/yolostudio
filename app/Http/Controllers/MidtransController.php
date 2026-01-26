@@ -23,7 +23,10 @@ class MidtransController extends Controller
         $status  = $notification->transaction_status;
         $gross   = (float) $notification->gross_amount;
 
-        $transaction = Transaction::where('transaction_code', $orderId)->first();
+        $transaction = Transaction::where('midtrans_order_id', $orderId)
+            ->orWhere('transaction_code', $orderId)
+            ->first();
+
 
         if (!$transaction) {
             Log::error("⚠️ Midtrans callback: Transaction not found (Order ID: {$orderId})");
@@ -63,7 +66,6 @@ class MidtransController extends Controller
 
                 Log::info("💰 Transaction {$orderId} updated to DP. Current amount: {$newAmount}");
             }
-
         } elseif (in_array($status, ['deny', 'expire', 'cancel'])) {
 
             $transaction->update(['payment_status' => 'Failed']);

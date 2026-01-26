@@ -3,76 +3,97 @@
 namespace App\Observers;
 
 use App\Models\Transaction;
-use App\Models\Coupon;
-use Illuminate\Support\Str;
-use App\Events\CouponGenerated;
+use App\Models\PointLog;
+use Illuminate\Support\Facades\Log;
 
 class TransactionObserver
 {
     /**
-     * Event ketika transaksi baru dibuat
+     * Jalankan saat transaksi dibuat
      */
     public function created(Transaction $transaction)
     {
-        $this->handleSuccessfulTransaction($transaction);
+        $this->handleReward($transaction);
     }
 
     /**
-     * Event ketika transaksi diupdate
+     * Jalankan saat transaksi diupdate
      */
     public function updated(Transaction $transaction)
     {
-        if (
-            $transaction->wasChanged('payment_status') &&
-            in_array($transaction->payment_status, ['Paid', 'DP', 'Cash'])
-        ) {
-            $this->handleSuccessfulTransaction($transaction);
-        }
+        $this->handleReward($transaction);
     }
 
     /**
-     * Logika reward & kupon
+     * Logika reward POINT
      */
-    protected function handleSuccessfulTransaction(Transaction $transaction)
+    protected function handleReward(Transaction $transaction)
     {
-        $user = $transaction->user;
-        if (!$user) {
+        Log::info('handleReward called', [
+            'transaction_id' => $transaction->id,
+            'status' => $transaction->payment_status
+        ]);
+
+        // 1️⃣ Pastikan transaksi sudah dibayar
+        if ($transaction->payment_status !== 'Paid') {
+            Log::info('Not Paid yet', ['transaction_id' => $transaction->id]);
             return;
         }
 
-        // ✅ Jika transaksi pakai kupon → tandai kupon used
-        if ($transaction->coupon_id) {
-            $coupon = $transaction->coupon;
-            if (
-                $coupon &&
-                $coupon->status === 'unused' &&
-                $coupon->user_id === $user->id
-            ) {
-                $coupon->update(['status' => 'used']);
-            }
+        // 2️⃣ Pastikan belum pernah direward
+        if ($transaction->rewarded_at) {
+            Log::info('Already rewarded', ['transaction_id' => $transaction->id]);
+            return;
         }
 
-        // ✅ Hitung total transaksi sukses (Paid, DP, Cash) yang tidak pakai kupon
-        $successfulCount = $user->transactions()
-            ->whereIn('payment_status', ['Paid', 'DP', 'Cash'])
-            ->whereNull('coupon_id')
-            ->count();
+        // 3️⃣ Load relasi yang dibutuhkan
+        $transaction->loadMissing(['user', 'appointment.service']);
 
-        // ✅ Generate kupon baru setiap kelipatan 3 transaksi
-        if ($successfulCount > 0 && $successfulCount % 3 === 0) {
-            $coupon = Coupon::create([
-                'user_id'            => $user->id,
-                'code'               => 'REWARD-' . strtoupper(Str::random(6)),
-                'type'               => 'fixed',
-                'value'              => 50000,
-                'minimum_cart_value' => 100000,
-                'expiry_date'        => now()->addDays(30),
-                'active'             => 1,
-                'status'             => 'unused',
-            ]);
+        $user = $transaction->user;
+        $appointment = $transaction->appointment;
 
-            // 🔥 Trigger event untuk listener
-            event(new CouponGenerated($coupon));
+        if (!$user) {
+            Log::warning('No user found', ['transaction_id' => $transaction->id]);
+            return;
         }
+
+        if (! $user->hasRole('member')) {
+            Log::info('User bukan member, skip reward', ['user_id' => $user->id]);
+            return;
+        }
+
+        // 4️⃣ Hitung points dari service appointment
+        $totalPoints = 0;
+        if ($appointment && $appointment->service) {
+            $totalPoints = (int) ($appointment->service->reward_points ?? 0);
+        }
+
+        Log::info('Total points calculated', [
+            'transaction_id' => $transaction->id,
+            'totalPoints' => $totalPoints
+        ]);
+
+        if ($totalPoints <= 0) {
+            Log::info('No points to reward', ['transaction_id' => $transaction->id]);
+            return;
+        }
+
+        // 5️⃣ Tambahkan points ke user
+        $user->increment('points', $totalPoints);
+
+        PointLog::create([
+            'user_id' => $user->id,
+            'points' => $totalPoints,
+            'type' => 'earn',
+            'description' => 'Point dari transaksi #' . $transaction->id,
+        ]);
+
+        // 6️⃣ Tandai transaksi sudah direward
+        $transaction->updateQuietly(['rewarded_at' => now()]);
+
+        Log::info('Points awarded successfully', [
+            'transaction_id' => $transaction->id,
+            'points' => $totalPoints
+        ]);
     }
 }

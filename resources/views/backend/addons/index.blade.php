@@ -1,14 +1,14 @@
 @extends('adminlte::page')
 
-@section('title', 'Daftar Kupon')
+@section('title', 'Daftar Addon')
 
 @section('content_header')
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h1 class="fw-bold text-primary mb-0">
-            <i class="fas fa-ticket-alt me-2 text-primary"></i> Daftar Kupon
+            <i class="fas fa-puzzle-piece me-2 text-primary"></i> Daftar Addon
         </h1>
-        <a href="{{ route('coupons.create') }}" class="btn btn-gradient-primary shadow-sm">
-            <i class="fas fa-plus me-1"></i> Tambah Kupon
+        <a href="{{ route('addons.create') }}" class="btn btn-gradient-primary shadow-sm">
+            <i class="fas fa-plus me-1"></i> Tambah Addon
         </a>
     </div>
 @stop
@@ -17,68 +17,51 @@
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-pill px-4" role="alert">
             <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
     <div class="card border-0 shadow-lg rounded-4">
         <div class="card-body table-responsive p-4">
-            <table id="couponTable" class="table align-middle table-hover table-borderless">
+            <table id="addonTable" class="table align-middle table-hover table-borderless">
                 <thead class="bg-gradient text-white" style="background: linear-gradient(90deg, #007bff, #00b4d8);">
                     <tr>
                         <th>#</th>
                         <th>Kode</th>
-                        <th>Jenis</th>
-                        <th>Nilai</th>
-                        <th>Minimal Transaksi</th>
-                        <th>Kadaluarsa</th>
-                        <th>Aktif</th>
+                        <th>Nama Addon</th>
+                        <th>Harga</th>
+                        <th>Satuan</th>
+                        <th>Max Qty</th>
                         <th>Status</th>
-                        <th>User</th>
                         <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($coupons as $coupon)
+                    @foreach ($addons as $addon)
                         <tr class="bg-white shadow-sm-hover">
                             <td class="fw-semibold text-muted">{{ $loop->iteration }}</td>
-                            <td class="fw-bold text-dark">{{ $coupon->code }}</td>
-                            <td>{{ ucfirst($coupon->type) }}</td>
-                            <td>
-                                @if ($coupon->type === 'fixed')
-                                    Rp {{ number_format($coupon->value, 0, ',', '.') }}
-                                @else
-                                    {{ $coupon->value }}%
-                                @endif
-                            </td>
-                            <td>
-                                {{ $coupon->minimum_cart_value ? 'Rp ' . number_format($coupon->minimum_cart_value, 0, ',', '.') : '-' }}
-                            </td>
-                            <td>{{ $coupon->expiry_date ? \Carbon\Carbon::parse($coupon->expiry_date)->format('d M Y') : '-' }}
-                            </td>
+                            <td class="fw-bold">{{ $addon->code }}</td>
+                            <td>{{ $addon->name }}</td>
+                            <td>Rp {{ number_format($addon->price, 0, ',', '.') }}</td>
+                            <td>{{ $addon->unit }}</td>
+                            <td>{{ $addon->max_qty ?? '-' }}</td>
                             <td>
                                 <span
-                                    class="badge text-white px-3 py-2 rounded-pill shadow-sm {{ $coupon->active ? 'bg-gradient-success' : 'bg-gradient-secondary' }}">
-                                    {{ $coupon->active ? 'Aktif' : 'Nonaktif' }}
+                                    class="badge text-white px-3 py-2 rounded-pill shadow-sm 
+                                {{ $addon->is_active ? 'bg-gradient-success' : 'bg-gradient-secondary' }}">
+                                    {{ $addon->is_active ? 'Aktif' : 'Nonaktif' }}
                                 </span>
                             </td>
-                            <td>
-                                <span
-                                    class="badge text-white px-3 py-2 rounded-pill shadow-sm {{ $coupon->status === 'unused' ? 'bg-gradient-info' : 'bg-gradient-danger' }}">
-                                    {{ $coupon->status === 'unused' ? 'Belum Digunakan' : 'Sudah Digunakan' }}
-                                </span>
-                            </td>
-                            <td>{{ $coupon->user ? $coupon->user->name : 'Semua User' }}</td>
                             <td class="text-center">
                                 <div class="btn-group">
-                                    <a href="{{ route('coupons.edit', $coupon) }}" class="btn btn-sm btn-outline-info">
+                                    <a href="{{ route('addons.edit', $addon) }}" class="btn btn-sm btn-outline-info">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form action="{{ route('coupons.destroy', $coupon) }}" method="POST"
-                                        onsubmit="return confirm('Yakin ingin menghapus kupon ini?')"
-                                        style="display:inline;">
-                                        @csrf @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <form action="{{ route('addons.destroy', $addon) }}" method="POST"
+                                        onsubmit="return confirm('Yakin ingin menghapus addon ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-sm btn-outline-danger">
                                             <i class="fas fa-trash-alt"></i>
                                         </button>
                                     </form>
@@ -231,22 +214,24 @@
 @section('js')
     <script>
         $(function() {
-            $('#couponTable').DataTable({
+            $('#addonTable').DataTable({
                 responsive: true,
                 paging: true,
                 pageLength: 10,
                 lengthChange: false,
                 language: {
                     search: "",
-                    searchPlaceholder: "Cari kupon...",
+                    searchPlaceholder: "Cari addon...",
                     paginate: {
                         next: "›",
                         previous: "‹"
                     },
-                    info: "Menampilkan _START_–_END_ dari _TOTAL_ kupon"
+                    info: "Menampilkan _START_–_END_ dari _TOTAL_ addon"
                 },
                 dom: "<'row mb-3'<'col-12 d-flex justify-content-end'f>>" + "rtip"
             });
+
+            // auto hide alert
             $(".alert").delay(4000).slideUp(300);
         });
     </script>

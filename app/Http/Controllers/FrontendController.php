@@ -190,10 +190,12 @@ class FrontendController extends Controller
                     $slotEnd = $current->copy()->addMinutes($slotDuration);
 
                     // Skip slot yang sudah lewat
-                    if ($isToday && $slotEnd->lte($now)) {
+                    // Skip slot yang start-nya sudah lewat
+                    if ($isToday && $current->lte($now)) {
                         $current->addMinutes($slotDuration + $breakDuration);
                         continue;
                     }
+
 
                     // Cek bentrok dengan appointment di slot group yang sama
                     $isBooked = Appointment::where('employee_id', $employee->id)
@@ -355,10 +357,12 @@ class FrontendController extends Controller
             while ($current->copy()->addMinutes($slotDuration)->lte($endTime)) {
                 $slotEnd = $current->copy()->addMinutes($slotDuration);
 
-                if ($isToday && $slotEnd->lte($now)) {
+                // Skip slot yang start-nya sudah lewat
+                if ($isToday && $current->lte($now)) {
                     $current->addMinutes($slotDuration + $breakDuration);
                     continue;
                 }
+
 
                 $isBooked = $existingAppointments->contains(function ($a) use ($current, $slotEnd, $date) {
                     $start = Carbon::parse($date->toDateString() . ' ' . $a->booking_start_time);

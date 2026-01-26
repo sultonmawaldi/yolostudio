@@ -47,7 +47,8 @@ class DashboardController extends Controller
 
                     return [
                         'id' => $appointment->id,
-                        'title' => sprintf('%s - %s',
+                        'title' => sprintf(
+                            '%s - %s',
                             $appointment->name,
                             $appointment->service->title ?? 'Service'
                         ),
@@ -78,6 +79,7 @@ class DashboardController extends Controller
          * MEMBER DASHBOARD
          * ===========================================================
          */
+
 
         $transactions = Transaction::where('user_id', $user->id)
             ->orderByDesc('created_at')

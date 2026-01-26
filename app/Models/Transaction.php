@@ -22,12 +22,14 @@ class Transaction extends Model
         'payload',
         'coupon_id',
         'qr_url',
+        'rewarded_at',
     ];
 
     protected $casts = [
         'payment_result' => 'array',
         'payload' => 'array',
         'public_token_expires_at' => 'datetime',
+        'rewarded_at' => 'datetime',
     ];
 
     /**
@@ -45,7 +47,7 @@ class Transaction extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
-    
+
 
     /**
      * Relasi ke kupon (jika ada)
@@ -72,18 +74,22 @@ class Transaction extends Model
     }
 
     public function photoResults()
-{
-    return $this->hasMany(PhotoResult::class, 'transaction_id');
-}
+    {
+        return $this->hasMany(PhotoResult::class, 'transaction_id');
+    }
 
-protected static function booted()
-{
-    static::creating(function ($transaction) {
-        $transaction->public_token = bin2hex(random_bytes(8));
-        $transaction->public_token_expires_at = now()->addDays(7); // aktif 7 hari
-    });
-}
+    protected static function booted()
+    {
+        static::creating(function ($transaction) {
+            $transaction->public_token = bin2hex(random_bytes(8));
+            $transaction->public_token_expires_at = now()->addDays(7); // aktif 7 hari
+        });
+    }
 
-
-    
+    public function services()
+    {
+        return $this->belongsToMany(Service::class)
+            ->withPivot('price', 'qty')
+            ->withTimestamps();
+    }
 }

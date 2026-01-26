@@ -18,6 +18,7 @@ class Service extends Model
         'max_people',
         'extra_price_per_person',
         'status',
+        'reward_points',
     ];
 
     protected $casts = [
@@ -26,6 +27,7 @@ class Service extends Model
         'max_people' => 'integer',
         'extra_price_per_person' => 'integer',
         'status' => 'boolean',
+        'reward_points' => 'integer',
     ];
 
     /**
@@ -74,5 +76,12 @@ class Service extends Model
     public function activeBackgrounds()
     {
         return $this->hasMany(ServiceBackground::class)->where('is_active', true);
+    }
+
+    public function transactions()
+    {
+        return $this->belongsToMany(Transaction::class)
+            ->withPivot('price', 'qty')
+            ->withTimestamps();
     }
 }
