@@ -48,6 +48,10 @@
     <!-- CDN SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/6.8.0/css/flag-icons.min.css"
+        integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
 
 
 
@@ -209,17 +213,18 @@
 
 
                     <!-- Right Desktop -->
-                    <div class="nav-right hidden lg:flex items-center space-x-4">
+                    <div class="nav-right hidden lg:flex items-center justify-end gap-1">
 
-                        <!-- Search -->
+
+                        <!-- Search
                         <div class="relative" x-data="{ openSearch: false }" @click.away="openSearch = false">
                             <button @click="openSearch = !openSearch"
                                 class="flex items-center justify-center w-10 h-10 text-blue-900 dark:text-gray-100
                        hover:text-blue-600 dark:hover:text-gray-300 rounded-full transition-colors">
                                 <i class="fa fa-search w-4 h-4 text-center leading-none"></i>
-                            </button>
+                            </button>-->
 
-                            <!-- Search Input -->
+                        <!-- Search Input
                             <div x-show="openSearch" x-transition.opacity.duration.200ms x-cloak
                                 class="absolute right-0 mt-2.5 w-64 bg-white/80 dark:bg-gray-800/80 
                     backdrop-blur-md p-2 rounded-xl shadow-lg z-50">
@@ -228,7 +233,48 @@
                           text-blue-900 dark:text-gray-100 placeholder-blue-400 dark:placeholder-gray-400 
                           bg-white/60 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
                             </div>
+                        </div> -->
+
+
+                        <!-- Language Dropdown (Desktop) -->
+                        <div class="relative" x-data="{
+                            openLang: false,
+                            lang: '{{ app()->getLocale() }}'
+                        }" @click.away="openLang = false">
+                            <!-- Tombol utama -->
+                            <button @click="openLang = !openLang"
+                                class="flex items-center gap-2 bg-white/70 dark:bg-gray-800/70 rounded-md px-3 py-2 backdrop-blur-md focus:ring-2 focus:ring-blue-400 hover:ring-blue-500 transition">
+                                <!-- Bendera sesuai lang -->
+                                <span class="fi fi-id w-5 h-4" x-show="lang==='id'"></span>
+                                <span class="fi fi-gb w-5 h-4" x-show="lang==='en'"></span>
+                                <!-- Chevron -->
+                                <i class="fa fa-chevron-down text-sm transition-transform duration-200"
+                                    :class="{ 'rotate-180': openLang }"></i>
+                            </button>
+
+                            <!-- Dropdown -->
+                            <div x-show="openLang" x-transition.opacity.duration.200ms x-cloak
+                                class="absolute right-0 mt-1 bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-xl shadow-lg z-50 w-auto overflow-hidden">
+                                <ul class="flex flex-col gap-1 p-1">
+                                    <!-- Indonesia -->
+                                    <li>
+                                        <button @click="lang='id'; changeLang(); openLang=false;"
+                                            class="flex items-center gap-2 px-3 py-2 hover:bg-blue-100/50 dark:hover:bg-gray-700 rounded-md whitespace-nowrap">
+                                            <span class="fi fi-id w-5 h-4"></span> ID
+                                        </button>
+                                    </li>
+                                    <!-- Inggris -->
+                                    <li>
+                                        <button @click="lang='en'; changeLang(); openLang=false;"
+                                            class="flex items-center gap-2 px-3 py-2 hover:bg-blue-100/50 dark:hover:bg-gray-700 rounded-md whitespace-nowrap">
+                                            <span class="fi fi-gb w-5 h-4"></span> EN
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
+
+
 
                         <!-- Dark Mode -->
                         <button @click="toggleDarkMode"
@@ -272,17 +318,12 @@
                                         </p>
                                         <div class="mt-2 border-b border-blue-300/60 dark:border-gray-700/60"></div>
                                     </div>
-                                    <a href="{{ route('member.dashboard') }}"
+                                    <a href="{{ route('member.profile') }}"
                                         class="flex items-center px-4 py-2 text-sm font-medium rounded-md transition-all duration-150
-                                      {{ request()->routeIs('member.dashboard')
-                                          ? 'bg-blue-600/10 dark:bg-gray-700 text-blue-700 dark:text-white'
-                                          : 'text-blue-900 dark:text-gray-100 hover:bg-blue-600/10 dark:hover:bg-gray-700' }}">
-                                        <i class="fa fa-gauge mr-2 text-xs opacity-80"></i> Dashboard
-                                    </a>
-                                    <a href="#"
-                                        class="flex items-center px-4 py-2 text-sm font-medium rounded-md transition-all duration-150
-                                      text-blue-900 dark:text-gray-100 hover:bg-blue-600/10 dark:hover:bg-gray-700">
-                                        <i class="fa fa-gear mr-2 text-xs opacity-80"></i> Settings
+                                        {{ request()->routeIs('member.profile')
+                                            ? 'bg-blue-600/10 dark:bg-gray-700 text-blue-700 dark:text-white'
+                                            : 'text-blue-900 dark:text-gray-100 hover:bg-blue-600/10 dark:hover:bg-gray-700' }}">
+                                        <i class="fa fa-user mr-2 text-xs opacity-80"></i> Profile
                                     </a>
                                     <form action="{{ route('logout') }}" method="POST" class="mt-1">
                                         @csrf
@@ -318,7 +359,7 @@
                     <!-- Mobile -->
                     <div class="lg:hidden flex items-center space-x-2">
 
-                        <!-- Search -->
+                        <!-- Search
                         <div class="relative" x-data="{ openSearch: false }" @click.away="openSearch = false">
                             <button @click="openSearch = !openSearch"
                                 class="flex items-center justify-center w-10 h-10 text-blue-900 dark:text-gray-100
@@ -333,7 +374,45 @@
                           text-blue-900 dark:text-gray-100 placeholder-blue-400 dark:placeholder-gray-400 
                           bg-white/60 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
                             </div>
+                        </div>-->
+
+                        <!-- Language Mobile Compact -->
+                        <div class="relative" x-data="{ openLangMobile: false, lang: 'id' }" @click.away="openLangMobile = false">
+                            <!-- Tombol utama -->
+                            <button @click="openLangMobile = !openLangMobile"
+                                class="inline-flex items-center gap-2 bg-white/70 dark:bg-gray-800/70 rounded px-3 py-2 text-sm font-semibold uppercase backdrop-blur-md focus:ring-2 focus:ring-blue-400 hover:ring-blue-500 transition">
+                                <!-- Bendera -->
+                                <span class="fi fi-id w-5 h-4" x-show="lang==='id'"></span>
+                                <span class="fi fi-gb w-5 h-4" x-show="lang==='en'"></span>
+                                <!-- Chevron -->
+                                <i class="fa fa-chevron-down text-sm ml-1 transition-transform duration-200"
+                                    :class="{ 'rotate-180': openLangMobile }"></i>
+                            </button>
+
+                            <!-- Dropdown -->
+                            <div x-show="openLangMobile" x-transition.opacity.duration.150ms x-cloak
+                                class="absolute right-0 mt-1 bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded shadow-lg z-50 w-max min-w-[60px] overflow-hidden">
+                                <ul class="flex flex-col gap-1 p-1">
+                                    <!-- Indonesia -->
+                                    <li>
+                                        <button @click="lang='id'; changeLang(); openLangMobile=false;"
+                                            class="flex items-center gap-2 px-3 py-2 hover:bg-blue-100/50 dark:hover:bg-gray-700 rounded text-sm font-semibold uppercase whitespace-nowrap">
+                                            <span class="fi fi-id w-5 h-4"></span> ID
+                                        </button>
+                                    </li>
+                                    <!-- Inggris -->
+                                    <li>
+                                        <button @click="lang='en'; changeLang(); openLangMobile=false;"
+                                            class="flex items-center gap-2 px-3 py-2 hover:bg-blue-100/50 dark:hover:bg-gray-700 rounded text-sm font-semibold uppercase whitespace-nowrap">
+                                            <span class="fi fi-gb w-5 h-4"></span> EN
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
+
+
+
 
                         <!-- Dark Mode -->
                         <button @click="toggleDarkMode"
@@ -444,21 +523,12 @@
                             </div>
 
                             <!-- Dashboard -->
-                            <a href="{{ route('member.dashboard') }}"
-                                class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition
-                      {{ request()->routeIs('member.dashboard')
-                          ? 'bg-blue-600/10 dark:bg-gray-700 text-blue-700 dark:text-white'
-                          : 'text-blue-900 dark:text-gray-100 hover:bg-blue-600/10 dark:hover:bg-gray-700' }}">
-                                <i class="fa fa-gauge mr-2 text-xs opacity-80"></i> Dashboard
-                            </a>
-
-                            <!-- Settings -->
-                            <a href="#"
-                                class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition
-                      {{ request()->routeIs('member.settings')
-                          ? 'bg-blue-600/10 dark:bg-gray-700 text-blue-700 dark:text-white'
-                          : 'text-blue-900 dark:text-gray-100 hover:bg-blue-600/10 dark:hover:bg-gray-700' }}">
-                                <i class="fa fa-gear mr-2 text-xs opacity-80"></i> Settings
+                            <a href="{{ route('member.profile') }}"
+                                class="flex items-center px-4 py-2 text-sm font-medium rounded-md transition-all duration-150
+      {{ request()->routeIs('member.profile')
+          ? 'bg-blue-600/10 dark:bg-gray-700 text-blue-700 dark:text-white'
+          : 'text-blue-900 dark:text-gray-100 hover:bg-blue-600/10 dark:hover:bg-gray-700' }}">
+                                <i class="fa fa-user mr-2 text-xs opacity-80"></i> Profile
                             </a>
 
                             <!-- Logout -->
@@ -496,23 +566,37 @@
 
         <!-- Footer -->
         <footer class="bg-gray-800 text-gray-300 mt-auto flex flex-col items-center justify-between">
-            <!-- Language & Dark Mode -->
-            <div class="max-w-7xl w-full px-6 py-4 flex flex-row items-center justify-center gap-4">
-                <!-- Language -->
-                <select x-model="lang" @change="changeLang"
-                    class="bg-white/60 text-blue-900 rounded-md px-2 py-1 text-sm backdrop-blur-md focus:ring-2 focus:ring-blue-400">
-                    <option value="en">EN</option>
-                    <option value="id">ID</option>
-                </select>
+            <!-- Copyright & Social Media -->
+            <div class="w-full text-center py-6 border-t border-gray-700 flex flex-col items-center gap-2">
+                <!-- Tahun dan brand -->
+                <div class="text-base font-semibold">
+                    © {{ date('Y') }} <span class="font-bold">YOLO STUDIO</span>
+                </div>
 
+                <!-- All rights reserved -->
+                <div class="text-sm text-gray-400">
+                    All rights reserved.
+                </div>
 
-            </div>
-
-            <!-- Copyright -->
-            <div class="w-full text-center py-3 border-t border-gray-700">
-                <p>© {{ date('Y') }} {{ config('app.name', 'Laravel') }}. All rights reserved.</p>
+                <!-- Social Media -->
+                <div class="flex gap-4 mt-2">
+                    <a href="https://www.instagram.com/yolostudio_id" target="_blank"
+                        class="hover:text-pink-500 transition">
+                        <i class="fab fa-instagram fa-lg"></i>
+                    </a>
+                    <a href="https://www.tiktok.com/@yolostudio_id" target="_blank"
+                        class="hover:text-black transition">
+                        <i class="fab fa-tiktok fa-lg"></i>
+                    </a>
+                </div>
             </div>
         </footer>
+
+
+        <!-- FontAwesome (untuk ikon sosial media) -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+            integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     </div>
 
     <script>

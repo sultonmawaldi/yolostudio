@@ -36,7 +36,7 @@ Auth::routes();
 | FRONTEND (GUEST)
 |--------------------------------------------------------------------------
 */
-Route::get('/', fn() => view('frontend.home'))->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/booking', [FrontendController::class, 'booking'])->name('booking');
 
 Route::get('/services/{service}/addons', [FrontendController::class, 'getServiceAddons']);
@@ -56,6 +56,12 @@ Route::post('/appointments/{appointment}/cancel', [AppointmentController::class,
 Route::post('/appointments/{appointment}/reschedule', [AppointmentController::class, 'reschedule'])->name('appointments.reschedule');
 Route::get('/appointments/{appointment}/reschedule/availability', [FrontendController::class, 'getAvailabilityForReschedule'])
     ->name('appointments.reschedule.availability');
+
+Route::get('/pricelist', [FrontendController::class, 'pricelist'])
+    ->name('pricelist');
+
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -141,7 +147,6 @@ Route::middleware('auth')->group(function () {
     */
     Route::middleware('role:admin|moderator|employee')
         ->prefix('admin')
-        ->name('admin.')
         ->group(function () {
             // Dashboard Admin
             Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

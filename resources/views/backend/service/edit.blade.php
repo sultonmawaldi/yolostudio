@@ -41,7 +41,7 @@
         </div>
     @endif
     <div class="">
-        <form action="{{ route('service.update',$service->id) }}" method="post" enctype="multipart/form-data">
+        <form action="{{ route('service.update', $service->id) }}" method="post" enctype="multipart/form-data">
             @csrf
             @method('PATCH')
             <div class="row">
@@ -62,7 +62,8 @@
                                 <label for="inputStatus">Title
                                 </label>
                                 <input class="form-control @error('title') is-invalid @enderror" type="text"
-                                    id="title" name="title" placeholder="Title here.." value="{{ old('title',$service->title) }}">
+                                    id="title" name="title" placeholder="Title here.."
+                                    value="{{ old('title', $service->title) }}">
                                 @error('title')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -73,7 +74,8 @@
                                 <small>&nbsp;&nbsp;Unique url of the Service
                                 </small>
                                 <input class="form-control bg-light @error('slug') is-invalid @enderror" type="text"
-                                    id="slug" name="slug" placeholder="slug here.." value="{{ old('slug',$service->slug) }}">
+                                    id="slug" name="slug" placeholder="slug here.."
+                                    value="{{ old('slug', $service->slug) }}">
                                 @error('slug')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -89,7 +91,7 @@
                             </div> --}}
                         </div>
                         <!-- /.card-body -->
-                        </div>
+                    </div>
                     <div class="card card-light">
                         <div class="card-header">
                             <h3 class="card-title">Price
@@ -104,60 +106,61 @@
                             </div>
                         </div>
                         <div class="card-body">
-                          <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="mb-0" for="price">Price</label>
-                                    <input class="form-control" type="number" name="price" placeholder="Price"
-                                        value="{{ old('price') }}">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="mb-0" for="price">Price</label>
+                                        <input class="form-control" type="number" name="price"
+                                            value="{{ old('price', $service->price) }}">
                                         <p class="mb-0 text-muted small">Main Price</p>
-                                    @error('price')
-                                        <span class="text-danger">
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
+                                        @error('price')
+                                            <span class="text-danger">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="mb-0" for="sale_price">Sale Price</label>
-                                    <input class="form-control" type="number" name="sale_price" placeholder="Price"
-                                        value="{{ old('sale_price') }}">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="mb-0" for="sale_price">Sale Price</label>
+                                        <input class="form-control" type="number" name="sale_price"
+                                            value="{{ old('sale_price', $service->sale_price) }}">
                                         <p class="mb-0 text-muted small">Price for sale</p>
-                                    @error('sale_price')
-                                        <span class="text-danger">
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
+                                        @error('sale_price')
+                                            <span class="text-danger">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="mb-0" for="extra_price_per_person">Harga Tambahan Per Orang</label>
-                                    <input class="form-control" type="number" name="extra_price_per_person" placeholder="Price"
-                                        value="{{ old('extra_price_per_person') }}">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="mb-0" for="extra_price_per_person">Harga Tambahan Per Orang</label>
+                                        <input class="form-control" type="number" name="extra_price_per_person"
+                                            value="{{ old('extra_price_per_person', $service->extra_price_per_person) }}">
                                         <p class="mb-0 text-muted small">Price for sale</p>
-                                    @error('extra_price_per_person')
-                                        <span class="text-danger">
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
+                                        @error('extra_price_per_person')
+                                            <span class="text-danger">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="mb-0" for="max_people">Dp Amount</label>
+                                        <input class="form-control" type="number" name="dp_amount"
+                                            value="{{ old('dp_amount', $service->dp_amount) }}">
+                                        <p class="mb-0 text-muted small">Maximum number of people allowed for this service
+                                        </p>
+                                        @error('dp_amount')
+                                            <span class="text-danger">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="mb-0" for="max_people">Dp Amount</label>
-                                <input class="form-control" type="number" name="dp_amount" id="dp_amount" min="1" placeholder="Down Payment"
-                                    value="{{ old('dp_amount', 1) }}">
-                                <p class="mb-0 text-muted small">Maximum number of people allowed for this service</p>
-                                @error('dp_amount')
-                                    <span class="text-danger">
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-                          </div>
                         </div>
                         <!-- /.card-body -->
                     </div>
@@ -167,51 +170,54 @@
                             </h3>
 
                             <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse"
+                                    title="Collapse">
                                     <i class="fas fa-minus" aria-hidden="true">
                                     </i>
                                 </button>
                             </div>
                         </div>
                         <div class="card-body">
-                        <div class="row">
+                            <div class="row">
 
-                            <!-- MIN PEOPLE (dipindah ke kiri) -->
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="mb-0" for="min_people">Min People</label>
-                                    <input class="form-control" type="number" name="min_people" id="min_people" min="1" placeholder="Min number of people"
-                                        value="{{ old('min_people', 1) }}">
-                                    <p class="mb-0 text-muted small">Minimum number of people allowed for this service</p>
-                                    @error('min_people')
-                                        <span class="text-danger">
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
+                                <!-- MIN PEOPLE (dipindah ke kiri) -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="mb-0" for="min_people">Min People</label>
+                                        <input class="form-control" type="number" name="min_people"
+                                            value="{{ old('min_people', $service->min_people) }}">
+                                        <p class="mb-0 text-muted small">Minimum number of people allowed for this service
+                                        </p>
+                                        @error('min_people')
+                                            <span class="text-danger">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </div>
                                 </div>
-                            </div>
 
-                            <!-- MAX PEOPLE (dipindah ke kanan) -->
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="mb-0" for="max_people">Max People</label>
-                                    <input class="form-control" type="number" name="max_people" id="max_people" min="1" placeholder="Max number of people"
-                                        value="{{ old('max_people', 1) }}">
-                                    <p class="mb-0 text-muted small">Maximum number of people allowed for this service</p>
-                                    @error('max_people')
-                                        <span class="text-danger">
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
+                                <!-- MAX PEOPLE (dipindah ke kanan) -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="mb-0" for="max_people">Max People</label>
+                                        <input class="form-control" type="number" name="max_people"
+                                            value="{{ old('max_people', $service->max_people) }}">
+                                        <p class="mb-0 text-muted small">Maximum number of people allowed for this service
+                                        </p>
+                                        @error('max_people')
+                                            <span class="text-danger">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </div>
                                 </div>
-                            </div>
 
+                            </div>
                         </div>
-                    </div>
-                    <!-- /.card-body -->
+                        <!-- /.card-body -->
 
                     </div>
-                    
+
                     <div class="card card-light">
                         <div class="card-header">
                             <h3 class="card-title">Excerpt
@@ -219,7 +225,8 @@
                             <small>&nbsp;&nbsp;Small Description of the Service
                             </small>
                             <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse"
+                                    title="Collapse">
                                     <i class="fas fa-minus" aria-hidden="true">
                                     </i>
                                 </button>
@@ -228,7 +235,7 @@
                         <div class="card-body">
                             <div class="form-group">
                                 <textarea class="form-control" name="excerpt" id="" value="{{ old('excerpt') }}" cols="30"
-                                    rows="5">{{ old('excerpt',$service->excerpt) }}</textarea>
+                                    rows="5">{{ old('excerpt', $service->excerpt) }}</textarea>
                             </div>
                         </div>
                         <!-- /.card-body -->
@@ -298,31 +305,34 @@
                                     <small>&nbsp;&nbsp;Select category for Service</small>
 
                                     <select id="category" name="category_id" class="select2" multiple=""
-                                    data-placeholder="Search Category" style="width: 100%;">
-                                    <option value="">None</option>
-                                    @foreach ($categories as $category)
-                                        <option value="{{ $category->id }}"
-                                            {{ isset($service->category->id) && $service->category->id == $category->id ? 'selected' : '' }}>
-                                            {{ $category->title }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                        data-placeholder="Search Category" style="width: 100%;">
+                                        <option value="">None</option>
+                                        @foreach ($categories as $category)
+                                            <option value="{{ $category->id }}"
+                                                {{ isset($service->category->id) && $service->category->id == $category->id ? 'selected' : '' }}>
+                                                {{ $category->title }}
+                                            </option>
+                                        @endforeach
+                                    </select>
 
 
-                                @error('category_id')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
+                                    @error('category_id')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
 
 
                                 </div>
                                 <div class="form-group">
                                     <label for="inputStatus">Status</label>
-                                    <select required="required" name="status" id="inputStatus" class="form-control custom-select">
+                                    <select required="required" name="status" id="inputStatus"
+                                        class="form-control custom-select">
                                         <option disabled value="">Select Option</option>
-                                        <option value="1" {{ isset($service->status) && $service->status == 1 ? 'selected' : '' }}>
+                                        <option value="1"
+                                            {{ isset($service->status) && $service->status == 1 ? 'selected' : '' }}>
                                             PUBLISHED
                                         </option>
-                                        <option value="0" {{ isset($service->status) && $service->status == 0 ? 'selected' : '' }}>
+                                        <option value="0"
+                                            {{ isset($service->status) && $service->status == 0 ? 'selected' : '' }}>
                                             DRAFT
                                         </option>
                                     </select>
@@ -339,7 +349,8 @@
                                     </div>
                                 </div> --}}
                                 <div class="form-group pt-0 pb-0 text-right">
-                                    <button onclick="return confirm('Are you sure you want to update this item?');" type="submit" class="btn btn-danger">Update
+                                    <button onclick="return confirm('Are you sure you want to update this item?');"
+                                        type="submit" class="btn btn-danger">Update
                                     </button>
                                 </div>
                             </div>
@@ -363,16 +374,14 @@
                                     </small>
                                     <input name="image" accept="image/*" type="file" id="imgInp">
                                     @if ($service->image)
-                                    <img class="img-fluid"
-                                        style="width: 150px; margin-top:10px; border:1px solid black;"
-                                        id="blah"
-                                        src="{{ asset('uploads/images/service/' . $service->image) }}"
-                                        alt="your image">
-                                @else
-                                    <img style="width: 150px; margin-top:10px; border:1px solid black;"
-                                        id="blah" src="{{ asset('uploads/images/no-image.jpg') }}"
-                                        alt="your image">
-                                @endif
+                                        <img class="img-fluid"
+                                            style="width: 150px; margin-top:10px; border:1px solid black;" id="blah"
+                                            src="{{ asset('uploads/images/service/' . $service->image) }}"
+                                            alt="your image">
+                                    @else
+                                        <img style="width: 150px; margin-top:10px; border:1px solid black;" id="blah"
+                                            src="{{ asset('uploads/images/no-image.jpg') }}" alt="your image">
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -406,7 +415,6 @@
             border-top-left-radius: calc(0.3rem - 1px);
             border-top-right-radius: calc(0.3rem - 1px);
         }
-
     </style>
 
 @stop
@@ -481,7 +489,6 @@
             }
 
         });
-
     </script>
 
 

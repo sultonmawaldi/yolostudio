@@ -4,51 +4,90 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Service extends Model
 {
     use SoftDeletes;
 
+    /**
+     * Kolom yang boleh di-mass assign
+     */
     protected $fillable = [
         'category_id',
-        'name',
+        'title',
+        'slug',
+        'image',
+        'excerpt',
+        'body',
+        'meta_title',
+        'meta_description',
+        'meta_keyword',
         'price',
-        'description',
+        'sale_price',
+        'reward_points',
         'min_people',
         'max_people',
         'extra_price_per_person',
+        'dp_amount',
+        'video',
+        'featured',
         'status',
-        'reward_points',
-    ];
-
-    protected $casts = [
-        'price' => 'integer',
-        'min_people' => 'integer',
-        'max_people' => 'integer',
-        'extra_price_per_person' => 'integer',
-        'status' => 'boolean',
-        'reward_points' => 'integer',
+        'other',
     ];
 
     /**
-     * Kategori layanan
+     * Casting tipe data
      */
+    protected $casts = [
+        'price' => 'float',
+        'sale_price' => 'float',
+        'extra_price_per_person' => 'float',
+        'reward_points' => 'integer',
+        'min_people' => 'integer',
+        'max_people' => 'integer',
+        'dp_amount' => 'integer',
+        'featured' => 'boolean',
+        'status' => 'boolean',
+    ];
+
+    /**
+     * Auto-generate slug dari title
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($service) {
+            if (empty($service->slug)) {
+                $service->slug = Str::slug($service->title);
+            }
+        });
+
+        static::updating(function ($service) {
+            if ($service->isDirty('title')) {
+                $service->slug = Str::slug($service->title);
+            }
+        });
+    }
+
+    /**
+     * ================== RELATIONS ==================
+     */
+
+    // Kategori layanan
     public function category()
     {
         return $this->belongsTo(Category::class);
     }
 
-    /**
-     * Booking / appointment
-     */
+    // Booking / appointment
     public function appointments()
     {
         return $this->hasMany(Appointment::class);
     }
 
-    /**
-     * Employee yang bisa handle service
-     */
+    // Employee yang handle service
     public function employees()
     {
         return $this->belongsToMany(Employee::class)
@@ -56,9 +95,7 @@ class Service extends Model
             ->withTimestamps();
     }
 
-    /**
-     * Addon yang tersedia untuk service ini
-     */
+    // Addon aktif untuk service ini
     public function addons()
     {
         return $this->belongsToMany(Addon::class, 'addon_service')
@@ -66,6 +103,7 @@ class Service extends Model
             ->where('addons.is_active', true);
     }
 
+    // Background service (aktif & urut)
     public function backgrounds()
     {
         return $this->hasMany(ServiceBackground::class)
@@ -73,15 +111,23 @@ class Service extends Model
             ->orderBy('sort_order');
     }
 
+    // Alias jika hanya mau background aktif
     public function activeBackgrounds()
     {
-        return $this->hasMany(ServiceBackground::class)->where('is_active', true);
+        return $this->backgrounds();
     }
 
+    // Transaksi
     public function transactions()
     {
         return $this->belongsToMany(Transaction::class)
             ->withPivot('price', 'qty')
             ->withTimestamps();
+    }
+
+    // Pricelist
+    public function pricelists()
+    {
+        return $this->hasMany(Pricelist::class);
     }
 }

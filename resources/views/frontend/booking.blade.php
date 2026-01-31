@@ -777,9 +777,12 @@
                         res.addons.forEach(a => {
                             container.append(`
                     <div class="card shadow-sm border-0 mb-3 addon-item"
-                         data-addon-id="${a.id}"
-                         data-addon-name="${a.name}"
-                         data-addon-price="${a.price}">
+                        data-addon-id="${a.id}"
+                        data-addon-name="${a.name}"
+                        data-addon-price="${a.price}"
+                        data-addon-unit="${a.unit}"
+                        data-addon-max="${a.max_qty}">
+
 
                         <div class="card-header bg-grey border-bottom">
                             <h6 class="mb-0 fw-semibold">
@@ -1334,12 +1337,24 @@
                 $.get(`/services/${serviceId}/backgrounds`, function(res) {
                     container.empty();
 
+                    // Jika tidak ada background, sembunyikan card
                     if (!res.backgrounds || !res.backgrounds.length) {
                         card.addClass('d-none');
+
+                        // Tandai service ini TIDAK punya background
+                        if (bookingState.selectedService) {
+                            bookingState.selectedService.hasBackgrounds = false;
+                        }
+
                         return;
                     }
 
                     card.removeClass('d-none');
+
+                    // Tandai service ini punya background
+                    if (bookingState.selectedService) {
+                        bookingState.selectedService.hasBackgrounds = true;
+                    }
 
                     res.backgrounds.forEach(bg => {
                         container.append(`
@@ -1364,6 +1379,7 @@
                     console.error('Background error', err.responseText);
                 });
             }
+
 
 
 
@@ -1484,7 +1500,7 @@
                 if (!el) return;
 
                 el.scrollIntoView({
-                    behavior: 'auto', // ⬅️ LANGSUNG CEPAT
+                    behavior: 'auto', // langsung cepat
                     block: 'center'
                 });
 
@@ -1493,22 +1509,17 @@
             }
 
             $(document).ready(function() {
-
                 $('#customer-info-form input, #customer-info-form textarea').on('input', function() {
                     $(this).removeClass('is-invalid');
                 });
-
             });
-
 
             function submitBooking() {
                 const form = $('#customer-info-form');
                 const csrfToken = form.find('input[name="_token"]').val();
                 const paymentMethod = $('#payment-method').val();
 
-                // ===============================
-                // 0️⃣ VALIDASI DATA DIRI (WAJIB)
-                // ===============================
+                // 0️⃣ Validasi data diri
                 const name = $('#customer-name').val().trim();
                 const email = $('#customer-email').val().trim();
                 const phone = $('#customer-phone').val().trim();
@@ -1516,146 +1527,128 @@
                 if (!name || name.length < 3) {
                     Swal.fire({
                         icon: 'warning',
-                        title: 'Data Belum Lengkap',
-                        text: 'Nama wajib diisi minimal 3 karakter.',
+                        title: 'Nama wajib diisi minimal 3 karakter',
                         confirmButtonColor: '#f59e0b',
                         allowOutsideClick: false,
-                        didClose: () => {
-                            focusToField('#customer-name');
-                        }
+                        didClose: () => focusToField('#customer-name')
                     });
-                    return; // ⛔ STOP TOTAL
+                    return;
                 }
 
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (!email || !emailRegex.test(email)) {
                     Swal.fire({
                         icon: 'warning',
-                        title: 'Email Tidak Valid',
-                        text: 'Masukkan alamat email yang valid.',
+                        title: 'Email tidak valid',
                         confirmButtonColor: '#f59e0b',
                         allowOutsideClick: false,
-                        didClose: () => {
-                            focusToField('#customer-email');
-                        }
+                        didClose: () => focusToField('#customer-email')
                     });
-                    return; // ⛔ STOP TOTAL
+                    return;
                 }
 
                 if (!phone || phone.replace(/\D/g, '').length < 8) {
                     Swal.fire({
                         icon: 'warning',
-                        title: 'Nomor HP / WhatsApp Tidak Valid',
-                        text: 'Nomor HP / WhatsApp wajib diisi.',
+                        title: 'Nomor HP wajib diisi',
                         confirmButtonColor: '#f59e0b',
                         allowOutsideClick: false,
-                        didClose: () => {
-                            focusToField('#customer-phone');
-                        }
+                        didClose: () => focusToField('#customer-phone')
                     });
-                    return; // ⛔ STOP TOTAL
+                    return;
                 }
 
+                // 0️⃣b Validasi background
+                if (bookingState.selectedService?.hasBackgrounds &&
+                    (!bookingState.selectedBackground || !bookingState.selectedBackground.id)) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Background belum dipilih',
+                        confirmButtonColor: '#f59e0b',
+                        allowOutsideClick: false,
+                        didClose: () => $('#background-container').get(0)?.scrollIntoView({
+                            behavior: 'auto',
+                            block: 'center'
+                        })
+                    });
+                    return;
+                }
 
-                // ===============================
-                // 1️⃣ HARGA DASAR LAYANAN
-                // ===============================
+                // 1️⃣ Harga dasar layanan
                 const basePrice = Number(window.selectedServicePrice || 0);
 
-                // ===============================
-                // 2️⃣ NORMALISASI ADDONS (OBJECT → ARRAY)
-                // ===============================
+                // 2️⃣ Normalisasi addons
                 const addons = Object.values(window.selectedAddons || {});
+                const normalizedAddons = addons.map(addon => {
+                    if (!addon?.id) return null; // skip addon tanpa id
+                    return {
+                        id: addon.id,
+                        name: addon.name || '',
+                        unit: addon.unit || 'item',
+                        qty: addon.qty || 1,
+                        duration: addon.unit === 'minute' ? (addon.qty || 0) : undefined,
+                        price: addon.price || 0,
+                        total_price: addon.unit === 'minute' ? addon.price : (addon.price || 0) * (addon
+                            .qty || 1)
+                    };
+                }).filter(a => a !== null);
 
-                // ===============================
-                // 3️⃣ TOTAL ADDONS
-                // ===============================
-                let addonsTotal = 0;
-                addons.forEach(addon => {
-                    addonsTotal += Number(addon.price || 0) * Number(addon.qty || 0);
-                });
+                // 3️⃣ Total addons
+                let addonsTotal = normalizedAddons.reduce((sum, a) => sum + Number(a.total_price || 0), 0);
 
-                // ===============================
-                // 4️⃣ TOTAL SEBELUM DISKON
-                // ===============================
+                // 4️⃣ Total sebelum diskon
                 const totalBeforeDiscount = basePrice + addonsTotal;
 
-                // ===============================
-                // 5️⃣ DISKON
-                // ===============================
+                // 5️⃣ Diskon
                 const discountAmount = Number(window.discountValue || 0);
                 const totalAfterDiscount = Math.max(0, totalBeforeDiscount - discountAmount);
 
-                // ===============================
-                // 6️⃣ DP / FULL
-                // ===============================
-                const dpAmount =
-                    bookingState.selectedService.dp_amount ||
-                    Math.round(totalAfterDiscount / 2);
+                // 6️⃣ DP / Full
+                const dpAmount = bookingState.selectedService.dp_amount || Math.round(totalAfterDiscount / 2);
+                const paymentAmount = paymentMethod === 'dp' ? dpAmount : totalAfterDiscount;
 
-                const paymentAmount =
-                    paymentMethod === 'dp' ? dpAmount : totalAfterDiscount;
-
-                // ===============================
-                // 7️⃣ HITUNG JUMLAH ORANG (DARI ADDON)
-                // ===============================
+                // 7️⃣ Hitung jumlah orang
                 let additionalPeople = 0;
                 addons.forEach(addon => {
-                    if (addon.name.toLowerCase().includes('tambahan orang')) {
-                        additionalPeople += addon.qty;
-                    }
+                    if (addon.name.toLowerCase().includes('tambahan orang')) additionalPeople += addon.qty;
                 });
-
                 const minPeople = Number(window.minPeople || 1);
                 const peopleCount = minPeople + additionalPeople;
 
-                // ===============================
-                // 8️⃣ FORMAT NOMOR HP
-                // ===============================
-                let rawPhone = $('#customer-phone').val().trim();
+                // 8️⃣ Format nomor HP
+                let rawPhone = phone;
                 if (!rawPhone.startsWith('+62')) {
                     rawPhone = rawPhone.replace(/\D/g, '');
                     if (rawPhone.startsWith('0')) rawPhone = rawPhone.substring(1);
                     rawPhone = '+62' + rawPhone;
                 }
 
-                // ===============================
-                // 9️⃣ PAYLOAD BOOKING
-                // ===============================
+                // 9️⃣ Payload booking
                 const bookingData = {
                     employee_id: bookingState.selectedEmployee.id,
                     service_id: bookingState.selectedService.id,
                     service_title: bookingState.selectedService.title,
-                    slot_group_id: bookingState.selectedEmployee.slot_group_id,
-
+                    slot_group_id: bookingState.selectedEmployee.pivot?.slot_group_id || bookingState
+                        .selectedEmployee.slot_group_id,
                     background_id: bookingState.selectedBackground?.id || null,
-
-                    name: $('#customer-name').val(),
-                    email: $('#customer-email').val(),
+                    name,
+                    email,
                     phone: rawPhone,
                     notes: $('#customer-notes').val(),
-
                     total_amount: totalBeforeDiscount,
                     discount_amount: discountAmount,
                     amount: paymentAmount,
                     dp_amount: dpAmount,
                     payment_type: paymentMethod,
-
                     people_count: peopleCount,
-
-                    addons: addons, // 🔥 SUMBER KEBENARAN
-
+                    addons: normalizedAddons,
                     coupon_id: $("#coupon_id").val() || null,
                     booking_date: bookingState.selectedDate,
                     booking_start_time: window.selectedStartTime + ':00',
                     booking_end_time: window.selectedEndTime + ':00',
-
-                    _token: csrfToken
+                    _token: csrfToken,
+                    service_price: window.selectedServicePrice
                 };
-
-                bookingData.service_price = window.selectedServicePrice;
-                bookingData.addons = Array.isArray(addons) ? addons : [];
-
 
                 if (typeof currentAuthUser !== 'undefined' && currentAuthUser) {
                     bookingData.user_id = currentAuthUser.id;
@@ -1665,12 +1658,9 @@
 
                 const nextBtn = $("#next-step");
                 nextBtn.prop('disabled', true).html(
-                    '<span class="spinner-border spinner-border-sm"></span> Memproses...'
-                );
+                    '<span class="spinner-border spinner-border-sm"></span> Memproses...');
 
-                // ===============================
-                // 1️⃣0️⃣ GRATIS
-                // ===============================
+                // 1️⃣0️⃣ Gratis / Kupon
                 if (totalAfterDiscount <= 0) {
                     bookingData.payment_method = 'Gratis / Kupon';
                     bookingData.payment_status = 'Paid';
@@ -1679,15 +1669,25 @@
                     return;
                 }
 
-                // ===============================
-                // 1️⃣1️⃣ MIDTRANS
-                // ===============================
+                // 1️⃣1️⃣ Midtrans
                 bookingData.payment_method = 'Midtrans';
                 bookingData.payment_status = paymentMethod === 'dp' ? 'DP' : 'Paid';
                 bookingData.status = 'Confirmed';
 
                 $.post('/midtrans/token', bookingData)
                     .done(res => {
+                        if (!res.token) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal membuat token Midtrans',
+                                text: 'Cek konfigurasi sandbox / production.',
+                                confirmButtonColor: '#dc2626',
+                                allowOutsideClick: false
+                            });
+                            nextBtn.prop('disabled', false).text('Konfirmasi & Bayar');
+                            return;
+                        }
+
                         snap.pay(res.token, {
                             onSuccess: r => {
                                 bookingData.payment_result = JSON.stringify(r);
@@ -1701,19 +1701,31 @@
                                 bookingData.payment_status = 'Pending';
                                 saveBooking(bookingData);
                             },
-                            onError: () => nextBtn.prop('disabled', false).text('Konfirmasi & Bayar'),
+                            onError: err => {
+                                console.error('Snap error:', err);
+                                nextBtn.prop('disabled', false).text('Konfirmasi & Bayar');
+                            },
                             onClose: () => nextBtn.prop('disabled', false).text('Konfirmasi & Bayar')
                         });
                     })
-                    .fail(() => {
+                    .fail(xhr => {
+                        console.error('Token request failed:', xhr.responseJSON || xhr);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal membuat token Midtrans',
+                            confirmButtonColor: '#dc2626',
+                            allowOutsideClick: false
+                        });
                         nextBtn.prop('disabled', false).text('Konfirmasi & Bayar');
                     });
             }
 
-            // 🎨 Pilih background
+            // Pilih background
             $(document).on('click', '.background-item', function() {
                 $('.background-item').removeClass('selected');
                 $(this).addClass('selected');
+
+                $('#background-card').removeClass('background-required');
 
                 bookingState.selectedBackground = {
                     id: $(this).data('id'),
@@ -1722,6 +1734,8 @@
 
                 console.log('🎨 Background dipilih:', bookingState.selectedBackground);
             });
+
+
 
 
         });
@@ -1762,26 +1776,33 @@
 
 
         // Addon management
-        function updateAddon(addonId, name, price, qtyChange, serviceId = null) {
-            if (serviceId && window.selectedServiceId !== serviceId) return;
-
+        function updateAddon(addonId, name, price, qtyChange, unit, maxQty = 1) {
             if (!window.selectedAddons[addonId]) {
+                if (qtyChange < 0) return;
+
                 window.selectedAddons[addonId] = {
                     id: addonId,
-                    name: name,
+                    name,
                     price: Number(price),
+                    unit,
+                    maxQty: Number(maxQty),
                     qty: 0
                 };
             }
 
-            window.selectedAddons[addonId].qty += qtyChange;
-            if (window.selectedAddons[addonId].qty <= 0) delete window.selectedAddons[addonId];
+            const addon = window.selectedAddons[addonId];
 
-            updatePeopleSummary();
-            updatePaymentSummary();
+            if (unit === 'minute') {
+                if (qtyChange > 0) {
+                    addon.qty = addon.maxQty; // langsung 5 menit
+                } else {
+                    delete window.selectedAddons[addonId];
+                }
+            } else {
+                addon.qty += qtyChange;
+                if (addon.qty <= 0) delete window.selectedAddons[addonId];
+            }
         }
-
-
 
 
         function formatRupiah(number) {
@@ -1796,26 +1817,44 @@
         const addonRowsEl = document.getElementById("addon-rows");
 
         function getAddonTotal() {
-            return Object.values(window.selectedAddons).reduce((sum, addon) => sum + addon.price * addon.qty, 0);
+            return Object.values(window.selectedAddons).reduce((sum, addon) => {
+
+                // ⏱️ Tambahan waktu → harga FLAT per paket
+                if (addon.unit === 'minute') {
+                    return sum + addon.price;
+                }
+
+                // 👥 / 📦 addon normal
+                return sum + (addon.price * addon.qty);
+
+            }, 0);
         }
 
-        function renderAddonRows() {
-            if (!addonRowsEl) return;
 
+
+        function renderAddonRows() {
             addonRowsEl.innerHTML = "";
 
             Object.values(window.selectedAddons).forEach(addon => {
-                const row = document.createElement("div");
-                row.className = "d-flex justify-content-between align-items-center mb-2 flex-wrap";
+                let total = 0;
+                let labelQty = addon.qty;
 
-                row.innerHTML = `
-            <span class="text-muted">${addon.name} × ${addon.qty}</span>
-            <span class="text-end">${formatRupiah(addon.price * addon.qty)}</span>
-        `;
+                if (addon.unit === 'minute') {
+                    total = addon.price; // harga per 5 menit
+                    labelQty = `${addon.qty} menit`;
+                } else {
+                    total = addon.price * addon.qty;
+                }
 
-                addonRowsEl.appendChild(row);
+                addonRowsEl.insertAdjacentHTML('beforeend', `
+            <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">${addon.name} × ${labelQty}</span>
+                <span>${formatRupiah(total)}</span>
+            </div>
+        `);
             });
         }
+
 
         document.addEventListener("click", function(e) {
             const btn = e.target.closest(".addon-increase, .addon-decrease");
@@ -1827,28 +1866,35 @@
             const addonId = card.dataset.addonId;
             const name = card.dataset.addonName;
             const price = Number(card.dataset.addonPrice);
+            const unit = card.dataset.addonUnit;
+            const max = Number(card.dataset.addonMax || 1);
 
             const qtyEl = card.querySelector(".addon-qty");
             const inputEl = card.querySelector(".addon-input");
 
-            let qty = Number(qtyEl.textContent || 0);
+            const change = btn.classList.contains("addon-increase") ? 1 : -1;
 
-            if (btn.classList.contains("addon-increase")) {
-                qty++;
-                updateAddon(addonId, name, price, 1, card.dataset.serviceId);
+            updateAddon(addonId, name, price, change, unit, max);
+
+            const addon = window.selectedAddons[addonId];
+
+            if (!addon) {
+                qtyEl.textContent = "0";
+                inputEl.value = 0;
             } else {
-                if (qty <= 0) return;
-                qty--;
-                updateAddon(addonId, name, price, -1, card.dataset.serviceId);
+                qtyEl.textContent =
+                    unit === "minute" ? addon.qty + " menit" : addon.qty;
+                inputEl.value = addon.qty;
             }
 
-            qtyEl.textContent = qty;
-            inputEl.value = qty;
-
-            // 🔥 Ganti updatePeopleCountDisplay dengan updatePeopleSummary
+            renderAddonRows();
             updatePeopleSummary();
             updatePaymentSummary();
         });
+
+
+
+
 
 
         function updatePaymentSummary(dynamicTotal = null) {

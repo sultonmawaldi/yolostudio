@@ -10,6 +10,7 @@ use App\Models\Setting;
 use App\Models\Appointment;
 use Spatie\OpeningHours\OpeningHours;
 use Carbon\Carbon;
+use App\Models\Pricelist;
 use App\Models\Addon;
 use Illuminate\Support\Number;
 use View;
@@ -136,8 +137,17 @@ class FrontendController extends Controller
         }
 
         try {
-            // Ambil pivot untuk service agar tahu slot_group_id
+            // Ambil pivot untuk service yang dipilih
             $pivot = $employee->services()->where('service_id', $serviceId)->first()?->pivot;
+
+            if (!$pivot) {
+                return response()->json([
+                    'employee_id' => $employee->id,
+                    'available_slots' => [],
+                    'message' => 'Employee not assigned to this service'
+                ]);
+            }
+
             $slotGroupId = $pivot->slot_group_id ?? null;
 
             if (!$slotGroupId) {
@@ -148,7 +158,6 @@ class FrontendController extends Controller
                 ]);
             }
 
-            // Ambil slot group
             $slotGroup = \App\Models\SlotGroup::find($slotGroupId);
             if (!$slotGroup) {
                 return response()->json([
@@ -158,23 +167,20 @@ class FrontendController extends Controller
                 ]);
             }
 
-            $slotDuration  = $slotGroup->slot_duration ?? 15;
-            $breakDuration = $slotGroup->break_duration ?? 0;
+            $slotDuration  = $pivot->duration ?? 15;
+            $breakDuration = $pivot->break_duration ?? 0;
 
-            // ---------------- Ambil working hours dari JSON
             $workingHours = $slotGroup->working_hours ?? [];
-            $dayOfWeek = strtolower($date->format('l')); // monday, tuesday, etc
+            $dayOfWeek = strtolower($date->format('l'));
             $intervals = $workingHours[$dayOfWeek] ?? [];
 
             if (empty($intervals)) {
-                // Hari libur
                 return response()->json([
                     'employee_id' => $employee->id,
                     'date' => $date->toDateString(),
                     'available_slots' => [],
-                    'slot_duration' => $slotDuration,
-                    'break_duration' => $breakDuration,
                     'slot_group_id' => $slotGroupId,
+                    'message' => 'Studio tutup hari ini'
                 ]);
             }
 
@@ -189,15 +195,12 @@ class FrontendController extends Controller
                 while ($current->copy()->addMinutes($slotDuration)->lte($endTime)) {
                     $slotEnd = $current->copy()->addMinutes($slotDuration);
 
-                    // Skip slot yang sudah lewat
-                    // Skip slot yang start-nya sudah lewat
-                    if ($isToday && $current->lte($now)) {
+                    if ($isToday && $slotEnd->lte($now)) {
                         $current->addMinutes($slotDuration + $breakDuration);
                         continue;
                     }
 
-
-                    // Cek bentrok dengan appointment di slot group yang sama
+                    // Cek bentrok appointment
                     $isBooked = Appointment::where('employee_id', $employee->id)
                         ->where('slot_group_id', $slotGroupId)
                         ->where('booking_date', $date->toDateString())
@@ -208,10 +211,13 @@ class FrontendController extends Controller
                         })
                         ->exists();
 
+
                     $slots[] = [
+                        'service_id' => $serviceId,
+                        'service_name' => $pivot->service->name ?? 'Service',
                         'start' => $current->format('H:i'),
                         'end' => $slotEnd->format('H:i'),
-                        'display' => $current->format('H:i') . ' - ' . $slotEnd->format('H:i'),
+                        'display' => $current->format('g:i A') . ' - ' . $slotEnd->format('g:i A'),
                         'slot_duration' => $slotDuration,
                         'break_duration' => $breakDuration,
                         'is_booked' => $isBooked,
@@ -225,14 +231,13 @@ class FrontendController extends Controller
                 'employee_id' => $employee->id,
                 'date' => $date->toDateString(),
                 'available_slots' => $slots,
-                'slot_duration' => $slotDuration,
-                'break_duration' => $breakDuration,
                 'slot_group_id' => $slotGroupId,
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error processing availability: ' . $e->getMessage()], 500);
         }
     }
+
 
 
 
@@ -388,5 +393,32 @@ class FrontendController extends Controller
             'available_slots' => $slots,
             'slot_group_id' => $slotGroupId,
         ]);
+    }
+
+
+
+    public function pricelist()
+    {
+        $categories = Category::where('status', 1)->get();
+
+        $services = Service::where('status', 1)
+            ->with([
+                'category',
+                'pricelists' => function ($q) {
+                    $q->active()->ordered();
+                },
+                'backgrounds' => function ($q) {
+                    $q->where('is_active', 1)->orderBy('sort_order');
+                }
+            ])
+            ->get();
+
+        $addons = Addon::where('is_active', 1)->get();
+
+        return view('frontend.pricelist', compact(
+            'categories',
+            'services',
+            'addons'
+        ));
     }
 }

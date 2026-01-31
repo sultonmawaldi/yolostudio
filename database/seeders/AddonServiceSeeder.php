@@ -2,25 +2,51 @@
 
 namespace Database\Seeders;
 
-use App\Models\Service;
-use App\Models\Addon;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class AddonServiceSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
-        $service = Service::where('title', 'Personal Self Photo Studio')->first();
+        $now = Carbon::now();
 
-        if (!$service) {
-            $this->command->warn('Service "Personal Self Photo Studio" not found');
-            return;
+        $serviceId = 4; // service yang mau di-seed
+
+        // Hapus data lama supaya bersih
+        DB::table('addon_service')->where('service_id', $serviceId)->delete();
+
+        // Ambil semua addon yang aktif
+        $addonIds = DB::table('addons')
+            ->where('is_active', 1)
+            ->pluck('id')
+            ->toArray();
+
+        $data = [];
+
+        // Masukkan addon_id = 11 dulu supaya muncul paling awal
+        if (($key = array_search(11, $addonIds)) !== false) {
+            $data[] = [
+                'service_id' => $serviceId,
+                'addon_id'   => 11,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+            unset($addonIds[$key]); // hapus dari array agar tidak duplikat
         }
 
-        $addonIds = Addon::where('is_active', 1)->pluck('id');
+        // Masukkan sisanya
+        foreach ($addonIds as $addonId) {
+            $data[] = [
+                'service_id' => $serviceId,
+                'addon_id'   => $addonId,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+        }
 
-        $service->addons()->syncWithoutDetaching($addonIds);
-
-        $this->command->info('Addon successfully attached to service Photobox');
+        // Insert ke database
+        DB::table('addon_service')->insert($data);
     }
 }
