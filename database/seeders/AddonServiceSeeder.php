@@ -12,7 +12,7 @@ class AddonServiceSeeder extends Seeder
     {
         $now = Carbon::now();
 
-        $serviceId = 4; // service yang mau di-seed
+        $serviceId = 7; // service yang mau di-seed
 
         // Hapus data lama supaya bersih
         DB::table('addon_service')->where('service_id', $serviceId)->delete();

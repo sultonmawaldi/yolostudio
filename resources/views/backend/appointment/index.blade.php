@@ -1,22 +1,26 @@
 @extends('adminlte::page')
 
-@section('title', 'All Appointments')
+@section('title', 'Daftar Janji Temu')
 
 @section('content_header')
-    <div class="row mb-2">
-        <div class="col-sm-6">
-            <h1>Daftar Janji Temu</h1>
-        </div>
+
+    <div class="page-title-wrapper text-center mb-4">
+        <h1 class="page-title">
+            <i class="fa fa-list-ul me-2"></i>
+            Daftar Janji Temu
+        </h1>
+        <div class="title-divider"></div>
     </div>
+
 @stop
 
+
 @section('content')
-    <!-- Modal -->
+    <!-- Modal Detail Janji Temu -->
     <form id="appointmentStatusForm" method="POST" action="{{ route('appointments.update.status') }}">
         @csrf
         <input type="hidden" name="appointment_id" id="modalAppointmentId">
 
-        <!-- ========== MODAL DETAIL JANJI TEMU (PREMIUM STYLE) ========== -->
         <div class="modal fade" id="appointmentModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
@@ -26,76 +30,116 @@
                         <h5 class="modal-title">
                             <i class="fas fa-calendar-check me-2"></i> Detail Janji Temu
                         </h5>
-                        <button type="button" class="btn-close btn-close-white" data-dismiss="modal"
-                            aria-label="Tutup"></button>
+                        <button type="button" class="btn-close btn-close-white" data-dismiss="modal"></button>
                     </div>
 
                     <!-- Body -->
                     <div class="modal-body">
+
+                        <!-- Booking ID -->
                         <div class="text-center mb-3">
-                            <span class="badge bg-light text-dark shadow-sm px-3 py-2" id="modalBookingId">ID Pemesanan:
-                                N/A</span>
+                            <span class="booking-id" id="modalBookingId">ID Pemesanan : -</span>
                         </div>
 
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <p><strong>Klien :</strong><br><span id="modalAppointmentName">N/A</span></p>
-                                <p><strong>Layanan :</strong><br><span id="modalService">N/A</span></p>
-                                <p><strong>Email :</strong><br><span id="modalEmail">N/A</span></p>
-                                <p><strong>Telepon :</strong><br><span id="modalPhone">N/A</span></p>
-                                <p><strong>Jumlah Orang :</strong><br><span id="modalPeopleCount">N/A</span></p>
+                        <!-- Informasi Utama -->
+                        <div class="detail-section">
+                            <div class="detail-row"><span>Klien</span><strong id="modalAppointmentName">-</strong></div>
+                            <div class="detail-row"><span>Email</span><strong id="modalEmail">-</strong></div>
+                            <div class="detail-row"><span>Telepon</span><strong id="modalPhone">-</strong></div>
+                            <div class="detail-row"><span>Crew</span><strong id="modalCrew">-</strong></div>
+                            <div class="detail-row"><span>Layanan</span><strong id="modalService">-</strong></div>
+                            <div class="detail-row" id="backgroundRow" style="display:none;">
+                                <span>Background</span><strong id="modalBackground">-</strong>
                             </div>
-                            <div class="col-md-6">
-                                <p><strong>Staf :</strong><br><span id="modalStaff">N/A</span></p>
-                                <p><strong>Tanggal :</strong><br><span id="modalDate">N/A</span></p>
-                                <p><strong>Waktu Mulai :</strong><br><span id="modalStartTime">N/A</span></p>
-                                <p><strong>Waktu Selesai :</strong><br><span id="modalEndTime">N/A</span></p>
-                                <p><strong>Total Biaya :</strong><br><span id="modalAmount">N/A</span></p>
+                            <div class="detail-row"><span>Jumlah Orang</span><strong id="modalPeopleCount">-</strong></div>
+                            <div class="detail-row"><span>Tanggal</span><strong id="modalDate">-</strong></div>
+                            <div class="detail-row">
+                                <span>Waktu</span>
+                                <strong><span id="modalStartTime">-</span> - <span id="modalEndTime">-</span></strong>
+                            </div>
+                            <div class="detail-row"><span>Harga Layanan</span><strong id="modalServicePrice">-</strong>
                             </div>
                         </div>
 
-                        <div class="mt-3">
-                            <p><strong>Catatan :</strong></p>
-                            <div id="modalNotes" class="p-2 bg-white border">N/A</div>
-                        </div>
-
-                        <hr class="my-3">
-
-                        <div>
-                            <p><strong>Layanan Tambahan:</strong></p>
-                            <div id="modalAddons" class="bg-white border rounded p-2">
+                        <!-- Addons -->
+                        <div class="mt-4">
+                            <label class="section-title">Layanan Tambahan</label>
+                            <div id="modalAddons" class="addons-box">
                                 <em class="text-muted">Tidak ada add on</em>
                             </div>
                         </div>
 
-                        <div class="text-center mb-3">
-                            <label class="fw-semibold d-block mb-1">Status Saat Ini :</label>
-                            <span id="modalStatusBadge" class="badge bg-secondary px-3 py-2">N/A</span>
+                        <div class="detail-row total-row">
+                            <span>Total Biaya</span>
+                            <strong id="modalAmount">-</strong>
                         </div>
 
-                        <div class="form-group">
-                            <label for="modalStatusSelect" class="fw-semibold mb-1">Ubah Status :</label>
-                            <select name="status" class="form-select" id="modalStatusSelect">
-                                <option value="Pending">Menunggu</option>
-                                <option value="Processing">Diproses</option>
-                                <option value="Confirmed">Dikonfirmasi</option>
-                                <option value="Cancelled">Dibatalkan</option>
-                                <option value="Completed">Selesai</option>
-                                <option value="On Hold">Ditunda</option>
-                                <option value="Rescheduled">Dijadwalkan Ulang</option>
-                                <option value="No Show">Tidak Hadir</option>
-                            </select>
+                        <!-- Pembayaran -->
+                        <div id="paymentSection" style="display:none;">
+
+                            <div class="detail-row total-row">
+                                <span id="paymentLabel">DP Dibayar</span>
+                                <strong id="modalDpAmount" class="text-success">-</strong>
+                            </div>
+
+                            <div class="detail-row total-row" id="remainingRow">
+                                <span>Sisa Pembayaran</span>
+                                <strong id="modalRemaining" class="text-danger">-</strong>
+                            </div>
+
                         </div>
+
+                        <!-- Catatan -->
+                        <div class="mt-4">
+                            <label class="section-title">Catatan</label>
+                            <div id="modalNotes" class="notes-box">-</div>
+                        </div>
+
+                        <!-- Status -->
+                        <!-- JUDUL DI LUAR BOX -->
+                        <label class="section-title mt-4">Status Saat Ini</label>
+
+                        <div class="status-section">
+
+                            <!-- BOX STATUS -->
+                            <div id="modalStatusBadge" class="current-status-box">
+                                <!-- Badge muncul di sini -->
+                            </div>
+
+                            <div class="divider-status"></div>
+
+                            <!-- UBAH STATUS -->
+                            <label class="change-status-label">Ubah Status</label>
+                            <select name="status" id="modalStatusSelect">
+                                <option value="Pending">Pending</option>
+                                <option value="Processing">Processing</option>
+                                <option value="Confirmed">Confirmed</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Cancelled">Cancelled</option>
+                                <option value="Rescheduled">Rescheduled</option>
+                            </select>
+
+                        </div>
+
                     </div>
 
                     <!-- Footer -->
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-dismiss="modal">
-                            <i class="fas fa-times me-1"></i> Tutup
+                    <div class="modal-footer custom-footer">
+
+                        <button type="button" class="btn btn-outline-secondary rounded-pill" data-dismiss="modal">
+                            Tutup
                         </button>
-                        <button type="submit" class="btn btn-gradient-success">
-                            <i class="fas fa-sync-alt me-1"></i> Perbarui Status
+
+                        <button type="button" id="btnReschedule" class="btn btn-warning rounded-pill">
+                            <i class="fas fa-calendar-alt me-1"></i>
+                            Jadwal Ulang
                         </button>
+
+                        <button type="submit" class="btn btn-gradient-success rounded-pill">
+                            <i class="fas fa-save me-1"></i>
+                            Simpan Perubahan
+                        </button>
+
                     </div>
 
                 </div>
@@ -103,76 +147,204 @@
         </div>
     </form>
 
-    @if (session('success'))
-        <div class="alert alert-success alert-dismissable">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            <strong>{{ session('success') }}</strong>
+
+
+    {{-- ================= MODAL RESCHEDULE ================= --}}
+    <div class="modal fade" id="rescheduleModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content rounded-2xl">
+
+                <div class="modal-header">
+                    <h5 class="modal-title d-flex align-items-center">
+                        <i class="fas fa-calendar-alt mr-2"></i>
+                        <span class="fw-semibold">Reschedule Booking</span>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body space-y-4">
+                    @csrf
+                    <input type="hidden" id="reschedule-appointment-id">
+
+                    <!-- Kalender -->
+                    <div class="card mb-3 shadow-sm border-0 rounded-4 modern-card">
+                        <div class="card-header bg-light calendar-header-grid rounded-top-4">
+
+                            <button class="btn btn-sm btn-light border-0 shadow-sm" id="res-prev-month">
+                                <i class="bi bi-arrow-left-circle-fill modern-arrow"></i>
+                            </button>
+
+                            <h5 class="mb-0 fw-semibold text-dark text-center" id="res-current-month"></h5>
+
+                            <button class="btn btn-sm btn-light border-0 shadow-sm" id="res-next-month">
+                                <i class="bi bi-arrow-right-circle-fill modern-arrow"></i>
+                            </button>
+
+                        </div>
+                        <div class="card-body p-0">
+                            <table class="table table-calendar text-center align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Sen</th>
+                                        <th>Sel</th>
+                                        <th>Rab</th>
+                                        <th>Kam</th>
+                                        <th>Jum</th>
+                                        <th>Sab</th>
+                                        <th>Min</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reschedule-calendar-body">
+                                    <!-- Kalender akan digenerate JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Slot Waktu -->
+                    <div class="card shadow-sm border-0 rounded-3 modern-card">
+                        <div class="card-header text-center py-3 rounded-top-3">
+                            <h5 class="mb-1 fw-semibold bi bi-check2-square">Slot Waktu Tersedia</h5>
+                            <div id="res-selected-date-display" class="text-muted small">
+                                Pilih tanggal untuk melihat slot
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="reschedule-time-slots" class="d-flex flex-wrap justify-content-center gap-2">
+                                <span class="text-muted w-100 text-center py-3">Pilih tanggal terlebih dahulu</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Legend -->
+                    <div class="mt-3 text-center small">
+                        <span class="badge bg-primary">Tersedia</span>
+                        <span class="badge bg-warning text-dark">Slot Saat Ini</span>
+                        <span class="badge bg-secondary">Sudah Dibooking</span>
+                    </div>
+                </div>
+
+
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button class="btn btn-primary" id="reschedule-submit-btn">Simpan Perubahan</button>
+                </div>
+
+            </div>
         </div>
-    @endif
+    </div>
+
 
     <section class="content">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <div class="card py-2 px-3">
+                    <div class="card">
 
                         <!-- ================= FILTER BAR ================= -->
-                        <div class="row mb-3">
-                            <!-- Staff Filter -->
-                            <div class="col-md-4 mb-2">
-                                <label><strong>Staf : </strong></label>
-                                <select id="filterStaff" class="form-control filter-select">
-                                    <option value="">Semua Staf</option>
-                                    @foreach ($appointments->pluck('employee.user.name')->unique() as $staff)
-                                        <option value="{{ $staff }}">{{ $staff }}</option>
-                                    @endforeach
-                                </select>
+                        <div class="filter-wrapper mb-1">
+
+                            <!-- Row 1 : Crew & Layanan -->
+                            <div class="row align-items-end g-3">
+
+                                <!-- Crew -->
+                                <div class="col-md-4 mb-3">
+                                    <label class="filter-label">
+                                        <i class="fas fa-users me-2"></i>
+                                        Pilih Crew
+                                    </label>
+
+                                    <select id="filterCrew" class="form-control filter-select mt-2">
+                                        @if (auth()->user()->hasRole('admin') || auth()->user()->hasRole('moderator'))
+                                            <option value="">Semua Crew</option>
+                                            @foreach ($employees as $employee)
+                                                <option value="{{ $employee->id }}">
+                                                    {{ $employee->user->name ?? '-' }}
+                                                </option>
+                                            @endforeach
+                                        @elseif(auth()->user()->hasRole('employee'))
+                                            <option value="{{ auth()->user()->employee->id }}" selected>
+                                                {{ auth()->user()->name }}
+                                            </option>
+                                        @endif
+                                    </select>
+                                </div>
+                                <!-- Layanan -->
+                                <div class="col-md-4 mb-3">
+                                    <label class="filter-label">
+                                        <i class="fas fa-briefcase me-2"></i>
+                                        Pilih Layanan
+                                    </label>
+
+                                    <select id="filterService" class="form-control filter-select mt-2">
+                                        <option value="">Semua Layanan</option>
+                                        @foreach ($services as $service)
+                                            <option value="{{ $service->id }}">
+                                                {{ $service->title }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
                             </div>
 
-                            <!-- Service Filter -->
-                            <div class="col-md-4 mb-2">
-                                <label><strong>Layanan : </strong></label>
-                                <select id="filterService" class="form-control filter-select">
-                                    <option value="">Semua Layanan</option>
-                                    @foreach ($appointments->pluck('service.title')->unique() as $service)
-                                        <option value="{{ $service }}">{{ $service }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
 
-                            <!-- Date Filter -->
-                            <div class="col-md-4 mb-2">
-                                <label><strong>Tanggal : </strong></label>
-                                <div class="d-flex flex-wrap gap-2 mb-2 date-filter-wrapper">
-                                    <button type="button" class="btn date-filter-btn active" data-value="">
+                            <!-- Tanggal Section -->
+                            <div class="mt-4 mb-0">
+
+                                <div class="date-title mb-3">
+                                    <i class="fas fa-calendar-alt me-2"></i>
+                                    Filter Jadwal
+                                </div>
+
+                                <div class="d-flex flex-wrap gap-3">
+
+                                    <button type="button"
+                                        class="btn btn-outline-primary btn-sm uniform-btn date-filter-btn active"
+                                        data-value="">
                                         Semua
                                     </button>
-                                    <button type="button" class="btn date-filter-btn" data-value="upcoming">
+
+                                    <button type="button"
+                                        class="btn btn-outline-primary btn-sm uniform-btn date-filter-btn"
+                                        data-value="upcoming">
                                         Akan Datang
                                     </button>
-                                    <button type="button" class="btn date-filter-btn" data-value="past">
+
+                                    <button type="button"
+                                        class="btn btn-outline-primary btn-sm uniform-btn date-filter-btn"
+                                        data-value="past">
                                         Sudah Lewat
                                     </button>
-                                    <button type="button" class="btn date-filter-btn" data-value="range">
+
+                                    <button type="button"
+                                        class="btn btn-outline-primary btn-sm uniform-btn date-filter-btn"
+                                        data-value="range">
                                         Rentang Tanggal
                                     </button>
+
                                 </div>
-                                <input type="text" id="dateRangePicker" class="form-control d-none"
-                                    placeholder="Pilih rentang tanggal...">
+
+                                <div class="mt-3">
+                                    <input type="text" id="dateRangePicker"
+                                        class="form-control form-control-sm d-none date-range-input"
+                                        placeholder="Pilih rentang tanggal...">
+                                </div>
+
                             </div>
+
                         </div>
                         <!-- ================= END FILTER BAR ================= -->
 
+
                         <div class="card-body p-0">
-                            <table id="myTable" class="table table-striped projects">
+                            <table id="myTable" class="table">
                                 <thead class="bg-light">
                                     <tr>
                                         <th>#</th>
                                         <th>Klien</th>
                                         <th>Layanan</th>
-                                        <th>Staf</th>
+                                        <th>Crew</th>
                                         <th>Tanggal</th>
                                         <th>Waktu</th>
                                         <th class="text-center">Status</th>
@@ -187,9 +359,7 @@
                                             'Confirmed' => '#2ecc71',
                                             'Cancelled' => '#ff0000',
                                             'Completed' => '#008000',
-                                            'On Hold' => '#95a5a6',
                                             'Rescheduled' => '#f1c40f',
-                                            'No Show' => '#e67e22',
                                         ];
 
                                         $appointments = $appointments->sortBy([
@@ -199,21 +369,20 @@
                                     @endphp
 
                                     @foreach ($appointments as $appointment)
-                                        <tr>
+                                        <tr data-service-id="{{ $appointment->service->id }}"
+                                            data-employee-id="{{ $appointment->employee_id }}">
                                             <td data-label="#"> {{ $loop->iteration }} </td>
                                             <td data-label="Klien">
                                                 <div class="font-weight-semibold text-dark">{{ $appointment->name }}</div>
                                             </td>
                                             <td data-label="Layanan">{{ $appointment->service->title ?? 'N/A' }}</td>
-                                            <td data-label="Staf">{{ $appointment->employee->user->name }}</td>
+                                            <td data-label="Crew">{{ $appointment->employee->user->name }}</td>
                                             <td data-label="Tanggal" data-date="{{ $appointment->booking_date }}"
                                                 data-order="{{ $appointment->booking_date }}">
                                                 {{ \Carbon\Carbon::parse($appointment->booking_date)->translatedFormat('l, d M Y') }}
                                             </td>
                                             <td data-label="Waktu">
                                                 {{ \Carbon\Carbon::createFromFormat('H:i:s', $appointment->booking_start_time)->format('H:i') }}
-                                                -
-                                                {{ \Carbon\Carbon::createFromFormat('H:i:s', $appointment->booking_end_time)->format('H:i') }}
                                                 WIB
                                             </td>
                                             <td data-label="Status" class="text-center">
@@ -234,14 +403,24 @@
                                                     data-booking="{{ $appointment->booking_id }}"
                                                     data-name="{{ $appointment->name }}"
                                                     data-service="{{ $appointment->service->title ?? 'N/A' }}"
+                                                    data-service_price="{{ $appointment->service->price ?? 0 }}"
+                                                    data-background="{{ optional($appointment->background)->name }}"
                                                     data-email="{{ $appointment->email }}"
                                                     data-phone="{{ $appointment->phone }}"
                                                     data-people="{{ $appointment->people_count ?? '-' }}"
                                                     data-employee="{{ $appointment->employee->user->name }}"
-                                                    data-date="{{ $appointment->booking_date }}"
-                                                    data-start_time="{{ $appointment->booking_start_time }}"
-                                                    data-end_time="{{ $appointment->booking_end_time }}"
-                                                    data-amount="{{ $appointment->amount }}"
+                                                    data-date="{{ \Carbon\Carbon::parse($appointment->booking_date)->locale('id')->translatedFormat('l, d M Y') }}"
+                                                    data-start_time="{{ \Carbon\Carbon::createFromFormat('H:i:s', $appointment->booking_start_time)->format('H:i') }}"
+                                                    data-end_time="{{ \Carbon\Carbon::createFromFormat('H:i:s', $appointment->booking_end_time)->format('H:i') }} WIB"
+                                                    data-amount="{{ $appointment->transaction->total_amount ?? 0 }}"
+                                                    data-dp="{{ $appointment->transaction->amount ?? 0 }}"
+                                                    data-payment_type="{{ $appointment->transaction
+                                                        ? ($appointment->transaction->amount == 0
+                                                            ? 'unpaid'
+                                                            : ($appointment->transaction->amount < $appointment->transaction->total_amount
+                                                                ? 'dp'
+                                                                : 'full'))
+                                                        : 'unpaid' }}"
                                                     data-notes="{{ $appointment->notes }}"
                                                     data-status="{{ $appointment->status }}"
                                                     data-addons='@json($appointment->addonData)'>
@@ -266,15 +445,9 @@
 @section('css')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
-        /* ======== Kartu Utama ======== */
-        .card {
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-        }
-
         /* ======== Filter Seragam ======== */
         #filterDate,
-        #filterStaff,
+        #filterCrew,
         #filterService,
         #dateRangePicker,
         .filter-select {
@@ -289,7 +462,7 @@
         }
 
         #filterDate:focus,
-        #filterStaff:focus,
+        #filterCrew:focus,
         #filterService:focus,
         #dateRangePicker:focus {
             box-shadow: 0 0 0 0.25rem rgba(108, 117, 125, 0.3);
@@ -298,43 +471,11 @@
         }
 
         #filterDate:hover,
-        #filterStaff:hover,
+        #filterCrew:hover,
         #filterService:hover,
         #dateRangePicker:hover {
             background-color: #fff;
             border-color: #6abfe3;
-        }
-
-        /* ======== Tombol Filter (Hari Ini, Besok, dst) ======== */
-        .date-filter-wrapper {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            justify-content: center;
-        }
-
-        .date-filter-btn {
-            border-radius: 50px;
-            padding: 0.45rem 1rem;
-            font-size: 0.85rem;
-            border: 1px solid #6abfe3;
-            color: #6abfe3;
-            background-color: #fff;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s;
-        }
-
-        .date-filter-btn:hover {
-            background-color: #6abfe3;
-            color: #fff;
-            border-color: #6abfe3;
-        }
-
-        .date-filter-btn.active {
-            background: linear-gradient(90deg, #6abfe3, #7873f5);
-            color: #fff;
-            border-color: #6abfe3;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
         }
 
         /* ======== Tabel Versi Desktop ======== */
@@ -353,7 +494,7 @@
 
         #myTable thead th {
             color: #fff;
-            font-weight: 700;
+            font-size: 13px;
             text-transform: uppercase;
             padding: 14px 12px;
             letter-spacing: 0.5px;
@@ -367,11 +508,10 @@
 
         /* Isi Tabel */
         #myTable td {
-            vertical-align: middle;
-            text-align: center;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            padding: 10px 12px;
+            font-size: 14px;
+            padding: 12px;
         }
+
 
         #myTable tbody tr:hover {
             background-color: #f7faff;
@@ -493,49 +633,7 @@
             padding: 0.8rem 1.2rem;
         }
 
-        /* ===== Info Grid ===== */
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px 16px;
-        }
 
-        .info-grid div {
-            display: grid;
-            grid-template-columns: 120px auto;
-            align-items: center;
-            background: #fff;
-            border-radius: 10px;
-            padding: 6px 10px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        }
-
-        .info-grid span:first-child {
-            font-weight: 600;
-            color: #555;
-            position: relative;
-        }
-
-        .info-grid span:first-child::after {
-            content: " :";
-            position: absolute;
-            right: 4px;
-        }
-
-        .info-grid span:last-child {
-            color: #222;
-            padding-left: 5px;
-            text-align: left;
-            overflow-wrap: break-word;
-        }
-
-        /* Waktu mulai & selesai sejajar horizontal */
-        .time-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            grid-column: span 2;
-        }
 
         /* Catatan */
         #modalNotes {
@@ -577,42 +675,662 @@
             }
         }
 
-        #myTable_filter {
-            width: 100%;
-            /* pastikan mengambil full row */
-            display: flex;
-            justify-content: center;
+        .filter-label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #444;
+            letter-spacing: 0.3px;
         }
 
-        #myTable_filter input {
-            margin: 0;
-            /* hilangkan margin default */
+        /* Judul lebih halus */
+        .date-title {
+            font-weight: 600;
+            font-size: 15px;
+            color: #333;
+            letter-spacing: 0.3px;
+        }
+
+
+        /* Tombol filter jadwal lebih kecil */
+        /* Desktop & default */
+        .date-filter-btn,
+        .uniform-btn {
+            flex: 1 1 120px;
+            /* semua tombol punya lebar minimal sama */
+            max-width: 150px;
+            /* batas maksimal */
+            font-size: 0.85rem;
+            padding: 0.35rem 1rem;
+            text-align: center;
+            border-radius: 50px;
+            border: 1px solid #6abfe3;
+            background-color: #fff;
+            color: #6abfe3;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        /* Tombol aktif */
+        .date-filter-btn.active {
+            background: linear-gradient(90deg, #6abfe3, #7873f5);
+            color: #fff;
+            border-color: #6abfe3;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Hover */
+        .date-filter-btn:hover,
+        .uniform-btn:hover {
+            background-color: #6abfe3;
+            color: #fff;
+            border-color: #6abfe3;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+
+            .date-filter-btn,
+            .uniform-btn {
+                flex: 1 1 45%;
+                /* dua tombol per baris, sama panjang */
+                max-width: none;
+                /* hilangkan batas max-width */
+                font-size: 0.8rem;
+                padding: 0.3rem 0.5rem;
+            }
+        }
+
+        .page-title-wrapper {
+            margin-top: 10px;
+        }
+
+        .page-title {
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: #2c3e50;
+            letter-spacing: 0.4px;
+        }
+
+        .page-title i {
+            color: #007bff;
+        }
+
+        .title-divider {
+            width: 70px;
+            height: 4px;
+            margin: 12px auto 0;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #007bff, #00c4ff);
+        }
+
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 1.4rem;
+            }
+
+            .title-divider {
+                width: 50px;
+                height: 3px;
+            }
+        }
+
+        .card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+            padding: 20px 20px 10px 20px;
+        }
+
+        .date-range-input {
+            width: 320px;
+            max-width: 100%;
+            border-radius: 50px;
+        }
+
+        /* ===== Booking ID ===== */
+        .booking-id {
+            background: linear-gradient(90deg, #007bff, #00b4d8);
+            color: #fff;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+
+        /* ===============================
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               DETAIL MODAL FINAL CLEAN
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ================================= */
+
+        .detail-section {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 18px 22px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .detail-row {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px 0;
+            border-bottom: 1px dashed #e5e7eb;
+            gap: 12px;
+            /* Jarak antar kolom */
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        /* LABEL */
+        .detail-row>span:first-child {
+            width: 180px;
+            font-weight: 500;
+            /* Tidak terlalu tebal */
+            color: #6b7280;
+            position: relative;
+            padding-right: 14px;
+            /* Ruang sebelum titik dua */
+        }
+
+        /* TITIK DUA */
+        .detail-row>span:first-child::after {
+            content: ":";
+            position: absolute;
+            right: 4px;
+            /* Tidak terlalu mepet */
+            color: #9ca3af;
+            font-weight: 400;
+        }
+
+        /* VALUE */
+        .detail-row strong {
+            flex: 1;
+            font-weight: 400;
+            color: #111827;
+            line-height: 1.6;
+            white-space: normal !important;
+            word-break: break-word !important;
+        }
+
+        /* TOTAL ROW STYLE */
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            /* Pastikan kiri & kanan */
+            align-items: center;
+            background: #f9fafb;
+            margin-top: 18px;
+            padding: 16px 18px;
+            border-top: 2px solid #e5e7eb;
+            border-radius: 10px;
+        }
+
+        /* Label Total */
+        .total-row span {
+            font-size: 15px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        /* Nominal Total */
+        .total-row strong {
+            font-size: 20px;
+            font-weight: 500;
+            color: #000000;
+            /* Hijau elegan */
+            text-align: right;
+        }
+
+        /* Notes & Addons */
+        .notes-box,
+        .addons-box {
+            background: #f8fafc;
+            border-radius: 14px;
+            padding: 14px 16px;
+            border: 1px solid #e5e7eb;
+            font-size: 14px;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 12px;
+            position: relative;
+            padding-left: 12px;
+            letter-spacing: 0.3px;
+        }
+
+        .section-title::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 3px;
+            width: 4px;
+            height: 18px;
+            border-radius: 4px;
+            background: linear-gradient(135deg, #007bff, #00b4d8);
+        }
+
+        /* ================= NO LAYOUT SHIFT ================= */
+        html {
+            overflow-y: scroll;
+        }
+
+        body {
+            padding-right: 0 !important;
+        }
+
+        body.modal-open {
+            overflow: hidden !important;
+            padding-right: 0 !important;
+        }
+
+        .modal-dialog {
+            max-height: 90vh;
+            margin: 1.5rem auto;
+        }
+
+        .modal-content {
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            /* biar footer tidak ikut scroll */
+        }
+
+        /* ================= MODAL BODY ================= */
+        .modal-body {
+            overflow-y: auto;
+            padding: 1rem 1.5rem;
+            flex: 1 1 auto;
+            /* agar modal-body fleksibel scrollable */
+        }
+
+        /* ================= MODAL FOOTER ================= */
+        .modal-footer {
+            position: sticky;
+            bottom: 0;
+            background-color: #fff;
+            z-index: 10;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-top: 1px solid #dee2e6;
+        }
+
+        /* ================= SLOT WAKTU STYLE ================= */
+        #reschedule-time-slots {
+            max-height: 250px;
+            overflow-y: auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        /* SLOT BASE */
+        #reschedule-time-slots .time-slot {
+            min-width: 95px;
+            text-align: center;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            background-color: #ffffff;
+            font-size: 0.9rem;
+            font-weight: 500;
+            position: relative;
+
+            /* IMPORTANT: jangan pakai transition all */
+            transition: background-color 0.2s ease,
+                color 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        /* HOVER */
+        #reschedule-time-slots .time-slot:hover:not(.disabled):not(.selected) {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+            color: #2563eb;
+        }
+
+        /* SELECTED (TIDAK UBAH SIZE SAMA SEKALI) */
+        #reschedule-time-slots .time-slot.selected {
+            background-color: #0d6efd !important;
+            color: #fff !important;
+            border-color: #0d6efd !important;
+
+            /* pakai inner shadow supaya tidak geser */
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3),
+                0 4px 10px rgba(13, 110, 253, 0.25);
+        }
+
+        /* OLD SLOT (KUNING) */
+        #reschedule-time-slots .time-slot.btn-warning {
+            background-color: #fef3c7 !important;
+            color: #92400e !important;
+            border-color: #facc15 !important;
+            cursor: not-allowed;
+        }
+
+        /* ICON JAM */
+        #reschedule-time-slots .time-slot.btn-warning::after {
+            content: "\f017";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            top: 4px;
+            right: 6px;
+            font-size: 10px;
+            opacity: 0.8;
+        }
+
+        /* DISABLED */
+        #reschedule-time-slots .time-slot.disabled {
+            background-color: #f3f4f6;
+            color: #9ca3af;
+            cursor: not-allowed;
+            border-color: #e5e7eb;
+        }
+
+        /* SCROLLBAR CLEAN */
+        #reschedule-time-slots::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #reschedule-time-slots::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 6px;
+        }
+
+        /* ================= MODERN CARD STYLE ================= */
+        .modern-card {
+            background-color: #fff;
+            border-radius: 1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .modern-arrow {
+            font-size: 1.2rem;
+            color: #3b82f6;
+            transition: transform 0.2s;
+        }
+
+        .modern-arrow:hover {
+            transform: scale(1.1);
+        }
+
+        /* Kalender table */
+        .table-calendar th,
+        .table-calendar td {
+            padding: 0.75rem;
+            vertical-align: middle;
+        }
+
+        .table-calendar td {
+            cursor: pointer;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .table-calendar td.available:hover {
+            background-color: #3b82f6;
+            color: #fff;
+        }
+
+        .table-calendar td.selected {
+            background-color: #e0f2ff;
+            font-weight: 600;
+        }
+
+        .table-calendar td.disabled {
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .calendar-header-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+        }
+
+        .calendar-header-grid h5 {
+            justify-self: center;
+        }
+
+        .calendar-header-grid button:first-child {
+            justify-self: start;
+        }
+
+        .calendar-header-grid button:last-child {
+            justify-self: end;
+        }
+
+        .table-calendar thead th {
+            font-weight: 400 !important;
+            font-size: 13px;
+            letter-spacing: 0.3px;
+            color: #000;
+        }
+
+        /* ================= FORCE FULL WIDTH FIX ================= */
+
+        .table-calendar {
+            width: 100% !important;
+            table-layout: fixed !important;
+            border-collapse: collapse !important;
+            border-spacing: 0 !important;
+        }
+
+        /* Reset semua padding horizontal */
+        .table-calendar th,
+        .table-calendar td {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+
+        /* Bagi rata 7 kolom */
+        .table-calendar td,
+        .table-calendar th {
+            width: calc(100% / 7);
+        }
+
+        /* Tinggi cell tetap elegan */
+        .table-calendar td {
+            height: 48px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        /* Pastikan parent tidak kasih ruang */
+        .table-calendar {
+            margin: 0 !important;
+        }
+
+        /* Wrapper spacing */
+        .mt-4 {
+            margin-top: 22px !important;
+        }
+
+        /* Label kecil */
+        .small.fw-semibold {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        /* ================= SECTION TITLE (SAMA SEPERTI CATATAN) ================= */
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #374151;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        /* ================= WRAPPER BOX ================= */
+        .status-section {
+            background: #f9fafb;
+            padding: 18px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+        }
+
+        /* ================= CURRENT STATUS BOX ================= */
+        .current-status-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 44px;
+            padding: 10px 16px;
+            background: #ffffff;
+            border: 1px dashed #d1d5db;
+            border-radius: 10px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        /* ================= DIVIDER ================= */
+        .divider-status {
+            height: 1px;
+            background: #e5e7eb;
+            margin: 16px 0;
+        }
+
+        /* ================= CHANGE LABEL ================= */
+        .change-status-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        /* ================= SELECT MODERN ================= */
+        #modalStatusSelect {
+            width: 100%;
+            appearance: none;
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 10px 42px 10px 14px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            transition: all 0.2s ease;
+            cursor: pointer;
+
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236b7280' viewBox='0 0 16 16'%3E%3Cpath d='M1.5 5.5l6 6 6-6' stroke='%236b7280' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+        }
+
+        /* Hover */
+        #modalStatusSelect:hover {
+            border-color: #cbd5e1;
+        }
+
+        /* Focus */
+        #modalStatusSelect:focus {
+            outline: none;
+            border-color: #16a34a;
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
+        }
+
+        /* === INPUT PENCARIAN === */
+        .dataTables_filter {
+            text-align: right;
+        }
+
+        .dataTables_filter input {
+            margin-top: 0.2rem;
+            /* turunkan input lebih presisi */
+            margin-right: 0.2rem;
+            border-radius: 50px !important;
+            padding: 0.5rem 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border: 1px solid #dee2e6;
+            transition: 0.3s;
+        }
+
+        .dataTables_filter input:focus {
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+            border-color: #80bdff;
+        }
+
+        .custom-footer {
+            display: flex;
+            gap: 10px;
+        }
+
+        .custom-footer .btn {
+            border-radius: 50px !important;
+            min-height: 44px;
+            padding: 8px 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            /* 🔥 ini yang bikin icon ada jarak */
+            white-space: nowrap;
+        }
+
+        /* MODE MOBILE */
+        @media (max-width: 576px) {
+            .custom-footer {
+                flex-direction: column;
+            }
+
+            .custom-footer .btn {
+                width: 100%;
+            }
         }
     </style>
 @stop
 
 
 @section('js')
-    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap4.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+
+    <script>
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true
+        });
+
+        @if (session('success'))
+            Toast.fire({
+                icon: 'success',
+                title: '{{ session('success') }}'
+            });
+        @endif
+
+        @if (session('error'))
+            Toast.fire({
+                icon: 'error',
+                title: '{{ session('error') }}'
+            });
+        @endif
+    </script>
 
     <script>
         $(document).ready(function() {
             // ================= DATATABLE =================
             var table = $('#myTable').DataTable({
                 responsive: true,
-                dom: "<'row mb-3'<'col-12 d-flex justify-content-center'f>>" + "rtip",
+                dom: "<'row mb-3'<'col-12 d-flex justify-content-end pe-3'f>>" + "rtip",
                 order: [
                     [4, 'asc']
                 ],
                 language: {
                     search: "",
-                    searchPlaceholder: "Cari...",
+                    searchPlaceholder: "Cari janji temu...",
                     paginate: {
                         first: "Pertama",
                         last: "Terakhir",
@@ -621,6 +1339,7 @@
                     },
                     info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ janji temu",
                     infoEmpty: "Menampilkan 0 sampai 0 dari 0 janji temu",
+                    infoFiltered: "(difilter dari _MAX_ total janji temu)",
                     zeroRecords: "Data tidak ditemukan",
                     lengthMenu: "Tampilkan _MENU_ baris",
                 }
@@ -674,7 +1393,7 @@
                 }
             });
 
-            $('#filterStaff, #filterService').on('change', function() {
+            $('#filterCrew, #filterService').on('change', function() {
                 applyFilters();
             });
 
@@ -683,8 +1402,7 @@
 
                 // ================= FILTER TANGGAL =================
                 $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-                    var today = new Date();
-                    today.setHours(0, 0, 0, 0);
+                    var now = new Date(); // waktu sekarang
                     var dateAttr = $(table.row(dataIndex).node()).find('td:eq(4)').data('date');
                     var startTimeAttr = $(table.row(dataIndex).node()).find('td:eq(5)').text().split(' - ')[
                         0]; // HH:mm
@@ -700,8 +1418,8 @@
                         parseInt(timeParts[1])
                     );
 
-                    if (dateFilterType === 'upcoming') return bookingDateTime >= today;
-                    if (dateFilterType === 'past') return bookingDateTime < today;
+                    if (dateFilterType === 'upcoming') return bookingDateTime >= now;
+                    if (dateFilterType === 'past') return bookingDateTime < now;
                     if (dateFilterType === 'range' && dateRange.length === 2) {
                         var start = new Date(dateRange[0]);
                         var end = new Date(dateRange[1]);
@@ -711,41 +1429,46 @@
                     return true;
                 });
 
-                // ================= FILTER STAFF =================
-                var staffVal = $('#filterStaff').val().toLowerCase();
+                // ================= FILTER CREW BASED ON EMPLOYEE ID =================
+                var staffVal = $('#filterCrew').val();
+
                 if (staffVal) {
                     $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-                        return data[3].toLowerCase().includes(staffVal);
+                        var row = table.row(dataIndex).node();
+                        var employeeId = $(row).data('employee-id');
+                        return employeeId == staffVal;
                     });
                 }
 
                 // ================= FILTER LAYANAN =================
-                var serviceVal = $('#filterService').val().toLowerCase();
+                var serviceVal = $('#filterService').val();
+
                 if (serviceVal) {
                     $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-                        return data[2].toLowerCase().includes(serviceVal);
+                        var rowNode = table.row(dataIndex).node();
+                        var rowServiceId = $(rowNode).data('service-id');
+                        return String(rowServiceId) === String(serviceVal);
                     });
                 }
 
-                table.draw();
+                // ================= SORT OTOMATIS =================
+                table.rows().every(function(rowIdx, tableLoop, rowLoop) {
+                    var row = $(this.node());
+                    var dateAttr = row.find('td:eq(4)').data('date');
+                    var startTimeAttr = row.find('td:eq(5)').text().split(' - ')[0];
+                    var dateParts = dateAttr.split('-');
+                    var timeParts = startTimeAttr.split(':');
+                    var bookingDateTime = new Date(
+                        parseInt(dateParts[0]),
+                        parseInt(dateParts[1]) - 1,
+                        parseInt(dateParts[2]),
+                        parseInt(timeParts[0]),
+                        parseInt(timeParts[1])
+                    );
+                    $(this.node()).attr('data-timestamp', bookingDateTime.getTime());
+                });
 
-                // ================= SORT OTOMATIS UNTUK PAST =================
                 if (dateFilterType === 'past') {
-                    table.rows().every(function(rowIdx, tableLoop, rowLoop) {
-                        var row = $(this.node());
-                        var dateAttr = row.find('td:eq(4)').data('date');
-                        var startTimeAttr = row.find('td:eq(5)').text().split(' - ')[0];
-                        var dateParts = dateAttr.split('-');
-                        var timeParts = startTimeAttr.split(':');
-                        var bookingDateTime = new Date(
-                            parseInt(dateParts[0]),
-                            parseInt(dateParts[1]) - 1,
-                            parseInt(dateParts[2]),
-                            parseInt(timeParts[0]),
-                            parseInt(timeParts[1])
-                        );
-                        $(this.node()).attr('data-timestamp', bookingDateTime.getTime());
-                    });
                     table.order([
                         [4, 'desc'],
                         [5, 'desc']
@@ -758,23 +1481,79 @@
                 }
             }
 
-
             applyFilters(); // filter default
-
             // ================= MODAL POPULATE =================
             $(document).on('click', '.view-appointment-btn', function() {
                 $('#modalAppointmentId').val($(this).data('id'));
-                $('#modalBookingId').text('ID Pemesanan: ' + $(this).data('booking'));
+                $('#modalBookingId').text('ID Pemesanan : ' + $(this).data('booking'));
                 $('#modalAppointmentName').text($(this).data('name'));
                 $('#modalService').text($(this).data('service'));
+                let background = $(this).data('background');
+
+                if (background) {
+                    $('#modalBackground').text(background);
+                    $('#backgroundRow').show();
+                } else {
+                    $('#modalBackground').text('-');
+                    $('#backgroundRow').hide();
+                }
                 $('#modalEmail').text($(this).data('email'));
                 $('#modalPhone').text($(this).data('phone'));
                 $('#modalPeopleCount').text($(this).data('people'));
-                $('#modalStaff').text($(this).data('employee'));
+                $('#modalCrew').text($(this).data('employee'));
                 $('#modalDate').text($(this).data('date'));
                 $('#modalStartTime').text($(this).data('start_time'));
                 $('#modalEndTime').text($(this).data('end_time'));
-                $('#modalAmount').text($(this).data('amount'));
+                // ✅ TAMBAHKAN DI SINI
+                let servicePrice = $(this).data('service_price');
+                $('#modalServicePrice').text(
+                    'Rp ' + Number(servicePrice).toLocaleString('id-ID')
+                );
+                let totalAmount = Number($(this).data('amount')) || 0;
+                let paidAmount = Number($(this).data('dp')) || 0;
+                let paymentType = $(this).data('payment_type');
+
+                let remaining = totalAmount - paidAmount;
+
+                // Set total biaya
+                $('#modalAmount').text('Rp ' + totalAmount.toLocaleString('id-ID'));
+
+                // Jika belum bayar sama sekali
+                if (paidAmount <= 0) {
+                    $('#paymentSection').hide();
+                    return;
+                }
+
+                // Tampilkan payment section
+                $('#paymentSection').show();
+
+                // ================= FULL PAYMENT =================
+                if (paymentType === 'full' || remaining <= 0) {
+
+                    $('#paymentLabel').text('Total Dibayar');
+                    $('#modalDpAmount').text('Rp ' + paidAmount.toLocaleString('id-ID'));
+
+                    $('#modalRemaining')
+                        .removeClass('text-danger')
+                        .addClass('text-success')
+                        .text('LUNAS');
+
+                    $('#remainingRow').show();
+                }
+
+                // ================= DP =================
+                else {
+
+                    $('#paymentLabel').text('DP Dibayar');
+                    $('#modalDpAmount').text('Rp ' + paidAmount.toLocaleString('id-ID'));
+
+                    $('#modalRemaining')
+                        .removeClass('text-success')
+                        .addClass('text-danger')
+                        .text('Rp ' + remaining.toLocaleString('id-ID'));
+
+                    $('#remainingRow').show();
+                }
                 $('#modalNotes').text($(this).data('notes'));
 
                 // 🔥 ADD ON DI SINI
@@ -785,10 +1564,22 @@
                     addonHtml += '<ul class="list-group list-group-flush">';
                     addons.forEach(function(a) {
                         addonHtml += `
-                <li class="list-group-item d-flex justify-content-between">
-                    <span>${a.name} (${a.qty}x)</span>
-                    <span>Rp${Number(a.subtotal).toLocaleString('id-ID')}</span>
-                </li>
+                <li class="list-group-item border-bottom px-0 py-2 bg-transparent">
+    <div class="d-flex justify-content-between align-items-start">
+        <div>
+            <div class="fw-semibold">
+                ${a.name}
+            </div>
+            <small class="text-muted">
+                ${a.qty} x Rp ${Number(a.price).toLocaleString('id-ID')}
+            </small>
+        </div>
+
+        <div class="fw-bold text-end">
+            Rp ${Number(a.subtotal).toLocaleString('id-ID')}
+        </div>
+    </div>
+</li>
             `;
                     });
                     addonHtml += '</ul>';
@@ -823,4 +1614,299 @@
             $(".alert").delay(6000).slideUp(300);
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // =============================
+            // GLOBAL STATE
+            // =============================
+            let resCurrentMonth = new Date().getMonth();
+            let resCurrentYear = new Date().getFullYear();
+            let selectedResDate = null;
+            let selectedSlot = null;
+            window.originalBookingTime = null;
+
+            const btnSubmit = document.getElementById('reschedule-submit-btn');
+            const slotContainer = document.getElementById('reschedule-time-slots');
+
+            function toggleSubmitButton() {
+                if (btnSubmit) {
+                    btnSubmit.disabled = !(selectedResDate && selectedSlot);
+                }
+            }
+
+            // =============================
+            // OPEN RESCHEDULE MODAL
+            // =============================
+            const btnReschedule = document.getElementById('btnReschedule');
+
+            if (btnReschedule) {
+                btnReschedule.addEventListener('click', function() {
+
+                    const appointmentId = document.getElementById('modalAppointmentId')?.value;
+
+                    if (!appointmentId) {
+                        Swal.fire('Error', 'Appointment tidak ditemukan', 'error');
+                        return;
+                    }
+
+                    document.getElementById('reschedule-appointment-id').value = appointmentId;
+
+                    selectedResDate = null;
+                    selectedSlot = null;
+                    toggleSubmitButton();
+
+                    if (slotContainer) {
+                        slotContainer.innerHTML =
+                            `<div class="text-muted text-center py-3">Pilih tanggal terlebih dahulu</div>`;
+                    }
+
+                    const modalEl = document.getElementById('rescheduleModal');
+                    const modal = new bootstrap.Modal(modalEl);
+                    modal.show();
+
+                    renderRescheduleCalendar(resCurrentMonth, resCurrentYear);
+                });
+            }
+
+            // =============================
+            // NAVIGATION MONTH
+            // =============================
+            document.getElementById('res-prev-month')?.addEventListener('click', () => navigateMonth(-1));
+            document.getElementById('res-next-month')?.addEventListener('click', () => navigateMonth(1));
+
+            function navigateMonth(direction) {
+                resCurrentMonth += direction;
+
+                if (resCurrentMonth < 0) {
+                    resCurrentMonth = 11;
+                    resCurrentYear--;
+                }
+
+                if (resCurrentMonth > 11) {
+                    resCurrentMonth = 0;
+                    resCurrentYear++;
+                }
+
+                renderRescheduleCalendar(resCurrentMonth, resCurrentYear);
+            }
+
+            // =============================
+            // RENDER CALENDAR
+            // =============================
+            function renderRescheduleCalendar(month, year) {
+
+                const tbody = document.getElementById('reschedule-calendar-body');
+                if (!tbody) return;
+
+                tbody.innerHTML = '';
+                selectedResDate = null;
+                selectedSlot = null;
+                toggleSubmitButton();
+
+                const firstDay = new Date(year, month, 1);
+                const lastDay = new Date(year, month + 1, 0);
+                const today = new Date();
+                const startingDay = (firstDay.getDay() + 6) % 7;
+
+                const monthNames = [
+                    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+                    "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+                ];
+
+                document.getElementById('res-current-month').textContent =
+                    `${monthNames[month]} ${year}`;
+
+                let date = 1;
+
+                for (let i = 0; i < 6; i++) {
+                    const row = document.createElement('tr');
+
+                    for (let j = 0; j < 7; j++) {
+
+                        const cell = document.createElement('td');
+
+                        if (i === 0 && j < startingDay) {
+                            row.appendChild(cell);
+                        } else if (date > lastDay.getDate()) {
+                            row.appendChild(cell);
+                        } else {
+
+                            const cellDate = new Date(year, month, date);
+                            const formatted =
+                                `${year}-${String(month+1).padStart(2,'0')}-${String(date).padStart(2,'0')}`;
+
+                            cell.textContent = date;
+                            cell.classList.add('calendar-day');
+
+                            if (cellDate < new Date(today.getFullYear(), today.getMonth(), today.getDate())) {
+                                cell.classList.add('disabled');
+                            } else {
+                                cell.addEventListener('click', function() {
+
+                                    document.querySelectorAll('.calendar-day')
+                                        .forEach(c => c.classList.remove('selected'));
+
+                                    cell.classList.add('selected');
+
+                                    selectedResDate = formatted;
+                                    selectedSlot = null;
+                                    toggleSubmitButton();
+
+                                    loadTimeSlots(formatted);
+
+                                    document.getElementById('res-selected-date-display').textContent =
+                                        "Dipilih: " +
+                                        cellDate.toLocaleDateString('id-ID', {
+                                            day: '2-digit',
+                                            month: 'short',
+                                            year: 'numeric'
+                                        });
+                                });
+                            }
+
+                            row.appendChild(cell);
+                            date++;
+                        }
+                    }
+
+                    tbody.appendChild(row);
+                }
+            }
+
+            // =============================
+            // LOAD TIME SLOTS
+            // =============================
+            function loadTimeSlots(date) {
+
+                const appointmentId =
+                    document.getElementById('reschedule-appointment-id')?.value;
+
+                if (!appointmentId || !slotContainer) return;
+
+                slotContainer.innerHTML =
+                    `<div class="text-center py-3">
+                <div class="spinner-border text-primary"></div>
+             </div>`;
+
+                fetch(`/appointments/${appointmentId}/reschedule/availability?date=${date}`)
+                    .then(res => res.json())
+                    .then(res => {
+
+                        slotContainer.innerHTML = '';
+                        selectedSlot = null;
+                        toggleSubmitButton();
+
+                        if (!res.success || !res.available_slots.length) {
+                            slotContainer.innerHTML =
+                                `<div class="text-muted text-center py-3">
+                            Tidak ada slot tersedia
+                         </div>`;
+                            return;
+                        }
+
+                        res.available_slots.forEach(slot => {
+
+                            const btn = document.createElement('button');
+                            btn.type = 'button';
+                            btn.className = 'time-slot btn m-1';
+                            btn.textContent = slot.display;
+                            btn.dataset.start = slot.start;
+                            btn.dataset.end = slot.end;
+
+                            // ================= BOOKED SLOT =================
+                            if (slot.is_booked && !slot.is_old) {
+                                btn.classList.add('btn-outline-secondary', 'disabled');
+                                btn.disabled = true;
+                            } else {
+                                btn.classList.add('btn-outline-primary');
+                            }
+
+                            // ================= SLOT SAAT INI =================
+                            if (slot.is_old) {
+                                btn.classList.remove('btn-outline-primary');
+                                btn.classList.add('btn-warning', 'text-dark');
+                                btn.classList.add('disabled');
+                                btn.disabled = true; // ⬅ WAJIB
+                            }
+
+                            btn.addEventListener('click', function() {
+
+                                if (btn.disabled) return;
+
+                                document.querySelectorAll('#reschedule-time-slots .time-slot')
+                                    .forEach(b => b.classList.remove('selected', 'active'));
+
+                                btn.classList.add('selected', 'active');
+                                selectedSlot = btn;
+                                toggleSubmitButton();
+                            });
+
+                            slotContainer.appendChild(btn);
+                        });
+                    })
+                    .catch(() => {
+                        slotContainer.innerHTML =
+                            `<div class="text-danger text-center py-3">
+                        Gagal memuat slot
+                     </div>`;
+                    });
+            }
+
+            // =============================
+            // SUBMIT RESCHEDULE
+            // =============================
+            if (btnSubmit) {
+
+                btnSubmit.addEventListener('click', function() {
+
+                    const appointmentId =
+                        document.getElementById('reschedule-appointment-id')?.value;
+
+                    if (!appointmentId || !selectedResDate || !selectedSlot) {
+                        Swal.fire('Error', 'Lengkapi pilihan terlebih dahulu', 'warning');
+                        return;
+                    }
+
+                    btnSubmit.disabled = true;
+                    btnSubmit.innerHTML =
+                        `<span class="spinner-border spinner-border-sm"></span> Menyimpan...`;
+
+                    fetch(`/appointments/${appointmentId}/reschedule`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                    .getAttribute('content'),
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                new_date: selectedResDate,
+                                new_start_time: selectedSlot.dataset.start,
+                                new_end_time: selectedSlot.dataset.end
+                            })
+                        })
+                        .then(res => res.json())
+                        .then(res => {
+
+                            if (!res.success) {
+                                throw new Error(res.message || 'Gagal reschedule');
+                            }
+
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil',
+                                text: 'Reschedule berhasil'
+                            }).then(() => location.reload());
+                        })
+                        .catch(err => {
+                            btnSubmit.disabled = false;
+                            btnSubmit.innerHTML = 'Simpan Perubahan';
+                            Swal.fire('Error', err.message, 'error');
+                        });
+                });
+            }
+
+        });
+    </script>
+
 @stop

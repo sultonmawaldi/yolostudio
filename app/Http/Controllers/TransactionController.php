@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Transaction;
 use App\Models\Appointment;
 use App\Models\Coupon;
+use App\Models\Employee;
+use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -54,14 +56,14 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        $transactions = Transaction::with(
-            'appointment.service',
-            'appointment.employee.user'
-        )
+        $transactions = Transaction::with(['appointment.employee.user', 'appointment.service'])
             ->latest()
             ->get();
 
-        return view('backend.transactions.index', compact('transactions'));
+        $employees = Employee::with('user')->get();
+        $services = Service::all();
+
+        return view('backend.transactions.index', compact('transactions', 'employees', 'services'));
     }
 
     public function create()
@@ -78,11 +80,12 @@ class TransactionController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'appointment_id' => 'required|exists:appointments,id',
-            'payment_method' => 'required|string',
-            'amount' => 'required|numeric',
-            'total_amount' => 'required|numeric',
-            'coupon_id' => 'nullable|exists:coupons,id',
+            'appointment_id'   => 'required|exists:appointments,id',
+            'dp_method'        => 'nullable|in:Cash,Midtrans,Coupon',
+            'pelunasan_method' => 'nullable|in:Cash,Midtrans,Coupon',
+            'amount'           => 'required|numeric',
+            'total_amount'     => 'required|numeric',
+            'coupon_id'        => 'nullable|exists:coupons,id',
         ]);
 
         $user = Auth::user();
@@ -102,39 +105,18 @@ class TransactionController extends Controller
                 ->first();
 
             if (!$coupon) {
-                return back()->withErrors(['coupon_id' => 'Kupon tidak valid atau sudah digunakan.']);
+                return back()->withErrors([
+                    'coupon_id' => 'Kupon tidak valid atau sudah digunakan.'
+                ]);
             }
 
             $validated['total_amount'] -= $coupon->value;
         }
 
-        $transaction = Transaction::create($validated);
-
-        /**
-         * ==============================
-         * QR CODE GENERATOR — SAFE MODE
-         * ==============================
-         */
-        try {
-            $qrDir = public_path('qrcodes');
-            if (!file_exists($qrDir)) {
-                mkdir($qrDir, 0777, true);
-            }
-
-            $qrPath = 'qrcodes/' . $transaction->transaction_code . '.png';
-            $fullPath = public_path($qrPath);
-
-            $png = QrCode::format('png')
-                ->size(300)
-                ->errorCorrection('H')
-                ->generate($transaction->transaction_code);
-
-            file_put_contents($fullPath, $png);
-
-            $transaction->update(['qr_url' => $qrPath]);
-        } catch (\Exception $e) {
-            \Log::error('QR Generation Error: ' . $e->getMessage());
-        }
+        // =========================
+        // CREATE TRANSACTION
+        // =========================
+        Transaction::create($validated);
 
         return redirect()->route('member.dashboard')
             ->with('success', 'Transaksi berhasil dibuat!');
@@ -154,17 +136,15 @@ class TransactionController extends Controller
     public function update(Request $request, Transaction $transaction)
     {
         $validated = $request->validate([
-            'appointment_id' => 'required|exists:appointments,id',
-            'payment_method' => 'required|string',
-            'amount' => 'required|numeric',
-            'total_amount' => 'required|numeric',
-            'coupon_id' => 'nullable|exists:coupons,id',
+            'dp_method'        => 'nullable|in:Cash,Midtrans',
+            'pelunasan_method' => 'nullable|in:Cash,Midtrans',
+            'payment_status'   => 'required|in:Pending,DP,Paid,Failed',
         ]);
 
         $transaction->update($validated);
 
         return redirect()->route('transactions.index')
-            ->with('success', 'Transaksi berhasil diperbarui!');
+            ->with('success', 'Status transaksi berhasil diperbarui.');
     }
 
     public function destroy(Transaction $transaction)
@@ -172,6 +152,81 @@ class TransactionController extends Controller
         $transaction->delete();
         return redirect()->route('transactions.index')
             ->with('success', 'Transaksi berhasil dihapus!');
+    }
+
+
+    /**
+     * ============================
+     * PAY REMAINING VIA MIDTRANS (ADMIN)
+     * ============================
+     */
+    public function payRemainingMidtrans(Transaction $transaction)
+    {
+        // 🔥 CEK JIKA SUDAH LUNAS
+        if ($transaction->payment_status === 'Paid') {
+            return back()->with('info', 'Transaksi sudah lunas.');
+        }
+
+        Config::$serverKey = config('midtrans.server_key');
+        Config::$isProduction = config('midtrans.is_production');
+
+        // 🔥 HITUNG SISA PEMBAYARAN
+        $remainingAmount = $transaction->total_amount - $transaction->amount;
+
+        // 🔥 TAMBAHAN PENTING (ANTI ERROR 400 MIDTRANS)
+        if ($remainingAmount <= 0) {
+            return redirect()->route('transactions.index')
+                ->with('error', 'Transaksi sudah digunakan sebelumnya dan hanya dapat digunakan 1 kali.');
+        }
+
+        $params = [
+            'transaction_details' => [
+                'order_id' => $transaction->transaction_code,
+                'gross_amount' => $remainingAmount,
+            ],
+            'customer_details' => [
+                'first_name' => $transaction->appointment->name ?? 'Customer',
+                'email' => $transaction->appointment->email ?? 'admin@local.test',
+            ],
+            'callbacks' => [
+                // route finish diarahkan ke callback controller
+                'finish' => route('transactions.payRemainingMidtrans', $transaction->id),
+            ]
+        ];
+
+        // Jika ini callback finish Midtrans
+        if (request()->has('result_type') && request()->get('result_type') === 'success') {
+
+            // 🔥 CEK LAGI UNTUK MENCEGAH DOUBLE CALLBACK
+            if ($transaction->payment_status === 'Paid') {
+                return redirect()->route('transactions.index')
+                    ->with('info', 'Transaksi sudah lunas.');
+            }
+
+            // Load services agar observer bisa hitung points
+            $transaction->load('services');
+
+            $transaction->update([
+                'payment_status' => 'Paid',
+                'amount' => $transaction->total_amount,
+                'pelunasan_method' => 'Midtrans',
+            ]);
+
+            if ($transaction->appointment) {
+                $transaction->appointment->update(['status' => 'Confirmed']);
+            }
+
+            return redirect()->route('transactions.index')
+                ->with('success', 'Pelunasan via Midtrans berhasil.');
+        }
+
+        // Generate Snap Token
+        $snapToken = Snap::getSnapToken($params);
+
+        return view('backend.transactions.pay_remaining', compact(
+            'transaction',
+            'snapToken'
+        ));
     }
 
     /**
@@ -187,39 +242,14 @@ class TransactionController extends Controller
         $transaction->update([
             'payment_status' => 'Paid',
             'amount' => $transaction->total_amount,
-            'payment_method' => 'Cash'
+            'pelunasan_method' => 'Cash', // 🔥 TAMBAHKAN INI
         ]);
-
 
         if ($transaction->appointment) {
             $transaction->appointment->update(['status' => 'Confirmed']);
         }
 
-        // Generate QR jika belum ada
-        if (empty($transaction->qr_url)) {
-            try {
-                $qrDir = public_path('qrcodes');
-                if (!file_exists($qrDir)) {
-                    mkdir($qrDir, 0777, true);
-                }
-
-                $qrPath = 'qrcodes/' . $transaction->transaction_code . '.png';
-                $fullPath = public_path($qrPath);
-
-                $png = QrCode::format('png')
-                    ->size(300)
-                    ->errorCorrection('H')
-                    ->generate($transaction->transaction_code);
-
-                file_put_contents($fullPath, $png);
-
-                $transaction->update(['qr_url' => $qrPath]);
-            } catch (\Exception $e) {
-                \Log::error("QR Generation Failed: " . $e->getMessage());
-            }
-        }
-
-        return redirect()->route('member.dashboard')
+        return redirect()->route('transactions.index')
             ->with('success', 'Pelunasan tunai berhasil.');
     }
 
@@ -275,30 +305,39 @@ class TransactionController extends Controller
         $orderId = $request->get('order_id');
 
         if ($transaction->transaction_code !== $orderId) {
-            return redirect()->route('member.transactions.index', ['info' => 'notfound']);
+            return redirect()->route('transactions.index')
+                ->with('error', 'Order ID tidak cocok.');
         }
 
         if (in_array($status, ['capture', 'settlement'])) {
-            // Load services agar observer bisa hitung points
-            $transaction->load('services');
-
             $transaction->update([
                 'payment_status' => 'Paid',
                 'amount' => $transaction->total_amount,
+                'pelunasan_method' => 'Midtrans', // 🔥 TAMBAHKAN INI
             ]);
 
-            return redirect()->route('member.transactions.index', [
-                'paid' => 'true',
-                'transaction_code' => $transaction->transaction_code
-            ]);
+            if ($transaction->appointment) {
+                $transaction->appointment->update(['status' => 'Confirmed']);
+            }
+
+            return redirect()->route('transactions.index')
+                ->with('success', 'Pembayaran berhasil dan status lunas.');
         }
 
         if ($status === 'pending') {
-            $transaction->update(['payment_status' => 'DP']);
-            return redirect()->route('member.transactions.index', ['pending' => 'true']);
+            $transaction->update([
+                'payment_status' => 'DP'
+            ]);
+
+            return redirect()->route('transactions.index')
+                ->with('info', 'Pembayaran masih pending.');
         }
 
-        $transaction->update(['payment_status' => 'Failed']);
-        return redirect()->route('member.transactions.index', ['failed' => 'true']);
+        $transaction->update([
+            'payment_status' => 'Failed'
+        ]);
+
+        return redirect()->route('transactions.index')
+            ->with('error', 'Pembayaran gagal.');
     }
 }

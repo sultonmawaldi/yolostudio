@@ -40,11 +40,6 @@ class Appointment extends Model
         return $this->belongsTo(ServiceBackground::class);
     }
 
-    public function timeSlot()
-    {
-        return $this->belongsTo(TimeSlot::class);
-    }
-
     // ======================
     // ADDONS (BEST PRACTICE)
     // ======================
@@ -54,5 +49,9 @@ class Appointment extends Model
         return $this->belongsToMany(Addon::class, 'appointment_addons')
             ->withPivot(['price', 'qty', 'subtotal'])
             ->withTimestamps();
+    }
+    public function studio()
+    {
+        return $this->belongsTo(Studio::class);
     }
 }

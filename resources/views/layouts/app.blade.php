@@ -17,7 +17,15 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>
+        {{ config('app.name') }}
+        @hasSection('title')
+            | @yield('title')
+        @endif
+    </title>
+
+
+
 
     <!-- Fonts -->
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
@@ -50,6 +58,8 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/6.8.0/css/flag-icons.min.css"
         integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
 
 
 
@@ -104,7 +114,7 @@
             <!-- Huruf O kedua -->
             <img src="{{ asset('uploads/images/logo-o-hitam.webp') }}" alt="O kedua hitam"
                 class="absolute animate-spin-reverse object-contain dark:hidden"
-                style="top: 46.5px; left: 143.5px; height: 97.5px; width: 97.5px;">
+                style="top: 47.5px; left: 143.5px; height: 97.5px; width: 97.5px;">
             <img src="{{ asset('uploads/images/logo-o-putih.webp') }}" alt="O kedua putih"
                 class="absolute animate-spin-reverse object-contain hidden dark:block"
                 style="top: 46.5px; left: 141.5px; height: 100px; width: 100px;">
@@ -144,6 +154,12 @@
         }
     </style>
 
+
+    @php
+        // Jika halaman member.blade menggunakan sidebar, set variabel
+        $isMemberSidebar = $isMemberSidebar ?? false;
+    @endphp
+
     <!-- App Wrapper -->
     <div id="app" :class="{ 'opacity-0': loading, 'opacity-100 transition-opacity duration-500': !loading }"
         class="min-h-screen flex flex-col">
@@ -178,38 +194,43 @@
                             class="h-full w-full object-contain hidden dark:block">
                     </a>
 
-
-                    <!-- Desktop Menu Responsive -->
-                    <div
-                        class="hidden lg:flex absolute left-1/2 transform -translate-x-1/2 
+                    @if (empty($isMemberSidebar))
+                        <!-- Desktop Menu Responsive -->
+                        <div
+                            class="hidden lg:flex absolute left-1/2 transform -translate-x-1/2 
             items-center space-x-4
             lg:left-20 lg:translate-x-0 xl:left-1/2 xl:translate-x-[-50%]">
-                        <a href="/"
-                            class="rounded-xl px-4 py-2 text-sm font-medium transition 
+                            <a href="/"
+                                class="rounded-xl px-4 py-2 text-sm font-medium transition 
         {{ request()->is('/') ? 'bg-blue-600/10 dark:bg-gray-700 text-blue-700 dark:text-white font-semibold' : 'text-blue-900 dark:text-gray-100 hover:bg-blue-600/10 dark:hover:bg-gray-700' }}">
-                            Home
-                        </a>
-                        <a href="{{ route('booking') }}"
-                            class="rounded-xl px-4 py-2 text-sm font-medium transition 
+                                Home
+                            </a>
+                            <a href="/booking"
+                                class="rounded-xl px-4 py-2 text-sm font-medium transition 
         {{ request()->routeIs('booking') ? 'bg-blue-600/10 dark:bg-gray-700 text-blue-700 dark:text-white font-semibold' : 'text-blue-900 dark:text-gray-100 hover:bg-blue-600/10 dark:hover:bg-gray-700' }}">
-                            Booking
-                        </a>
-                        <a href="/pricelist"
-                            class="rounded-xl px-4 py-2 text-sm font-medium transition 
+                                Booking
+                            </a>
+                            <a href="/pricelist"
+                                class="rounded-xl px-4 py-2 text-sm font-medium transition 
         {{ request()->is('pricelist') ? 'bg-blue-600/10 dark:bg-gray-700 text-blue-700 dark:text-white font-semibold' : 'text-blue-900 dark:text-gray-100 hover:bg-blue-600/10 dark:hover:bg-gray-700' }}">
-                            Pricelist
-                        </a>
-                        <a href="/gallery"
-                            class="rounded-xl px-4 py-2 text-sm font-medium transition 
+                                Pricelist
+                            </a>
+                            <a href="/gallery"
+                                class="rounded-xl px-4 py-2 text-sm font-medium transition 
         {{ request()->is('gallery') ? 'bg-blue-600/10 dark:bg-gray-700 text-blue-700 dark:text-white font-semibold' : 'text-blue-900 dark:text-gray-100 hover:bg-blue-600/10 dark:hover:bg-gray-700' }}">
-                            Gallery
-                        </a>
-                        <a href="/claim-photos"
-                            class="rounded-xl px-4 py-2 text-sm font-medium transition 
-        {{ request()->is('claim-photos') ? 'bg-blue-600/10 dark:bg-gray-700 text-blue-700 dark:text-white font-semibold' : 'text-blue-900 dark:text-gray-100 hover:bg-blue-600/10 dark:hover:bg-gray-700' }}">
-                            Claim Photos
-                        </a>
-                    </div>
+                                Gallery
+                            </a>
+                            <a href="/studio"
+                                class="rounded-xl px-4 py-2 text-sm font-medium transition
+   {{ request()->routeIs('studio')
+       ? 'bg-blue-600/10 dark:bg-gray-700 text-blue-700 dark:text-white font-semibold'
+       : 'text-blue-900 dark:text-gray-100 hover:bg-blue-600/10 dark:hover:bg-gray-700' }}">
+                                Studio
+                            </a>
+
+
+                        </div>
+                    @endif
 
 
                     <!-- Right Desktop -->
@@ -294,12 +315,12 @@
                         @auth
                             <div class="relative" x-data="{ open: false }" @click.away="open = false">
                                 <button @click="open = !open"
-                                    class="flex items-center text-blue-900 dark:text-gray-100 px-3 py-2 rounded-lg text-sm font-medium 
-                                   hover:bg-blue-600/10 dark:hover:bg-gray-700 transition-all duration-200">
-                                    <img src="{{ Auth::user()->profile_picture ?? 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) }}"
-                                        class="h-8 w-8 rounded-full mr-2 border border-blue-200 dark:border-gray-600 shadow-sm">
-                                    <span class="text-sm font-semibold tracking-tight">{{ Auth::user()->name }}</span>
-                                    <i class="fa fa-chevron-down ml-2 text-xs transform transition-transform duration-300 ease-out"
+                                    class="flex items-center text-blue-900 dark:text-gray-100 px-2 py-1 rounded-lg text-xs font-medium 
+               hover:bg-blue-600/10 dark:hover:bg-gray-700 transition-all duration-200">
+                                    <img src="{{ auth()->user()->profileImage() }}"
+                                        class="h-8 w-8 rounded-full mr-2 border border-blue-200 dark:border-gray-600 shadow-sm object-cover">
+                                    <span class="text-xs font-semibold">{{ Auth::user()->name }}</span>
+                                    <i class="fa fa-chevron-down ml-1 text-xs transform transition-transform duration-300 ease-out"
                                         :class="{ 'rotate-180': open }"></i>
                                 </button>
 
@@ -308,7 +329,7 @@
                                     class="absolute right-0 mt-2 w-60 backdrop-blur-xl bg-white/70 dark:bg-gray-900/80 
                                     rounded-xl shadow-lg py-3 z-50 border border-blue-100/40 dark:border-gray-700/50 font-[Inter]">
                                     <div class="px-4 pb-3 text-center">
-                                        <img src="{{ Auth::user()->profile_picture ?? 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) }}"
+                                        <img src="{{ auth()->user()->profileImage() ?? 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) }}"
                                             class="h-12 w-12 rounded-full mb-2 border border-blue-200 dark:border-gray-600 shadow-sm mx-auto">
                                         <p class="text-[15px] font-semibold text-blue-900 dark:text-gray-100 leading-snug">
                                             {{ Auth::user()->name }}
@@ -330,7 +351,7 @@
                                         <button type="submit"
                                             class="flex items-center w-full text-left px-4 py-2 text-sm font-medium rounded-md 
                                                text-blue-900 dark:text-gray-100 hover:bg-blue-600/10 dark:hover:bg-gray-700 transition-all duration-150">
-                                            <i class="fa fa-sign-out-alt mr-2 text-xs opacity-80"></i> Logout
+                                            <i class="fa fa-sign-out-alt mr-2 text-xs opacity-80"></i> Keluar
                                         </button>
                                     </form>
                                 </div>
@@ -425,15 +446,21 @@
                                     class="fa fa-sun w-4 h-4 text-center leading-none"></i></template>
                         </button>
 
+
                         <!-- Hamburger / Close -->
-                        <button @click="mobileMenu = !mobileMenu"
-                            class="flex items-center justify-center w-10 h-10 text-blue-900 dark:text-gray-100
-                   hover:text-blue-600 dark:hover:text-gray-300 rounded-md transition-colors">
-                            <template x-if="!mobileMenu"><i
-                                    class="fa fa-bars w-4 h-4 text-center leading-none text-lg"></i></template>
-                            <template x-if="mobileMenu"><i
-                                    class="fa fa-times w-4 h-4 text-center leading-none text-lg"></i></template>
-                        </button>
+                        @if (!($isMemberSidebar ?? false))
+                            <button @click="mobileMenu = !mobileMenu"
+                                class="flex items-center justify-center w-10 h-10 text-blue-900 dark:text-gray-100
+       hover:text-blue-600 dark:hover:text-gray-300 rounded-md transition-colors">
+                                <template x-if="!mobileMenu">
+                                    <i class="fa fa-bars w-4 h-4 text-center leading-none text-lg"></i>
+                                </template>
+                                <template x-if="mobileMenu">
+                                    <i class="fa fa-times w-4 h-4 text-center leading-none text-lg"></i>
+                                </template>
+                            </button>
+                        @endif
+
 
                     </div>
 
@@ -471,7 +498,7 @@
                         <i class="fa fa-home mr-2 opacity-70"></i> Home
                     </a>
 
-                    <a href="{{ route('booking') }}"
+                    <a href="/booking"
                         class="block rounded-lg px-3 py-2 text-base font-medium transition 
                   {{ request()->routeIs('booking')
                       ? 'bg-blue-600/10 dark:bg-gray-700 text-blue-700 dark:text-white font-semibold'
@@ -495,13 +522,14 @@
                         <i class="fa fa-images mr-2 opacity-70"></i> Gallery
                     </a>
 
-                    <a href="/claim-photos"
+                    <a href="/studio"
                         class="block rounded-lg px-3 py-2 text-base font-medium transition 
-                  {{ request()->is('claim-photos')
-                      ? 'bg-blue-600/10 dark:bg-gray-700 text-blue-700 dark:text-white font-semibold'
-                      : 'text-blue-900 dark:text-gray-100 hover:bg-blue-600/10 dark:hover:bg-gray-700' }}">
-                        <i class="fa fa-envelope mr-2 opacity-70"></i> Claim Photos
+   {{ request()->is('studio*')
+       ? 'bg-blue-600/10 dark:bg-gray-700 text-blue-700 dark:text-white font-semibold'
+       : 'text-blue-900 dark:text-gray-100 hover:bg-blue-600/10 dark:hover:bg-gray-700' }}">
+                        <i class="fa fa-camera mr-2 opacity-70"></i> Studio
                     </a>
+
 
                     <!-- Divider -->
                     <div class="border-t border-blue-200 dark:border-gray-700/80 my-3"></div>
@@ -512,8 +540,11 @@
                             <!-- User Info -->
                             <div
                                 class="flex items-center px-3 py-2 rounded-md bg-gradient-to-r from-blue-50/40 to-blue-100/30 dark:from-gray-800/60 dark:to-gray-900/40 shadow-inner">
-                                <img src="{{ Auth::user()->profile_picture ?? 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) }}"
-                                    class="h-10 w-10 rounded-full mr-3 border border-blue-200 dark:border-gray-600 shadow-sm">
+                                @auth
+                                    <img src="{{ auth()->user()->profileImage() }}"
+                                        class="h-10 w-10 rounded-full mr-3 border border-blue-200 dark:border-gray-600 shadow-sm object-cover">
+                                @endauth
+
                                 <div class="flex flex-col text-left">
                                     <span
                                         class="text-sm font-semibold text-blue-900 dark:text-gray-100 truncate">{{ Auth::user()->name }}</span>
@@ -524,7 +555,7 @@
 
                             <!-- Dashboard -->
                             <a href="{{ route('member.profile') }}"
-                                class="flex items-center px-4 py-2 text-sm font-medium rounded-md transition-all duration-150
+                                class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-all duration-150
       {{ request()->routeIs('member.profile')
           ? 'bg-blue-600/10 dark:bg-gray-700 text-blue-700 dark:text-white'
           : 'text-blue-900 dark:text-gray-100 hover:bg-blue-600/10 dark:hover:bg-gray-700' }}">
@@ -544,11 +575,11 @@
                     @else
                         <a href="{{ route('login') }}"
                             class="block px-3 py-2 text-blue-900 dark:text-gray-100 hover:bg-blue-600/10 dark:hover:bg-gray-700 rounded-md transition">
-                            Login
+                            <i class="fa fa-sign-in-alt mr-2 opacity-70"></i> Login
                         </a>
                         <a href="{{ route('register') }}"
                             class="block px-3 py-2 text-blue-900 dark:text-gray-100 hover:bg-blue-600/10 dark:hover:bg-gray-700 rounded-md transition">
-                            Register
+                            <i class="fa fa-user-plus mr-2 opacity-70"></i> Register
                         </a>
                     @endauth
                 </div>
@@ -598,6 +629,14 @@
             integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     </div>
+
+    <style>
+        html {
+            scrollbar-gutter: stable;
+        }
+    </style>
+
+
 
     <script>
         function navbar() {

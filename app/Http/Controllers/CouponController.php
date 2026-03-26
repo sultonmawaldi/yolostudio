@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Coupon;
 use App\Models\User;
+use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -19,7 +20,7 @@ class CouponController extends Controller
      */
     public function index()
     {
-        $coupons = Coupon::with('user')->orderByDesc('created_at')->get();
+        $coupons = Coupon::with(['user', 'services'])->orderByDesc('created_at')->get();
         return view('backend.coupons.index', compact('coupons'));
     }
 
@@ -29,7 +30,9 @@ class CouponController extends Controller
     public function create()
     {
         $users = User::all();
-        return view('backend.coupons.create', compact('users'));
+        $services = Service::all();
+
+        return view('backend.coupons.create', compact('users', 'services'));
     }
 
     /**
@@ -40,19 +43,32 @@ class CouponController extends Controller
         $data = $request->validate([
             'code' => 'required|unique:coupons,code',
             'type' => 'required|in:fixed,percentage',
-            'value' => 'required|numeric|min:0',
-            'minimum_cart_value' => 'nullable|numeric|min:0',
+            'value' => 'required|integer|min:0',
+            'minimum_cart_value' => 'nullable|integer|min:0',
             'expiry_date' => 'nullable|date',
             'user_id' => 'nullable|exists:users,id',
+            'service_id' => 'nullable|array',
+            'service_id.*' => 'exists:services,id',
             'active' => 'required|in:0,1',
         ]);
 
-        // Status selalu 'unused'
+        // 🔥 Ambil service_id lalu hapus dari data utama
+        $serviceIds = $data['service_id'] ?? [];
+        unset($data['service_id']);
+
+        // Default status
         $data['status'] = 'unused';
 
-        Coupon::create($data);
+        // Simpan kupon
+        $coupon = Coupon::create($data);
 
-        return redirect()->route('coupons.index')->with('success', 'Kupon berhasil dibuat.');
+        // 🔥 Simpan relasi ke pivot (kalau ada)
+        if (!empty($serviceIds)) {
+            $coupon->services()->sync($serviceIds);
+        }
+
+        return redirect()->route('coupons.index')
+            ->with('success', 'Kupon berhasil dibuat.');
     }
 
     /**
@@ -61,7 +77,9 @@ class CouponController extends Controller
     public function edit(Coupon $coupon)
     {
         $users = User::all();
-        return view('backend.coupons.edit', compact('coupon', 'users'));
+        $services = Service::all();
+
+        return view('backend.coupons.edit', compact('coupon', 'users', 'services'));
     }
 
     /**
@@ -72,17 +90,28 @@ class CouponController extends Controller
         $data = $request->validate([
             'code' => 'required|unique:coupons,code,' . $coupon->id,
             'type' => 'required|in:fixed,percentage',
-            'value' => 'required|numeric|min:0',
-            'minimum_cart_value' => 'nullable|numeric|min:0',
+            'value' => 'required|integer|min:0',
+            'minimum_cart_value' => 'nullable|integer|min:0',
             'expiry_date' => 'nullable|date',
             'user_id' => 'nullable|exists:users,id',
+            'service_id' => 'nullable|array',
+            'service_id.*' => 'exists:services,id',
             'active' => 'required|in:0,1',
-            'status' => 'required|in:unused,used,expired', // admin bisa ubah status
+            'status' => 'required|in:unused,used,expired',
         ]);
 
+        // 🔥 Ambil service_id lalu hapus dari data utama
+        $serviceIds = $data['service_id'] ?? [];
+        unset($data['service_id']);
+
+        // Update kupon
         $coupon->update($data);
 
-        return redirect()->route('coupons.index')->with('success', 'Kupon berhasil diperbarui.');
+        // 🔥 Update relasi pivot (kalau kosong = hapus semua relasi)
+        $coupon->services()->sync($serviceIds);
+
+        return redirect()->route('coupons.index')
+            ->with('success', 'Kupon berhasil diperbarui.');
     }
 
     /**
@@ -91,7 +120,9 @@ class CouponController extends Controller
     public function destroy(Coupon $coupon)
     {
         $coupon->delete();
-        return redirect()->route('coupons.index')->with('success', 'Kupon berhasil dihapus.');
+
+        return redirect()->route('coupons.index')
+            ->with('success', 'Kupon berhasil dihapus.');
     }
 
     // ==========================
@@ -107,7 +138,6 @@ class CouponController extends Controller
         return view('frontend.member.coupons.index', compact('coupons'));
     }
 
-
     /**
      * Halaman redeem point (member)
      */
@@ -115,16 +145,15 @@ class CouponController extends Controller
     {
         $user = Auth::user();
 
-        $requiredPoints = 30; // contoh: 30 point = 100rb
+        $requiredPoints = 100;
         $couponValue = 100000;
 
-        return view('frontend.member.coupons.redeem', [  // <-- ganti ke 'coupons'
+        return view('frontend.member.coupons.redeem', [
             'points' => $user->points ?? 0,
             'requiredPoints' => $requiredPoints,
             'couponValue' => $couponValue,
         ]);
     }
-
 
     /**
      * Proses redeem point menjadi kupon (member)
@@ -133,32 +162,40 @@ class CouponController extends Controller
     {
         $user = Auth::user();
 
-        $requiredPoints = 30;
+        $requiredPoints = 100;
         $couponValue = 100000;
 
         if ($user->points < $requiredPoints) {
-            return redirect()->back()->with('error', 'Point Anda tidak cukup untuk menukar kupon.');
+            return redirect()->back()
+                ->with('error', 'Point Anda tidak cukup untuk menukar kupon.');
         }
 
-        // Kurangi point user
+        // Kurangi point
         $user->decrement('points', $requiredPoints);
 
-        // Generate kode kupon unik
+        // Generate kode kupon
         $code = 'REWARD-' . Str::upper(Str::random(6));
 
-        // Simpan kupon
-        Coupon::create([
+        // ✅ BUAT KUPON
+        $coupon = Coupon::create([
             'user_id' => $user->id,
             'code' => $code,
             'type' => 'fixed',
             'value' => $couponValue,
-            'minimum_cart_value' => $couponValue,
-            'expiry_date' => now()->addMonth(),
+            'minimum_cart_value' => null,
+            'expiry_date' => null,
             'active' => 1,
             'status' => 'unused',
         ]);
 
+        /**
+         * ============================================
+         * 🔥 ATTACH KE PIVOT (WAJIB)
+         * ============================================
+         */
+        $coupon->services()->attach([1, 2, 3]);
+
         return redirect()->route('member.coupons.redeem')
-            ->with('success', "Berhasil menukar $requiredPoints point menjadi kupon Rp " . number_format($couponValue));
+            ->with('success', "Berhasil menukar $requiredPoints point menjadi kupon.");
     }
 }

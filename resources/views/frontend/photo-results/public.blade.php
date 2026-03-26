@@ -203,7 +203,7 @@
                 extraButtons.querySelector(".gl-btn-download").onclick = () => {
                     const a = document.createElement("a");
                     a.href = currentImgUrl;
-                    a.download = "{{ $photo->file_name }}";
+                    a.download = currentImgUrl.split('/').pop();
                     a.click();
                 };
 

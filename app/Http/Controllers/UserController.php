@@ -66,8 +66,10 @@ class UserController extends Controller
             'is_employee' => 'nullable|boolean',
         ]);
 
-        // ✅ Generate unique role_uid
-        $roleUid = 'EMP-' . now()->format('Ymd') . '-' . strtoupper(Str::random(6));
+        // ✅ Generate unique role_uid sesuai role
+        $roleName = strtoupper(substr($data['roles'], 0, 3)); // ambil 3 huruf pertama role
+        $roleUid = $roleName . '-' . now()->format('Ymd') . '-' . strtoupper(Str::random(6));
+
 
         // ✅ Create new user
         $user = User::create([
@@ -568,5 +570,37 @@ class UserController extends Controller
         return redirect()
             ->route('member.profile')
             ->with('success', 'Profile updated successfully');
+    }
+
+    /**
+     * Update member password
+     */
+    public function memberPasswordUpdate(Request $request)
+    {
+        $user = auth()->user();
+
+        // Validasi menggunakan validator manual untuk bisa pakai named error bag
+        $validator = \Validator::make($request->all(), [
+            'current_password'      => 'required|string',
+            'password'              => 'required|string|min:8|confirmed',
+            'password_confirmation' => 'required|string',
+        ]);
+
+        // Jika gagal validasi, kembalikan ke named bag 'password'
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator, 'password')->withInput();
+        }
+
+        // Cek apakah password lama sesuai
+        if (!Hash::check($request->current_password, $user->password)) {
+            return redirect()->back()->withErrors(['current_password' => 'Password lama tidak sesuai!'], 'password');
+        }
+
+        // Update password
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        // Flash message khusus untuk password
+        return redirect()->back()->with('password_success', 'Password berhasil diperbarui!');
     }
 }

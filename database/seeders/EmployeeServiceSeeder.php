@@ -3,67 +3,79 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\EmployeeService;
-use App\Models\SlotGroup;
-use App\Models\Service;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class EmployeeServiceSeeder extends Seeder
 {
     public function run(): void
     {
-        $employeeId = 1;
+        $now = Carbon::now();
 
-        // Ambil slot groups
-        $studioSlot = SlotGroup::where('employee_id', $employeeId)
-            ->where('name', 'Studio Session')
-            ->firstOrFail();
-
-        $photoboxSlot = SlotGroup::where('employee_id', $employeeId)
-            ->where('name', 'Photobox')
-            ->firstOrFail();
-
-        // === SERVICE STUDIO (Self Photo & Pas Foto) ===
-        $studioServices = Service::whereIn('slug', [
-            'personal-self-photo-studio',
-            'pas-photo',
-            'pas-foto-background-merah',
-            'pas-foto-background-biru',
-            'pas-foto-background-hijau',
-        ])->get();
-
-        foreach ($studioServices as $service) {
-            EmployeeService::updateOrCreate(
-                [
-                    'employee_id' => $employeeId,
-                    'service_id'  => $service->id,
-                ],
-                [
-                    'slot_group_id' => $studioSlot->id,
-                    'duration' => 30,
-                    'break_duration' => 5,
-                ]
-            );
-        }
-
-        // === SERVICE PHOTOBOX ===
-        $photoboxServices = Service::whereIn('slug', [
-            'wide-box',
-            'corner-box',
-            'snap-up-box',
-        ])->get();
-
-        foreach ($photoboxServices as $service) {
-            EmployeeService::updateOrCreate(
-                [
-                    'employee_id' => $employeeId,
-                    'service_id'  => $service->id,
-                ],
-                [
-                    'slot_group_id' => $photoboxSlot->id,
-                    'duration' => 5,
-                    'break_duration' => 0,
-                ]
-            );
-        }
+        DB::table('employee_service')->insert([
+            [
+                'employee_id' => 4,
+                'service_id' => 1,
+                'slot_group_id' => 1,
+                'duration' => 15,
+                'break_duration' => 15,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'employee_id' => 4,
+                'service_id' => 2,
+                'slot_group_id' => 1,
+                'duration' => 15,
+                'break_duration' => 15,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'employee_id' => 4,
+                'service_id' => 3,
+                'slot_group_id' => 1,
+                'duration' => 10,
+                'break_duration' => 10,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'employee_id' => 4,
+                'service_id' => 4,
+                'slot_group_id' => 2,
+                'duration' => 5,
+                'break_duration' => 5,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'employee_id' => 4,
+                'service_id' => 5,
+                'slot_group_id' => 3,
+                'duration' => 5,
+                'break_duration' => 5,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'employee_id' => 4,
+                'service_id' => 6,
+                'slot_group_id' => 4,
+                'duration' => 5,
+                'break_duration' => 5,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'employee_id' => 4,
+                'service_id' => 7,
+                'slot_group_id' => 5,
+                'duration' => 5,
+                'break_duration' => 5,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+        ]);
     }
 }

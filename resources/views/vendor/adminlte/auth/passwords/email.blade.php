@@ -5,60 +5,57 @@
     <link rel="stylesheet" href="{{ asset('vendor/icheck-bootstrap/icheck-bootstrap.min.css') }}">
 @stop
 
-@php( $password_email_url = View::getSection('password_email_url') ?? config('adminlte.password_email_url', 'password/email') )
+@php($password_email_url = View::getSection('password_email_url') ?? config('adminlte.password_email_url', 'password/email'))
 
 @if (config('adminlte.use_route_url', false))
-    @php( $password_email_url = $password_email_url ? route($password_email_url) : '' )
+    @php($password_email_url = $password_email_url ? route($password_email_url) : '')
 @else
-    @php( $password_email_url = $password_email_url ? url($password_email_url) : '' )
+    @php($password_email_url = $password_email_url ? url($password_email_url) : '')
 @endif
 
 @section('auth_header')
-<div class="text-center mb-4">
-    <h2 class="fw-bold mb-2 text-gradient kalcer-heading">
-        ✦ Lupa Kata Sandi ✦
-    </h2>
+    <div class="text-center mb-4">
+        <h2 class="fw-bold mb-2 text-gradient kalcer-heading">
+            ✦ Lupa Kata Sandi ✦
+        </h2>
 
-    <p class="mb-4 fw-light"
-       style="font-size:1rem; color:#6c757d; letter-spacing:0.5px; line-height:1.5;">
-        Masukkan email terdaftar kamu untuk menerima link reset kata sandi 🔑
-    </p>
-</div>
+        <p class="mb-4 fw-light text-muted" style="font-size:1rem; letter-spacing:0.5px; line-height:1.6;">
+            Masukkan email terdaftar kamu untuk menerima link reset kata sandi
+            <i class="fas fa-key me-2 text-warning"></i>
+        </p>
+
+    </div>
 @stop
 
 @section('auth_body')
 
     {{-- ALERT STATUS --}}
-    @if(session('status'))
-        <div class="alert alert-success text-center rounded-pill py-2">
-            {{ session('status') }}
+    @if (session('status'))
+        <div class="custom-success mb-3">
+            <i class="fas fa-check-circle"></i>
+            <div>
+                {{ session('status') }}
+            </div>
         </div>
     @endif
+
 
     <form action="{{ $password_email_url }}" method="POST" novalidate>
         @csrf
 
         {{-- EMAIL FIELD --}}
-        <div class="input-group mb-3 rounded-pill overflow-hidden shadow-sm">
-            <input type="email"
-                   name="email"
-                   id="email"
-                   class="form-control border-0 @error('email') is-invalid @enderror"
-                   placeholder="Alamat Email"
-                   value="{{ old('email') }}"
-                   required
-                   autofocus>
-
-            <div class="input-group-append">
-                <span class="input-group-text border-0">
-                    <i class="fas fa-envelope"></i>
-                </span>
+        <div class="mb-3">
+            <div class="input-group shadow-sm">
+                <input type="email" name="email" id="email"
+                    class="form-control border-0 @error('email') is-invalid @enderror" placeholder="Alamat Email"
+                    value="{{ old('email') }}" required autofocus style="border-radius: .5rem;">
             </div>
 
             @error('email')
-                <span class="invalid-feedback d-block px-3">
-                    <strong>{{ $message }}</strong>
-                </span>
+                <div class="custom-error mt-2">
+                    <i class="fas fa-exclamation-circle me-1"></i>
+                    {{ $message }}
+                </div>
             @enderror
         </div>
 
@@ -70,212 +67,305 @@
 @stop
 
 @section('auth_footer')
-<div class="text-center mt-3">
-    <p class="mb-1">
-        <a href="{{ route('login') }}" class="text-decoration-none text-secondary">
-            <i class="fas fa-arrow-left me-1"></i> Kembali ke Halaman Masuk
-        </a>
-    </p>
-</div>
+    <div class="text-center mt-3">
+        <p class="mb-1">
+            <a href="{{ route('login') }}" class="text-decoration-none text-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Kembali ke Halaman Masuk
+            </a>
+        </p>
+    </div>
 @stop
 
 @push('css')
-<style>
-body.login-page {
-    background: linear-gradient(135deg, rgba(102,166,255,0.7), rgba(137,247,254,0.7)), 
-                url('{{ asset("uploads/images/bg-login.jpg") }}') center/cover no-repeat;
-    font-family: 'Poppins', sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    padding: 10px;
-    box-sizing: border-box;
-    overflow-y: auto; /* scroll aktif di layar kecil */
-}
+    <style>
+        body.login-page {
+            background: linear-gradient(135deg, rgba(102, 166, 255, 0.7), rgba(137, 247, 254, 0.7)),
+                url('{{ asset('uploads/images/bg-login.jpg') }}') center/cover no-repeat;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            /* scroll aktif di layar kecil */
+        }
 
-/* Login Box - ukuran tetap */
-.login-box {
-    width: 100%;
-    max-width: 400px; /* tetap, tidak responsive */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    box-sizing: border-box;
-    margin-top: 0;
-}
+        /* Login Box - ukuran tetap */
+        .login-box {
+            width: 100%;
+            max-width: 400px;
+            /* tetap, tidak responsive */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-sizing: border-box;
+            margin-top: 0;
+        }
 
-/* Logo */
-.login-logo img {
-    width: auto;
-    max-width: 120px; /* tetap */
-    height: auto;
-    margin-bottom: 15px;
-}
+        /* Logo */
+        .login-logo img {
+            width: auto;
+            max-width: 120px;
+            /* tetap */
+            height: auto;
+            margin-bottom: 15px;
+        }
 
-/* Card transparan & blur */
-.card {
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-radius: 1.8rem;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.25);
-    border: none;
-    width: 100%;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-}
+        /* Card transparan & blur */
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 1.8rem;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+            border: none;
+            width: 100%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+        }
 
-/* Card Header */
-.card .card-header {
-    text-align: center;
-    background: transparent;
-    border-bottom: none;
-    color: #fff;
-    padding: 15px 0;
-}
+        /* Card Header */
+        .card .card-header {
+            text-align: center;
+            background: transparent;
+            border-bottom: none;
+            color: #fff;
+            padding: 15px 0;
+        }
 
-/* Card Body transparan */
-.card .card-body {
-    background: transparent;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    padding: 15px 0;
-}
+        /* Card Body transparan */
+        .card .card-body {
+            background: transparent;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 15px 0;
+        }
 
-/* Card Footer tetap di dalam card */
-.card .card-footer {
-    background: transparent;
-    border-top: none;
-    text-align: center;
-    padding: 15px 0;
-    color: #fff;
-}
+        /* Card Footer tetap di dalam card */
+        .card .card-footer {
+            background: transparent;
+            border-top: none;
+            text-align: center;
+            padding: 15px 0;
+            color: #fff;
+        }
 
-/* Hapus ikon mata bawaan browser */
-input::-ms-reveal,
-input::-ms-clear {
-    display: none !important;
-}
+        /* Hapus ikon mata bawaan browser */
+        input::-ms-reveal,
+        input::-ms-clear {
+            display: none !important;
+        }
 
-/* Footer selalu ikut scroll */
-.login-box {
-    display: flex;
-    flex-direction: column;
-}
+        /* Footer selalu ikut scroll */
+        .login-box {
+            display: flex;
+            flex-direction: column;
+        }
 
-/* Responsive kecil untuk scroll saja */
-@media (max-height: 667px) { /* iPhone SE */
-    body.login-page {
-        justify-content: flex-start; /* biar scroll muncul */
-    }
-}
+        /* Responsive kecil untuk scroll saja */
+        @media (max-height: 667px) {
 
-@media (max-height: 600px) { /* Nest Hub */
-    body.login-page {
-        justify-content: flex-start;
-    }
-}
+            /* iPhone SE */
+            body.login-page {
+                justify-content: flex-start;
+                /* biar scroll muncul */
+            }
+        }
 
-/* Tombol Masuk lebih kecil & Kalcer aesthetic */
-.btn-gradient {
-    background: linear-gradient(90deg, #6abfe3, #7873f5); /* gradient Kalcer-style */
-    color: #fff;
-    font-weight: 600;
-    font-size: 0.9rem;         /* lebih kecil dari default */
-    padding: 0.45rem 1.2rem;   /* vertical lebih compact, horizontal tetap nyaman */
-    transition: all 0.3s;
-    backdrop-filter: blur(10px);
-    border-radius: 50px;       /* tetap rounded-pill */
-    border: none;
-}
+        @media (max-height: 600px) {
 
-/* Hover / focus effect */
-.btn-gradient:hover,
-.btn-gradient:focus {
-    transform: scale(1.03);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
-    color: #fff;
-}
+            /* Nest Hub */
+            body.login-page {
+                justify-content: flex-start;
+            }
+        }
 
-/* Font & style Kalcer vibes */
-.kalcer-heading {
-    font-family: 'Poppins', 'Montserrat', sans-serif;
-    font-size: 1.5rem;
-    font-weight: 700;
-    letter-spacing: 1px;
-    line-height: 1.2;
-    background: #0b1292;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
+        /* Tombol Masuk lebih kecil & Kalcer aesthetic */
+        .btn-gradient {
+            background: linear-gradient(90deg, #6abfe3, #7873f5);
+            /* gradient Kalcer-style */
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.9rem;
+            /* lebih kecil dari default */
+            padding: 0.45rem 1.2rem;
+            /* vertical lebih compact, horizontal tetap nyaman */
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            /* tetap rounded-pill */
+            border: none;
+        }
 
-/* === Input Transparan Putih Cerah === */
-.form-control {
-    background: rgba(255, 255, 255, 0.4) !important; /* lebih terang dan jelas */
-    color: #000 !important; /* teks hitam agar kontras di atas putih */
-    border: 1px solid rgba(255, 255, 255, 0.6) !important;
-    border-radius: 50px;
-    padding: 0.65rem 1.2rem;
-    transition: all 0.3s ease;
-    font-size: 0.95rem;
-    backdrop-filter: blur(8px); /* efek kaca lembut */
-    -webkit-backdrop-filter: blur(8px);
-}
+        /* Hover / focus effect */
+        .btn-gradient:hover,
+        .btn-gradient:focus {
+            transform: scale(1.03);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+            color: #fff;
+        }
 
-/* Placeholder lebih terlihat tapi tetap lembut */
-.form-control::placeholder {
-    color: rgba(0, 0, 0, 0.5);
-    font-weight: 400;
-}
+        /* Font & style Kalcer vibes */
+        .kalcer-heading {
+            font-family: 'Poppins', 'Montserrat', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            line-height: 1.2;
+            background: #0b1292;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
 
-/* Fokus input lebih cerah */
-.form-control:focus {
-    background: rgba(255, 255, 255, 0.6) !important;
-    border-color: rgba(255, 255, 255, 0.9) !important;
-    box-shadow: 0 0 12px rgba(255,255,255,0.5);
-    color: #000;
-}
+        /* === Input Transparan Putih Cerah === */
+        .form-control {
+            background: rgba(255, 255, 255, 0.4) !important;
+            /* lebih terang dan jelas */
+            color: #000 !important;
+            /* teks hitam agar kontras di atas putih */
+            border: 1px solid rgba(255, 255, 255, 0.6) !important;
+            border-radius: 50px;
+            padding: 0.65rem 1.2rem;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            backdrop-filter: blur(8px);
+            /* efek kaca lembut */
+            -webkit-backdrop-filter: blur(8px);
+        }
 
-/* Input group transparan */
-.input-group-text {
-    background: rgba(255, 255, 255, 0.35) !important;
-    border: 1px solid rgba(255, 255, 255, 0.5) !important;
-    color: #000 !important;
-    backdrop-filter: blur(8px);
-}
+        /* Placeholder lebih terlihat tapi tetap lembut */
+        .form-control::placeholder {
+            color: rgba(0, 0, 0, 0.5);
+            font-weight: 400;
+        }
 
-/* Tombol toggle mata */
-#toggle-password {
-    background: rgba(255, 255, 255, 0.35) !important;
-    color: rgba(0,0,0,0.7);
-    border: 1px solid rgba(255,255,255,0.5) !important;
-    border-left: none;
-    transition: all 0.3s;
-    backdrop-filter: blur(8px);
-}
+        /* Fokus input lebih cerah */
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.6) !important;
+            border-color: rgba(255, 255, 255, 0.9) !important;
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
+            color: #000;
+        }
 
-#toggle-password:hover {
-    background: rgba(255, 255, 255, 0.55) !important;
-    color: #000;
-}
+        /* Input group transparan */
+        .input-group-text {
+            background: rgba(255, 255, 255, 0.35) !important;
+            border: 1px solid rgba(255, 255, 255, 0.5) !important;
+            color: #000 !important;
+            backdrop-filter: blur(8px);
+        }
 
-/* Validasi error transparan */
-.is-invalid {
-    border-color: rgba(255, 77, 77, 0.9) !important;
-    background: rgba(255, 77, 77, 0.25) !important;
-}
+        /* Tombol toggle mata */
+        #toggle-password {
+            background: rgba(255, 255, 255, 0.35) !important;
+            color: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.5) !important;
+            border-left: none;
+            transition: all 0.3s;
+            backdrop-filter: blur(8px);
+        }
 
-.invalid-feedback {
-    color: #cc0000;
-    font-weight: 400;
-}
+        #toggle-password:hover {
+            background: rgba(255, 255, 255, 0.55) !important;
+            color: #000;
+        }
+
+        /* Validasi error transparan */
+        .is-invalid {
+            border-color: rgba(255, 77, 77, 0.9) !important;
+            background: rgba(255, 77, 77, 0.25) !important;
+        }
+
+        .invalid-feedback {
+            color: #cc0000;
+            font-weight: 400;
+
+        }
+
+        /* ================= SUCCESS MODERN ================= */
+
+        .custom-success {
+            width: 100%;
+            margin-bottom: 15px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #0f5132;
+            background: rgba(25, 135, 84, 0.12);
+            border: 1px solid rgba(25, 135, 84, 0.25);
+            padding: 10px 14px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(6px);
+            animation: fadeInSuccess 0.4s ease;
+        }
+
+        .custom-success i {
+            font-size: 1rem;
+            color: #198754;
+        }
+
+        @keyframes fadeInSuccess {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
 
-</style>
+        /* ================= ERROR MODERN ================= */
+
+        .custom-error {
+            width: 100%;
+            margin-top: 8px;
+            /* 🔥 kasih jarak dari input */
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #842029;
+            background: rgba(255, 99, 132, 0.12);
+            border: 1px solid rgba(255, 99, 132, 0.25);
+            padding: 8px 12px;
+            border-radius: 8px;
+            display: flex;
+            /* 🔥 jangan inline-flex */
+            align-items: center;
+            gap: 6px;
+            backdrop-filter: blur(4px);
+            animation: fadeInError 0.3s ease;
+        }
+
+        .custom-error i {
+            font-size: 0.85rem;
+        }
+
+        .is-invalid {
+            border-color: rgba(255, 99, 132, 0.7) !important;
+            box-shadow: 0 0 0 2px rgba(255, 99, 132, 0.2);
+        }
+
+        @keyframes fadeInError {
+            from {
+                opacity: 0;
+                transform: translateY(-3px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 @endpush

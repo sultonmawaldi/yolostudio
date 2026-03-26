@@ -40,6 +40,23 @@ class TransactionObserver
             return;
         }
 
+        // 🔥 TAMBAHAN: update coupon (AMAN, tidak ganggu logic lama)
+        if ($transaction->relationLoaded('coupon') || method_exists($transaction, 'coupon')) {
+            $transaction->loadMissing('coupon');
+
+            if ($transaction->coupon && $transaction->coupon->status === 'unused') {
+                $transaction->coupon->update([
+                    'status' => 'used',
+                    'used_at' => now()
+                ]);
+
+                Log::info('Coupon marked as used', [
+                    'transaction_id' => $transaction->id,
+                    'coupon_id' => $transaction->coupon->id
+                ]);
+            }
+        }
+
         // 2️⃣ Pastikan belum pernah direward
         if ($transaction->rewarded_at) {
             Log::info('Already rewarded', ['transaction_id' => $transaction->id]);

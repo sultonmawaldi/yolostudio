@@ -43,7 +43,7 @@ class LoginController extends Controller
             ]);
         }
 
-        Auth::login($user, $request->filled('remember'));
+        Auth::login($user, $request->boolean('remember'));
 
         return redirect($this->redirectTo($user));
     }

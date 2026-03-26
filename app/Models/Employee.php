@@ -61,4 +61,10 @@ class Employee extends Model
     {
         return $this->hasMany(SlotGroup::class);
     }
+
+    // App\Models\Employee.php
+    public function studio()
+    {
+        return $this->belongsTo(Studio::class);
+    }
 }

@@ -14,7 +14,7 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = Category::latest()->get();
-        return view('backend.category.index',compact('categories'));
+        return view('backend.category.index', compact('categories'));
     }
 
     /**
@@ -33,7 +33,7 @@ class CategoryController extends Controller
         $data = $request->validate([
             'title' => 'required',
             'slug' => 'required|unique:categories,slug',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3072',
             'body' => 'nullable|string',
             'featured' => 'nullable|boolean',
             'status' => 'nullable|boolean',
@@ -41,21 +41,27 @@ class CategoryController extends Controller
             'meta_description' => 'nullable|string',
             'meta_keywords' => 'nullable|string',
             'other' => 'nullable',
+        ], [
+            // 🔥 Tambahan pesan custom di sini
+            'slug.unique' => 'Slug sudah digunakan.',
+            'image.image' => 'File harus berupa gambar.',
+            'image.mimes' => 'Format gambar harus jpg, jpeg, png, atau webp.',
+            'image.max' => 'Ukuran gambar terlalu besar. Maksimal 3 MB.',
         ]);
 
         $data['featured'] = $request->featured ?? 0;
         $data['status'] = $request->status ?? 0;
         $data['body'] = $request->body ?? '';
 
-        if($request->hasFile('image'))
-        {
-            $imageName = time().'.'.$request->image->getClientOriginalExtension();
-            $request->image->move(public_path('uploads/images/category/'),$imageName);
+        if ($request->hasFile('image')) {
+            $imageName = time() . '.' . $request->image->getClientOriginalExtension();
+            $request->image->move(public_path('uploads/images/category/'), $imageName);
             $data['image'] = $imageName;
         }
 
         Category::create($data);
-        return redirect()->route('category.index')->withSuccess('Category has been created successfully!');
+        return redirect()->route('category.index')
+            ->with('success', 'Kategori berhasil ditambahkan');
     }
 
     /**
@@ -63,8 +69,8 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        $categories = Category::where('parent_id',null)->orderby('title','asc')->get();
-        return view('backend.category.show',compact('category','categories'));
+        $categories = Category::where('parent_id', null)->orderby('title', 'asc')->get();
+        return view('backend.category.show', compact('category', 'categories'));
     }
 
     /**
@@ -72,7 +78,7 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        return view('backend.category.edit',compact('category'));
+        return view('backend.category.edit', compact('category'));
     }
 
     /**
@@ -97,34 +103,29 @@ class CategoryController extends Controller
         $data['status'] = $request->status ?? 0;
         $data['body'] = $request->body ?? '';
 
-        if($request->delete_image)
-        {
-            $destination = public_path('uploads/images/category/'.$category->image);
-            if(\File::exists($destination))
-            {
+        if ($request->delete_image) {
+            $destination = public_path('uploads/images/category/' . $category->image);
+            if (\File::exists($destination)) {
                 \File::delete($destination);
             }
 
             $data['image'] =  '';
-
         }
 
-        if($request->hasFile('image')){
+        if ($request->hasFile('image')) {
             // delete old image
-            $destination = public_path('uploads/images/category/'.$category->image);
-            if(\File::exists($destination))
-            {
+            $destination = public_path('uploads/images/category/' . $category->image);
+            if (\File::exists($destination)) {
                 \File::delete($destination);
             }
 
             //add new image
-            $imageName = time().'.'.$request->image->getClientOriginalExtension();
-            $request->image->move(public_path('uploads/images/category/'),$imageName);
+            $imageName = time() . '.' . $request->image->getClientOriginalExtension();
+            $request->image->move(public_path('uploads/images/category/'), $imageName);
             $data['image'] = $imageName;
-
         }
         $category->update($data);
-        return redirect()->route('category.index')->with('success', 'Category has been updated successfully.');
+        return redirect()->route('category.index')->with('success', 'Kategori berhasil diperbarui');
     }
 
     /**
@@ -132,17 +133,15 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        if($category->services->count())
-       {
-            return back()->withErrors('Category cannot be deleted as it is linked to services.');
-       }
+        if ($category->services->count()) {
+            return back()->with('error', 'Kategori tidak bisa dihapus karena masih terhubung dengan layanan');
+        }
 
-        $destination = public_path('uploads/images/category/'.$category->image);
-        if(\File::exists($destination))
-        {
+        $destination = public_path('uploads/images/category/' . $category->image);
+        if (\File::exists($destination)) {
             \File::delete($destination);
         }
         $category->delete();
-        return redirect()->back()->with('success', 'Category has been deleted successfully.');
+        return redirect()->back()->with('success', 'Kategori berhasil dihapus');
     }
 }

@@ -21,11 +21,29 @@ class DashboardController extends Controller
          * ADMIN DASHBOARD
          * ===========================================================
          */
-        if ($user->hasRole('admin')) {
-            $appointments = Appointment::with(['employee.user', 'service', 'user'])
+        if ($user->hasRole(['admin', 'moderator', 'employee'])) {
+
+            $query = Appointment::with([
+                'employee.user',
+                'service',
+                'user',
+                'background' // tambahkan ini
+            ])
                 ->orderBy('booking_date', 'asc')
-                ->orderBy('booking_start_time', 'asc')
-                ->get();
+                ->orderBy('booking_start_time', 'asc');
+
+            // 🔐 FILTER KHUSUS EMPLOYEE
+            if ($user->hasRole('employee')) {
+
+                if (!$user->employee) {
+                    abort(403, 'Employee profile not found.');
+                }
+
+                $query->where('employee_id', $user->employee->id);
+            }
+
+            $appointments = $query->get();
+
 
             $appointments = $appointments->map(function ($appointment) {
                 try {
@@ -59,11 +77,16 @@ class DashboardController extends Controller
                         'phone' => $appointment->phone,
                         'amount' => $appointment->amount,
                         'status' => $appointment->status,
-                        'staff' => $appointment->employee->user->name ?? 'Unassigned',
+                        'crew' => $appointment->employee->user->name ?? 'Unassigned',
                         'color' => $this->getStatusColor($appointment->status),
                         'service_title' => $appointment->service->title ?? 'Service',
                         'name' => $appointment->name,
                         'notes' => $appointment->notes,
+
+                        // ✅ TAMBAHAN BARU
+                        'background_id' => $appointment->background_id,
+                        'background_name' => $appointment->background->name ?? null,
+                        'people_count' => $appointment->people_count,
                     ];
                 } catch (\Exception $e) {
                     \Log::error("Format error for appointment {$appointment->id}: {$e->getMessage()}");
@@ -100,14 +123,12 @@ class DashboardController extends Controller
     private function getStatusColor($status)
     {
         $colors = [
-            'Pending' => '#f39c12',
-            'Processing' => '#3498db',
-            'Confirmed' => '#2ecc71',
-            'Cancelled' => '#ff0000',
-            'Completed' => '#008000',
-            'On Hold' => '#95a5a6',
-            'Rescheduled' => '#f1c40f',
-            'No Show' => '#e67e22',
+            'Pending'     => '#d68910', // dark orange
+            'Processing'  => '#21618c', // dark blue
+            'Confirmed' => '#28b463',
+            'Cancelled'   => '#922b21', // dark red
+            'Completed'   => '#145a32', // deeper green
+            'Rescheduled' => '#7d6608', // dark yellow / gold
         ];
 
         return $colors[$status] ?? '#7f8c8d';
@@ -118,7 +139,7 @@ class DashboardController extends Controller
     {
         $request->validate([
             'appointment_id' => 'required|exists:appointments,id',
-            'status' => 'required|in:Pending,Processing,Confirmed,Cancelled,Completed,On Hold,No Show'
+            'status' => 'required|in:Pending,Processing,Confirmed,Cancelled,Completed,Rescheduled'
         ]);
 
         $appointment = Appointment::findOrFail($request->appointment_id);
@@ -127,6 +148,6 @@ class DashboardController extends Controller
 
         event(new \App\Events\StatusUpdated($appointment));
 
-        return back()->with('success', 'Status updated successfully');
+        return back()->with('success', 'Status berhasil diperbarui.');
     }
 }

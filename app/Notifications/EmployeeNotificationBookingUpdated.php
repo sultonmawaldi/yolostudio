@@ -13,7 +13,7 @@ class EmployeeNotificationBookingUpdated extends Notification implements ShouldQ
     use Queueable;
 
     public $appointment;
-    public function __construct( $appointment)
+    public function __construct($appointment)
     {
         $this->appointment =  $appointment;
     }
@@ -34,18 +34,18 @@ class EmployeeNotificationBookingUpdated extends Notification implements ShouldQ
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-        ->greeting('Hello '.$this->appointment->employee->user['name'])
-        ->subject('Booking Status Updated: ' . $this->appointment['name'])
-        ->line('Booking Status Updated for: ' . $this->appointment['name'])
-        ->line('Name: '. $this->appointment['name'])
-        ->line('Phone: '. $this->appointment['phone'])
-        ->line('Service: '. $this->appointment->service['title'])
-        ->line('Staff: '. $this->appointment->employee->user['name'])
-        ->line('Amount: '. $this->appointment['amount'])
-        ->line('Appointment Date : ' . Carbon::parse($this->appointment['booking_date'])->format('d M Y'))
-        ->line('Slot Time: '. $this->appointment['booking_time'])
-        ->line('Status: '. $this->appointment['status'])
-        ->line('Thank you for using our application !');
+            ->greeting('Hello ' . $this->appointment->employee->user['name'])
+            ->subject('Booking Status Updated: ' . $this->appointment['name'])
+            ->line('Booking Status Updated for: ' . $this->appointment['name'])
+            ->line('Name: ' . $this->appointment['name'])
+            ->line('Phone: ' . $this->appointment['phone'])
+            ->line('Service: ' . $this->appointment->service['title'])
+            ->line('Crew: ' . $this->appointment->employee->user['name'])
+            ->line('Amount: ' . $this->appointment['amount'])
+            ->line('Appointment Date : ' . Carbon::parse($this->appointment['booking_date'])->format('d M Y'))
+            ->line('Slot Time: ' . $this->appointment['booking_time'])
+            ->line('Status: ' . $this->appointment['status'])
+            ->line('Thank you for using our application !');
     }
 
     /**

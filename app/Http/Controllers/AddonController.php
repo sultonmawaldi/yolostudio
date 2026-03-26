@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Addon;
 use Illuminate\Http\Request;
+use App\Models\Service;
 
 class AddonController extends Controller
 {
@@ -23,27 +24,36 @@ class AddonController extends Controller
 
     public function create()
     {
-        return view('backend.addons.create');
+        $services = Service::orderBy('title')->get();
+
+        return view('backend.addons.create', compact('services'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'code'     => 'required|unique:addons,code',
+            'code'     => 'required|unique:addons,code|max:255',
             'name'     => 'required|string|max:255',
-            'price'    => 'required|numeric|min:0',
-            'unit'     => 'required|string|max:50',
+            'price'    => 'required|integer|min:0',
+            'unit'     => 'required|in:person,minute,item',
             'max_qty'  => 'nullable|integer|min:1',
+            'sort_order' => 'nullable|integer|min:0',
         ]);
 
-        Addon::create([
-            'code'      => strtoupper($request->code),
-            'name'      => $request->name,
-            'price'     => $request->price,
-            'unit'      => $request->unit,
-            'max_qty'   => $request->max_qty,
-            'is_active' => $request->boolean('is_active'),
+        $addon = Addon::create([
+            'code'       => $request->code,
+            'name'       => $request->name,
+            'price'      => $request->price,
+            'unit'       => $request->unit,
+            'max_qty'    => $request->max_qty,
+            'is_active'  => $request->boolean('is_active'),
+            'sort_order' => $request->sort_order ?? 0,
         ]);
+
+        // SIMPAN RELASI PIVOT
+        if ($request->services) {
+            $addon->services()->sync($request->services);
+        }
 
         return redirect()
             ->route('addons.index')
@@ -52,31 +62,42 @@ class AddonController extends Controller
 
     public function edit(Addon $addon)
     {
-        return view('backend.addons.edit', compact('addon'));
+        $services = Service::orderBy('title')->get();
+
+        return view('backend.addons.edit', compact('addon', 'services'));
     }
 
     public function update(Request $request, Addon $addon)
     {
         $request->validate([
-            'code'     => 'required|unique:addons,code,' . $addon->id,
+            'code'     => 'required|unique:addons,code,' . $addon->id . '|max:255',
             'name'     => 'required|string|max:255',
-            'price'    => 'required|numeric|min:0',
-            'unit'     => 'required|string|max:50',
+            'price'    => 'required|integer|min:0',
+            'unit'     => 'required|in:person,minute,item',
             'max_qty'  => 'nullable|integer|min:1',
+            'sort_order' => 'nullable|integer|min:0',
         ]);
 
         $addon->update([
-            'code'      => strtoupper($request->code),
-            'name'      => $request->name,
-            'price'     => $request->price,
-            'unit'      => $request->unit,
-            'max_qty'   => $request->max_qty,
-            'is_active' => $request->boolean('is_active'),
+            'code'       => $request->code,
+            'name'       => $request->name,
+            'price'      => $request->price,
+            'unit'       => $request->unit,
+            'max_qty'    => $request->max_qty,
+            'is_active'  => $request->boolean('is_active'),
+            'sort_order' => $request->sort_order ?? 0,
         ]);
+
+        // UPDATE RELASI PIVOT
+        if ($request->services) {
+            $addon->services()->sync($request->services);
+        } else {
+            $addon->services()->detach();
+        }
 
         return redirect()
             ->route('addons.index')
-            ->with('success', 'Addon berhasil diupdate');
+            ->with('success', 'Addon berhasil diperbarui');
     }
 
     public function destroy(Addon $addon)

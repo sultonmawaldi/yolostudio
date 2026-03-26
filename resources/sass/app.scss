@@ -82,13 +82,14 @@ section.relative h1 span.block {
     text-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
 
-/* Paragraf */
+/* Paragraf — FIX */
 section.relative p {
     font-family: "Poppins", sans-serif;
     font-weight: 400;
     line-height: 1.7;
-    color: rgba(255, 255, 255, 0.9);
+    /* HAPUS COLOR */
 }
+
 
 /* Tombol Booking */
 section.relative a {
@@ -926,6 +927,46 @@ body {
     word-break: break-word;
 }
 
+/* Light mode */
+.modal-content .modal-header {
+    background-color: var(--primary-color); /* warna primary default */
+    color: #fff; /* teks putih agar kontras */
+    border-bottom: none; /* hapus border jika perlu */
+}
+
+/* ===================== TERMS LINK ===================== */
+.terms-link {
+    text-decoration: underline;               /* underline standar */
+    text-decoration-color: var(--primary-color); /* warna underline sesuai theme */
+    text-decoration-thickness: 1.3px;        /* tebal garis */
+    text-underline-offset: 2px;              /* jarak dari huruf */
+    text-decoration-skip-ink: auto;          /* jangan melewati huruf */
+    transition: color 0.2s, text-decoration-color 0.2s;
+}
+
+.terms-link:hover {
+    color: var(--accent-color);
+    text-decoration-color: var(--accent-color);
+}
+
+/* Wrapper supaya label tidak melebar berlebihan */
+.terms-wrapper {
+    display: inline-block;
+    max-width: 100%;
+}
+
+/* Checkbox spacing */
+.terms-check .form-check-input {
+    flex-shrink: 0;
+}
+
+.terms-check .form-check-label {
+    line-height: 1.5;
+    word-break: break-word; /* teks rapi di layar kecil */
+}
+
+
+
 
 /* ===================== DARK MODE TOGGLE SUPPORT ===================== */
 html.dark body {
@@ -1490,4 +1531,15 @@ html.dark .background-item.selected::after {
 html.dark .bg-name {
     color: #fff;          /* nama putih di dark mode */
     /* margin-top tetap 6px agar jarak sama dengan light mode */
+}
+
+/* Optional: rapi di dark mode */
+html.dark .terms-link {
+    color: #6a11cb;                   /* primary dark color */
+    text-decoration-color: #6a11cb;   
+}
+
+html.dark .terms-link:hover {
+    color: #facc15;                   /* highlight saat hover */
+    text-decoration-color: #facc15;
 }

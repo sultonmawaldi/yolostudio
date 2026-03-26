@@ -3,86 +3,390 @@
 @section('title', 'Tambah Kupon')
 
 @section('content_header')
-    <h1>Tambah Kupon</h1>
+    <div class="container-fluid">
+        <div class="row mb-3 align-items-center">
+
+            <div class="col-sm-6">
+                <h1 class="m-0 font-weight-bold">
+                    <i class="fas fa-ticket-alt text-primary mr-2"></i>
+                    Tambah Kupon
+                </h1>
+            </div>
+
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item">
+                        <a href="{{ route('dashboard') }}">
+                            <i class="fas fa-home"></i> Beranda
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ route('coupons.index') }}">Kupon</a>
+                    </li>
+                    <li class="breadcrumb-item active">Tambah Kupon</li>
+                </ol>
+            </div>
+
+        </div>
+    </div>
 @stop
 
 @section('content')
-<div class="container-fluid">
+    <div class="container-fluid">
+        <form action="{{ route('coupons.store') }}" method="POST">
+            @csrf
 
-    <div class="card">
-        <div class="card-body">
-            <form action="{{ route('coupons.store') }}" method="POST">
-                @csrf
+            <div class="row">
 
-                {{-- Kode Kupon --}}
-                <div class="form-group">
-                    <label for="code">Kode Kupon</label>
-                    <input type="text" name="code" id="code" class="form-control" value="{{ old('code') }}" required>
+                {{-- FORM --}}
+                <div class="col-md-8">
+
+                    {{-- INFORMASI KUIPON --}}
+                    <div class="card card-light">
+                        <div class="card-header">
+                            <h3 class="card-title">Informasi Kupon</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+
+                            {{-- KODE --}}
+                            <div class="form-group">
+                                <label>Kode Kupon</label>
+                                <input type="text" name="code"
+                                    class="form-control @error('code') is-invalid @enderror" value="{{ old('code') }}"
+                                    placeholder="Masukkan kode kupon">
+
+                                @error('code')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
+                            </div>
+
+                            {{-- TYPE --}}
+                            <div class="form-group">
+                                <label>Jenis Kupon</label>
+                                <select name="type" class="form-control">
+                                    <option value="fixed" {{ old('type') == 'fixed' ? 'selected' : '' }}>Fixed (Rp)
+                                    </option>
+                                    <option value="percentage" {{ old('type') == 'percentage' ? 'selected' : '' }}>
+                                        Percentage (%)</option>
+                                </select>
+                            </div>
+
+                            {{-- VALUE --}}
+                            <div class="form-group">
+                                <label>Nilai</label>
+                                <input type="number" step="1" min="0" name="value" class="form-control"
+                                    value="{{ old('value') }}">
+                            </div>
+
+                            {{-- MIN --}}
+                            <div class="form-group">
+                                <label>Minimal Transaksi</label>
+                                <input type="number" step="1" min="0" name="minimum_cart_value"
+                                    class="form-control" value="{{ old('minimum_cart_value') }}">
+                                <small class="text-muted">
+                                    Kosongkan jika tidak ada minimal transaksi
+                                </small>
+                            </div>
+
+                            {{-- EXPIRY --}}
+                            <div class="form-group">
+                                <label>Tanggal Kadaluarsa</label>
+                                <input type="date" name="expiry_date" class="form-control"
+                                    value="{{ old('expiry_date') }}">
+                            </div>
+
+                            {{-- USER --}}
+                            <div class="form-group">
+                                <label>User</label>
+                                <select name="user_id" id="user_id"
+                                    class="select2 form-control @error('user_id') is-invalid @enderror"
+                                    data-placeholder="Pilih User" style="width:100%;">
+                                    <option></option>
+                                    @foreach ($users as $user)
+                                        <option value="{{ $user->id }}"
+                                            {{ old('user_id') == $user->id ? 'selected' : '' }}>
+                                            {{ $user->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <small class="text-muted">
+                                    Kosongkan jika berlaku untuk semua user
+                                </small>
+                            </div>
+
+                            {{-- SERVICE --}}
+                            <div class="form-group">
+                                <label>Service</label>
+                                <select name="service_id[]" id="services" class="form-control select2" multiple
+                                    style="width:100%">
+                                    @foreach ($services as $service)
+                                        <option value="{{ $service->id }}"
+                                            {{ in_array($service->id, old('service_id', [])) ? 'selected' : '' }}>
+                                            {{ $service->title }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <small class="text-muted">
+                                    Kosongkan jika berlaku untuk semua service
+                                </small>
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
 
-                {{-- Jenis --}}
-                <div class="form-group">
-                    <label for="type">Jenis</label>
-                    <select name="type" id="type" class="form-control" required>
-                        <option value="fixed" {{ old('type') == 'fixed' ? 'selected' : '' }}>Fixed (Rp)</option>
-                        <option value="percentage" {{ old('type') == 'percentage' ? 'selected' : '' }}>Percentage (%)</option>
-                    </select>
+                {{-- SIDEBAR --}}
+                <div class="col-md-4">
+                    <div class="sticky-top">
+
+                        <div class="card card-primary">
+                            <div class="card-header">
+                                <h3 class="card-title">Detail Kupon</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="card-body pb-0">
+
+                                <div class="form-group">
+                                    <label>Status Aktif</label>
+                                    <select name="active" class="form-control">
+                                        <option value="1" {{ old('active') == '1' ? 'selected' : '' }}>Aktif</option>
+                                        <option value="0" {{ old('active') == '0' ? 'selected' : '' }}>Nonaktif
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Status Kupon</label>
+                                    <select name="status" class="form-control">
+                                        <option value="unused" {{ old('status') == 'unused' ? 'selected' : '' }}>Belum
+                                            Digunakan</option>
+                                        <option value="used" {{ old('status') == 'used' ? 'selected' : '' }}>Sudah
+                                            Digunakan</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group mt-4 d-flex justify-content-end">
+                                    <a href="{{ route('coupons.index') }}" class="btn btn-secondary mr-2">
+                                        Batal
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save mr-1"></i>
+                                        Simpan & Terbitkan
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
 
-                {{-- Nilai --}}
-                <div class="form-group">
-                    <label for="value">Nilai</label>
-                    <input type="number" step="0.01" name="value" id="value" class="form-control" value="{{ old('value') }}" required>
-                </div>
-
-                {{-- Minimal Transaksi --}}
-                <div class="form-group">
-                    <label for="minimum_cart_value">Minimal Transaksi</label>
-                    <input type="number" step="0.01" name="minimum_cart_value" id="minimum_cart_value" class="form-control" value="{{ old('minimum_cart_value') }}">
-                </div>
-
-                {{-- Tanggal Kadaluarsa --}}
-                <div class="form-group">
-                    <label for="expiry_date">Tanggal Kadaluarsa</label>
-                    <input type="date" name="expiry_date" id="expiry_date" class="form-control" value="{{ old('expiry_date') }}">
-                </div>
-
-                {{-- Aktif --}}
-                <div class="form-group">
-                    <label for="active">Aktif</label>
-                    <select name="active" id="active" class="form-control" required>
-                        <option value="1" {{ old('active') == '1' ? 'selected' : '' }}>Aktif</option>
-                        <option value="0" {{ old('active') == '0' ? 'selected' : '' }}>Nonaktif</option>
-                    </select>
-                </div>
-
-                {{-- Status --}}
-                <div class="form-group">
-                    <label for="status">Status</label>
-                    <select name="status" id="status" class="form-control" required>
-                        <option value="unused" {{ old('status') == 'unused' ? 'selected' : '' }}>Belum Digunakan</option>
-                        <option value="used" {{ old('status') == 'used' ? 'selected' : '' }}>Sudah Digunakan</option>
-                    </select>
-                </div>
-
-                {{-- User --}}
-                <div class="form-group">
-                    <label for="user_id">User</label>
-                    <select name="user_id" id="user_id" class="form-control">
-                        <option value="">Semua User</option>
-                        @foreach($users as $user)
-                            <option value="{{ $user->id }}" {{ old('user_id') == $user->id ? 'selected' : '' }}>
-                                {{ $user->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <button type="submit" class="btn btn-success">Simpan</button>
-                <a href="{{ route('coupons.index') }}" class="btn btn-secondary">Batal</a>
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
+@stop
 
-</div>
+@section('css')
+    {{-- COPY CSS YANG SUDAH ADA DI HALAMAN LAYANAN UNTUK SELECT2 --}}
+    <style>
+        /* MULTIPLE SELECT - ITEM TERPILIH (TAG) */
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: #000 !important;
+            border: none !important;
+            color: #fff !important;
+
+            margin-top: 0 !important;
+            /* INI KUNCINYA */
+        }
+
+        /* ICON X (REMOVE) */
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+            color: #fff !important;
+            margin-right: 5px;
+        }
+
+        /* FIX AGAR TIDAK KE-OVERRIDE ADMINLTE */
+        .select2-container--default.select2-container--focus .select2-selection--multiple .select2-selection__choice {
+            background-color: #000 !important;
+            color: #fff !important;
+        }
+
+        /* pastikan container punya positioning */
+        .select2-container--default .select2-selection--multiple {
+            position: relative;
+        }
+
+        /* CHEVRON */
+        .select2-container--default .select2-selection--multiple::after {
+            content: "";
+            position: absolute;
+            right: 8px;
+            /* samakan dengan single */
+            top: 50%;
+            transform: translateY(-50%) rotate(0deg);
+            width: 0;
+            height: 0;
+
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid #6c757d;
+
+            pointer-events: none;
+            transition: transform 0.2s ease;
+        }
+
+        /* SAAT OPEN (BIAR NAIK) */
+        .select2-container--default.select2-container--open .select2-selection--multiple::after {
+            transform: translateY(-50%) rotate(180deg);
+        }
+
+
+        /* SINGLE SELECT (SAMA PERSIS SERVICE) */
+        .select2-container--default .select2-selection--single {
+            height: 38px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            padding: 0 35px 0 10px;
+            position: relative;
+        }
+
+        /* text */
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            padding: 0 !important;
+            margin: 0;
+            line-height: normal;
+        }
+
+        /* arrow */
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 100%;
+            right: 8px;
+        }
+
+        /* tombol X (clear) */
+        .select2-container--default .select2-selection--single .select2-selection__clear {
+            position: absolute;
+            right: 28px;
+            top: 50%;
+            transform: translateY(-50%);
+            margin: 0;
+            font-size: 16px;
+        }
+
+        /* MATIKAN ARROW BAWAAN SELECT2 */
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            display: none !important;
+        }
+
+        /* CHEVRON */
+        .select2-container--default .select2-selection--single::after {
+            content: "";
+            position: absolute;
+            right: 8px;
+            /* samakan dengan single */
+            top: 50%;
+            transform: translateY(-50%) rotate(0deg);
+            width: 0;
+            height: 0;
+
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid #6c757d;
+
+            pointer-events: none;
+            transition: transform 0.2s ease;
+        }
+
+        /* SAAT OPEN (BIAR NAIK) */
+        .select2-container--default.select2-container--open .select2-selection--single::after {
+            transform: translateY(-50%) rotate(180deg);
+        }
+
+        /* container utama */
+        .select2-container--default .select2-selection--multiple {
+            min-height: 38px;
+            padding: 2px 28px 2px 4px;
+            /* lebih seimbang (kanan diperkecil) */
+            display: flex;
+            align-items: center;
+        }
+
+        /* isi (tag + placeholder) */
+        .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 4px;
+            padding: 0;
+        }
+
+        /* input placeholder */
+        .select2-container--default .select2-selection--multiple .select2-search__field {
+            margin: 0 !important;
+            padding: 0 !important;
+            cursor: pointer !important;
+        }
+    </style>
+@stop
+
+@section('js')
+    <script>
+        $(document).ready(function() {
+
+            // 🌐 Global bahasa Indonesia
+            $.fn.select2.defaults.set("language", {
+                noResults: function() {
+                    return "Data tidak ditemukan";
+                },
+                searching: function() {
+                    return "Mencari...";
+                }
+            });
+
+            // Helper init select2
+            function initSelect2(selector, options = {}) {
+                $(selector).select2({
+                    width: '100%',
+                    dropdownParent: $(selector).parent(),
+                    language: {
+                        noResults: function() {
+                            return "Data tidak ditemukan";
+                        },
+                        searching: function() {
+                            return "Mencari...";
+                        }
+                    },
+                    ...options
+                });
+            }
+
+            // USER (single select)
+            initSelect2('#user_id', {
+                placeholder: "Pilih User",
+                allowClear: true
+            });
+            $('#user_id').on('select2:open', function() {
+                $('.select2-container--open .select2-search__field').attr('placeholder', 'Cari User...');
+            });
+
+            // SERVICE (multiple select)
+            initSelect2('#services', {
+                placeholder: "Pilih Service"
+            });
+
+        });
+    </script>
 @stop

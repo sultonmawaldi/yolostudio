@@ -5,16 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> {{ $setting->meta_title }}</title>
-      <!-- SEO Meta Tags -->
-      <meta name="description" content="{{ $setting->meta_description }}">
-      <meta name="keywords" content="{{ $setting->meta_keywords }}">
-      <meta name="csrf-token" content="{{ csrf_token() }}">
-      <!-- @TODO: replace SET_YOUR_CLIENT_KEY_HERE with your client key -->
-  <script type="text/javascript"
-		src="https://app.stg.midtrans.com/snap/snap.js"
-    data-client-key="{{ config('midtrans.client_key') }}"></script>
-  <!-- Note: replace with src="https://app.midtrans.com/snap/snap.js" for Production environment -->
-  <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="SB-Mid-client-wOopH1HTjOtfrXWE"></script>
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="{{ $setting->meta_description }}">
+    <meta name="keywords" content="{{ $setting->meta_keywords }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <!-- @TODO: replace SET_YOUR_CLIENT_KEY_HERE with your client key -->
+    <script type="text/javascript" src="https://app.stg.midtrans.com/snap/snap.js"
+        data-client-key="{{ config('midtrans.client_key') }}"></script>
+    <!-- Note: replace with src="https://app.midtrans.com/snap/snap.js" for Production environment -->
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="SB-Mid-client-wOopH1HTjOtfrXWE"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css"
@@ -41,53 +40,59 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
-                         @guest
-        <li class="nav-item">
-            <a class="nav-link active" href="{{ route('login') }}">Login</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{{ route('register') }}">Register</a>
-        </li>
-    @endguest
+                        @guest
+                            <li class="nav-item">
+                                <a class="nav-link active" href="{{ route('login') }}">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('register') }}">Register</a>
+                            </li>
+                        @endguest
 
-    {{-- Navbar Profile --}}
-@auth
-<li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" id="navbarProfileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-        <img src="{{ Auth::user()->profile_picture ?? 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) }}" 
-             alt="Avatar" 
-             class="rounded-circle border-2" 
-             width="32" height="32">
-        <span class="fw-semibold">{{ Auth::user()->name }}</span>
-    </a>
-    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-3 animate-fade" aria-labelledby="navbarProfileDropdown">
-        <li>
-            <a class="dropdown-item d-flex align-items-center py-2" href="{{ route('member.dashboard') }}">
-                <i class="bi bi-speedometer2 me-2 text-primary"></i> Dashboard
-            </a>
-        </li>
+                        {{-- Navbar Profile --}}
+                        @auth
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#"
+                                    id="navbarProfileDropdown" role="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                    <img src="{{ Auth::user()->profile_picture ?? 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) }}"
+                                        alt="Avatar" class="rounded-circle border-2" width="32" height="32">
+                                    <span class="fw-semibold">{{ Auth::user()->name }}</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-3 animate-fade"
+                                    aria-labelledby="navbarProfileDropdown">
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center py-2"
+                                            href="{{ route('member.dashboard') }}">
+                                            <i class="bi bi-speedometer2 me-2 text-primary"></i> Dashboard
+                                        </a>
+                                    </li>
 
-        {{-- ❌ Hilangkan Profile Settings untuk admin/moderator/employee --}}
-        @if(!Auth::user()->hasAnyRole(['admin', 'moderator', 'employee']))
-        <li>
-            <a class="dropdown-item d-flex align-items-center py-2" href="{{ route('member.profile') }}">
-                <i class="bi bi-gear me-2 text-success"></i> Profile Settings
-            </a>
-        </li>
-        @endif
+                                    {{-- ❌ Hilangkan Profile Settings untuk admin/moderator/employee --}}
+                                    @if (!Auth::user()->hasAnyRole(['admin', 'moderator', 'employee']))
+                                        <li>
+                                            <a class="dropdown-item d-flex align-items-center py-2"
+                                                href="{{ route('member.profile') }}">
+                                                <i class="bi bi-gear me-2 text-success"></i> Profile Settings
+                                            </a>
+                                        </li>
+                                    @endif
 
-        <li><hr class="dropdown-divider"></li>
-        <li>
-            <form action="{{ route('logout') }}" method="POST" class="m-0">
-                @csrf
-                <button type="submit" class="dropdown-item d-flex align-items-center py-2 text-danger">
-                    <i class="bi bi-box-arrow-right me-2"></i> Logout
-                </button>
-            </form>
-        </li>
-    </ul>
-</li>
-@endauth
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li>
+                                        <form action="{{ route('logout') }}" method="POST" class="m-0">
+                                            @csrf
+                                            <button type="submit"
+                                                class="dropdown-item d-flex align-items-center py-2 text-danger">
+                                                <i class="bi bi-box-arrow-right me-2"></i> Logout
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                        @endauth
 
 
                     </ul>
@@ -156,48 +161,50 @@
                     </div>
                 </div>
 
-               <!-- Step 4: Date and Time Selection -->
-<div class="booking-step" id="step4">
-  <h3 class="mb-4 fw-semibold bi bi-calendar-event me-2"> Pilih Tanggal & Waktu</h3>
-  <div class="selected-employee-name mb-3 fw-bold"></div>
+                <!-- Step 4: Date and Time Selection -->
+                <div class="booking-step" id="step4">
+                    <h3 class="mb-4 fw-semibold bi bi-calendar-event me-2"> Pilih Tanggal & Waktu</h3>
+                    <div class="selected-employee-name mb-3 fw-bold"></div>
 
-  <div class="row">
-    <div class="col-md-6">
-      <div class="card mb-4 shadow-sm border-0 rounded-4 modern-card">
-        <div class="card-header bg-light d-flex justify-content-between align-items-center rounded-top-4">
-          <button class="btn btn-sm btn-light border-0 shadow-sm" id="prev-month">
-            <i class="bi bi-arrow-left-circle-fill modern-arrow"></i>
-          </button>
-          <h5 class="mb-0 fw-semibold text-dark" id="current-month">March 2023</h5>
-          <button class="btn btn-sm btn-light border-0 shadow-sm" id="next-month">
-            <i class="bi bi-arrow-right-circle-fill modern-arrow"></i>
-          </button>
-        </div>
-        <div class="card-body">
-          <table class="table table-calendar text-center align-middle">
-            <thead class="table-light">
-              <tr>
-                <th>Sen</th>
-                <th>Sel</th>
-                <th>Rab</th>
-                <th>Kam</th>
-                <th>Jum</th>
-                <th>Sab</th>
-                <th>Min</th>
-              </tr>
-            </thead>
-            <tbody id="calendar-body">
-              <!-- Calendar will be generated dynamically -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card mb-4 shadow-sm border-0 rounded-4 modern-card">
+                                <div
+                                    class="card-header bg-light d-flex justify-content-between align-items-center rounded-top-4">
+                                    <button class="btn btn-sm btn-light border-0 shadow-sm" id="prev-month">
+                                        <i class="bi bi-arrow-left-circle-fill modern-arrow"></i>
+                                    </button>
+                                    <h5 class="mb-0 fw-semibold text-dark" id="current-month">March 2023</h5>
+                                    <button class="btn btn-sm btn-light border-0 shadow-sm" id="next-month">
+                                        <i class="bi bi-arrow-right-circle-fill modern-arrow"></i>
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-calendar text-center align-middle">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Sen</th>
+                                                <th>Sel</th>
+                                                <th>Rab</th>
+                                                <th>Kam</th>
+                                                <th>Jum</th>
+                                                <th>Sab</th>
+                                                <th>Min</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="calendar-body">
+                                            <!-- Calendar will be generated dynamically -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="col-md-6">
                             <div class="card shadow-sm border-0 rounded-3 modern-card">
                                 <div class="card-header text-center py-3 rounded-top-3">
-                                    <h5 class="mb-1 fw-semibold text-dark bi bi-check2-square"> Slot Waktu Tersedia</h5>
+                                    <h5 class="mb-1 fw-semibold text-dark bi bi-check2-square"> Slot Waktu Tersedia
+                                    </h5>
                                     <div id="selected-date-display" class="text-muted small"></div>
                                 </div>
 
@@ -215,309 +222,326 @@
                     </div>
                 </div>
 
-               <!-- Step 5: Confirmation --> 
-<div class="booking-step" id="step5">
-  <h3 class="mb-4 fw-bold text-center">Konfirmasi Pemesanan</h3>
+                <!-- Step 5: Confirmation -->
+                <div class="booking-step" id="step5">
+                    <h3 class="mb-4 fw-bold text-center">Konfirmasi Pemesanan</h3>
 
-  <!-- Ringkasan Pemesanan -->
-  <div class="card shadow-sm border-0 mb-4">
-    <div class="card-header bg-grey border-bottom">
-      <h5 class="mb-0 fw-semibold text-center">
-        <i class="bi bi-clipboard-check me-2"></i> Ringkasan Pemesanan
-      </h5>
-    </div>
-
-    <div class="card-body">
-      <div class="mb-3">
-
-        <!-- ITEM REUSABLE COMPONENT -->
-        <div class="row mb-3 align-items-center">
-          <div class="col-4 text-muted"><i class="bi bi-tags me-2"></i> Kategori : </div>
-          <div class="col-8 fw-medium text-dark" id="summary-category">-</div>
-        </div>
-
-        <div class="row mb-3 align-items-center">
-          <div class="col-4 text-muted"><i class="bi bi-gear me-2"></i> Servis : </div>
-          <div class="col-8 fw-medium text-dark" id="summary-service">-</div>
-        </div>
-
-        <div class="row mb-3 align-items-center">
-  <div class="col-4 text-muted">
-    <i class="bi bi-people me-2"></i> Jumlah Orang :
-  </div>
-  <div class="col-8">
-    <div class="d-flex align-items-center gap-3">
-      <!-- Tombol - -->
-      <button id="decrease-btn"
-        class="btn btn-dark rounded-circle shadow d-flex align-items-center justify-content-center"
-        style="width: 30px; height: 30px; font-size: 1.5rem;" type="button">
-        <i class="bi bi-dash-lg text-white"></i>
-      </button>
-
-      <!-- Jumlah -->
-      <span id="people-count"
-        class="fw-medium text-dark fs-5 user-select-none text-center"
-        style="min-width: 30px;">1</span>
-
-      <!-- Tombol + -->
-      <button id="increase-btn"
-        class="btn btn-dark rounded-circle shadow d-flex align-items-center justify-content-center"
-        style="width: 30px; height: 30px; font-size: 1.5rem;" type="button">
-        <i class="bi bi-plus-lg text-white"></i>
-      </button>
-    </div>
-  </div>
-</div>
-
-
-        <div class="row mb-3 align-items-center">
-          <div class="col-4 text-muted"><i class="bi bi-building me-2"></i> Cabang : </div>
-          <div class="col-8 fw-medium text-dark" id="summary-employee">-</div>
-        </div>
-
-        <div class="row mb-3 align-items-center">
-          <div class="col-4 text-muted"><i class="bi bi-calendar3 me-2"></i> Tanggal & Waktu : </div>
-          <div class="col-8 fw-medium text-dark" id="summary-datetime">-</div>
-        </div>
-
-        <div class="row mb-3 align-items-center">
-          <div class="col-4 text-muted"><i class="bi bi-hourglass-split me-2"></i> Durasi : </div>
-          <div class="col-8 fw-medium text-dark" id="summary-duration">-</div>
-        </div>
-
-        <hr>
-
-        <div class="row mb-3 align-items-center">
-          <div class="col-4 fw-semibold"><i class="bi bi-currency-idr me-2 text-muted"></i> Harga : </div>
-          <div class="col-8 fw-bold text-dark fs-5" id="summary-price">Rp0</div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-<!-- Checkout Pembayaran -->
-<div class="card shadow-sm border-0 mb-4">
-  <div class="card-header bg-gery text-dark text-center">
-    <h4 class="mb-0 fw-medium">
-      <i class="bi bi-cart-check me-2"></i> Checkout Pembayaran
-    </h4>
-  </div>
-
-  <div class="card-body">
-    <!-- Metode Pembayaran -->
-    <div class="mb-4">
-      <label for="payment-method" class="form-label fw-semibold">Metode Pembayaran:</label>
-        <select id="payment-method" class="form-select">
-          <option value="cash">Bayar Cash</option>
-          <option value="dp">Bayar DP</option>
-        </select>
-      </div>
-    
-
-    <!-- Kupon -->
-<div class="mb-4">
-  <label for="coupon-code" class="form-label fw-semibold">Kode Kupon:</label>
-  <div class="input-group">
-    <input type="text" class="form-control" id="coupon-code" placeholder="Masukkan kode kupon">
-    <button class="btn btn-primary" type="button" id="apply-coupon">Gunakan</button>
-  </div>
-
-
-
-  <div class="form-text text-success d-none" id="coupon-success-msg">
-    Kupon berhasil diterapkan!
-  </div>
-  <div class="form-text text-danger d-none" id="coupon-error-msg">
-    Kupon tidak valid.
-  </div>
-</div>
-
-
-    <!-- Ringkasan Pembayaran -->
-    <div id="payment-summary" class="border-top pt-3">
-      <h5 class="fw-medium mb-3">Ringkasan Pembayaran</h5>
-
-      <div class="row mb-2">
-        <div class="col-6 text-muted">Total Harga :</div>
-        <div class="col-6 text-end fw-medium" id="original-price">Rp0</div>
-      </div>
-
-      <div class="row mb-2 d-none" id="discount-row">
-        <div class="col-6 text-muted">Potongan Kupon:</div>
-        <div class="col-6 text-end" id="discount-amount">- Rp0</div>
-      </div>
-
-      <div class="row mb-2 border-top pt-2">
-        <div class="col-6 fw-semibold">Total Setelah Diskon:</div>
-        <div class="col-6 text-end fw-bold" id="final-price">Rp0</div>
-      </div>
-
-      <div class="row mb-2 d-none border-top pt-2" id="dp-row">
-        <div class="col-6 text-muted">Bayar Sekarang (DP):</div>
-        <div class="col-6 text-end" id="dp-amount">Rp0</div>
-      </div>
-
-      <div class="row mb-2 d-none" id="sisa-row">
-        <div class="col-6 text-muted">Sisa Pembayaran:</div>
-        <div class="col-6 text-end text-danger" id="sisa-payment">Rp0</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-
-<!-- Informasi Pelanggan -->
-@auth
-    @if(Auth::user()->hasAnyRole(['admin','moderator','employee']))
-        <!-- Admin / Moderator / Employee: tampilkan form untuk input data pelanggan -->
-        <div class="card shadow-sm border-0">
-            <div class="card-header bg-white border-bottom">
-                <h5 class="mb-0 fw-semibold">
-                    <i class="bi bi-person-lines-fill me-2"></i> Informasi Pelanggan
-                </h5>
-            </div>
-            <div class="card-body">
-                <form id="customer-info-form">
-                    @csrf
-                    <input type="hidden" id="total_amount" name="total_amount" value="0">
-                    <input type="hidden" id="payment_status" name="payment_status" value="">
-                    <input type="hidden" id="midtrans_order_id" name="midtrans_order_id" value="">
-                    <input type="hidden" name="coupon_id" id="coupon_id">
-
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="customer-name" class="form-label">Nama Lengkap</label>
-                            <input type="text" class="form-control" id="customer-name" name="name" placeholder="Nama pelanggan" value="{{ old('name') }}" required>
+                    <!-- Ringkasan Pemesanan -->
+                    <div class="card shadow-sm border-0 mb-4">
+                        <div class="card-header bg-grey border-bottom">
+                            <h5 class="mb-0 fw-semibold text-center">
+                                <i class="bi bi-clipboard-check me-2"></i> Ringkasan Pemesanan
+                            </h5>
                         </div>
-                        <div class="col-md-6">
-                            <label for="customer-email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="customer-email" name="email" placeholder="email@domain.com" value="{{ old('email') }}" required>
-                        </div>
-                        <div class="col-md-12">
-                            <label for="customer-phone" class="form-label">Nomor HP/WhatsApp</label>
-                            <input type="tel" class="form-control" id="customer-phone" name="phone" placeholder="08xxxxxxxxxx" value="{{ old('phone') }}" required>
-                        </div>
-                        <div class="col-12">
-                            <label for="customer-notes" class="form-label">Catatan (Opsional)</label>
-                            <textarea class="form-control" id="customer-notes" name="notes" rows="3" placeholder="Tulis catatan jika ada...">{{ old('notes') }}</textarea>
+
+                        <div class="card-body">
+                            <div class="mb-3">
+
+                                <!-- ITEM REUSABLE COMPONENT -->
+                                <div class="row mb-3 align-items-center">
+                                    <div class="col-4 text-muted"><i class="bi bi-tags me-2"></i> Kategori : </div>
+                                    <div class="col-8 fw-medium text-dark" id="summary-category">-</div>
+                                </div>
+
+                                <div class="row mb-3 align-items-center">
+                                    <div class="col-4 text-muted"><i class="bi bi-gear me-2"></i> Servis : </div>
+                                    <div class="col-8 fw-medium text-dark" id="summary-service">-</div>
+                                </div>
+
+                                <div class="row mb-3 align-items-center">
+                                    <div class="col-4 text-muted">
+                                        <i class="bi bi-people me-2"></i> Jumlah Orang :
+                                    </div>
+                                    <div class="col-8">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <!-- Tombol - -->
+                                            <button id="decrease-btn"
+                                                class="btn btn-dark rounded-circle shadow d-flex align-items-center justify-content-center"
+                                                style="width: 30px; height: 30px; font-size: 1.5rem;" type="button">
+                                                <i class="bi bi-dash-lg text-white"></i>
+                                            </button>
+
+                                            <!-- Jumlah -->
+                                            <span id="people-count"
+                                                class="fw-medium text-dark fs-5 user-select-none text-center"
+                                                style="min-width: 30px;">1</span>
+
+                                            <!-- Tombol + -->
+                                            <button id="increase-btn"
+                                                class="btn btn-dark rounded-circle shadow d-flex align-items-center justify-content-center"
+                                                style="width: 30px; height: 30px; font-size: 1.5rem;" type="button">
+                                                <i class="bi bi-plus-lg text-white"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="row mb-3 align-items-center">
+                                    <div class="col-4 text-muted"><i class="bi bi-building me-2"></i> Cabang : </div>
+                                    <div class="col-8 fw-medium text-dark" id="summary-employee">-</div>
+                                </div>
+
+                                <div class="row mb-3 align-items-center">
+                                    <div class="col-4 text-muted"><i class="bi bi-calendar3 me-2"></i> Tanggal & Waktu
+                                        : </div>
+                                    <div class="col-8 fw-medium text-dark" id="summary-datetime">-</div>
+                                </div>
+
+                                <div class="row mb-3 align-items-center">
+                                    <div class="col-4 text-muted"><i class="bi bi-hourglass-split me-2"></i> Durasi :
+                                    </div>
+                                    <div class="col-8 fw-medium text-dark" id="summary-duration">-</div>
+                                </div>
+
+                                <hr>
+
+                                <div class="row mb-3 align-items-center">
+                                    <div class="col-4 fw-semibold"><i class="bi bi-currency-idr me-2 text-muted"></i>
+                                        Harga : </div>
+                                    <div class="col-8 fw-bold text-dark fs-5" id="summary-price">Rp0</div>
+                                </div>
+
+                            </div>
                         </div>
                     </div>
-                </form>
-            </div>
-        </div>
 
-    @else
-        <!-- Authenticated but not admin/moderator/employee (=> member): hidden inputs -->
-        <form id="customer-info-form" class="d-none">
-            @csrf
-            <input type="hidden" id="total_amount" name="total_amount" value="0">
-            <input type="hidden" id="payment_status" name="payment_status" value="">
-            <input type="hidden" id="midtrans_order_id" name="midtrans_order_id" value="">
-            <!-- hidden input untuk dikirim ke backend -->
-            <input type="hidden" name="coupon_id" id="coupon_id">
+                    <!-- Checkout Pembayaran -->
+                    <div class="card shadow-sm border-0 mb-4">
+                        <div class="card-header bg-gery text-dark text-center">
+                            <h4 class="mb-0 fw-medium">
+                                <i class="bi bi-cart-check me-2"></i> Checkout Pembayaran
+                            </h4>
+                        </div>
 
-            <input type="hidden" id="customer-name" value="{{ auth()->user()->name }}">
-            <input type="hidden" id="customer-email" value="{{ auth()->user()->email }}">
-            <input type="hidden" id="customer-phone" value="{{ auth()->user()->phone ?? '' }}">
-            <input type="hidden" id="customer-notes" value="">
-        </form>
-    @endif
-@else
-    <!-- Guest: tampilkan form input pelanggan -->
-    <div class="card shadow-sm border-0">
-        <div class="card-header bg-white border-bottom">
-            <h5 class="mb-0 fw-semibold">
-                <i class="bi bi-person-lines-fill me-2"></i> Informasi Anda
-            </h5>
-        </div>
-        <div class="card-body">
-            <form id="customer-info-form">
-                @csrf
-                <input type="hidden" id="total_amount" name="total_amount" value="0">
-                <input type="hidden" id="payment_status" name="payment_status" value="">
-                <input type="hidden" id="midtrans_order_id" name="midtrans_order_id" value="">
-                <input type="hidden" name="coupon_id" id="coupon_id">
+                        <div class="card-body">
+                            <!-- Metode Pembayaran -->
+                            <div class="mb-4">
+                                <label for="payment-method" class="form-label fw-semibold">Metode Pembayaran:</label>
+                                <select id="payment-method" class="form-select">
+                                    <option value="cash">Bayar Cash</option>
+                                    <option value="dp">Bayar DP</option>
+                                </select>
+                            </div>
 
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label for="customer-name" class="form-label">Nama Lengkap</label>
-                        <input type="text" class="form-control" id="customer-name" name="name" placeholder="Nama Anda" required>
+
+                            <!-- Kupon -->
+                            <div class="mb-4">
+                                <label for="coupon-code" class="form-label fw-semibold">Kode Kupon:</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="coupon-code"
+                                        placeholder="Masukkan kode kupon">
+                                    <button class="btn btn-primary" type="button" id="apply-coupon">Gunakan</button>
+                                </div>
+
+
+
+                                <div class="form-text text-success d-none" id="coupon-success-msg">
+                                    Kupon berhasil diterapkan!
+                                </div>
+                                <div class="form-text text-danger d-none" id="coupon-error-msg">
+                                    Kupon tidak valid.
+                                </div>
+                            </div>
+
+
+                            <!-- Ringkasan Pembayaran -->
+                            <div id="payment-summary" class="border-top pt-3">
+                                <h5 class="fw-medium mb-3">Ringkasan Pembayaran</h5>
+
+                                <div class="row mb-2">
+                                    <div class="col-6 text-muted">Total Harga :</div>
+                                    <div class="col-6 text-end fw-medium" id="original-price">Rp0</div>
+                                </div>
+
+                                <div class="row mb-2 d-none" id="discount-row">
+                                    <div class="col-6 text-muted">Potongan Kupon:</div>
+                                    <div class="col-6 text-end" id="discount-amount">- Rp0</div>
+                                </div>
+
+                                <div class="row mb-2 border-top pt-2">
+                                    <div class="col-6 fw-semibold">Total Setelah Diskon:</div>
+                                    <div class="col-6 text-end fw-bold" id="final-price">Rp0</div>
+                                </div>
+
+                                <div class="row mb-2 d-none border-top pt-2" id="dp-row">
+                                    <div class="col-6 text-muted">Bayar Sekarang (DP):</div>
+                                    <div class="col-6 text-end" id="dp-amount">Rp0</div>
+                                </div>
+
+                                <div class="row mb-2 d-none" id="sisa-row">
+                                    <div class="col-6 text-muted">Sisa Pembayaran:</div>
+                                    <div class="col-6 text-end text-danger" id="sisa-payment">Rp0</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <label for="customer-email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="customer-email" name="email" placeholder="email@domain.com" required>
-                    </div>
-                    <div class="col-md-12">
-                        <label for="customer-phone" class="form-label">Nomor HP/WhatsApp</label>
-                        <input type="tel" class="form-control" id="customer-phone" name="phone" placeholder="08xxxxxxxxxx" required>
-                    </div>
-                    <div class="col-12">
-                        <label for="customer-notes" class="form-label">Catatan (Opsional)</label>
-                        <textarea class="form-control" id="customer-notes" name="notes" rows="3" placeholder="Tulis catatan jika ada..."></textarea>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-@endauth
-</div>
-</div>
 
 
-<!-- Booking Footer -->
-<div class="booking-footer mt-4 d-flex justify-content-between">
-  <button class="btn btn-outline-secondary" id="prev-step" disabled>
-    <i class="bi bi-arrow-left"></i> Kembali
-  </button>
-  <button class="btn btn-primary" id="next-step">
-    Selanjutnya <i class="bi bi-arrow-right"></i>
-  </button>
-</div>
-</div>
 
+                    <!-- Informasi Pelanggan -->
+                    @auth
+                        @if (Auth::user()->hasAnyRole(['admin', 'moderator', 'employee']))
+                            <!-- Admin / Moderator / Employee: tampilkan form untuk input data pelanggan -->
+                            <div class="card shadow-sm border-0">
+                                <div class="card-header bg-white border-bottom">
+                                    <h5 class="mb-0 fw-semibold">
+                                        <i class="bi bi-person-lines-fill me-2"></i> Informasi Pelanggan
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="customer-info-form">
+                                        @csrf
+                                        <input type="hidden" id="total_amount" name="total_amount" value="0">
+                                        <input type="hidden" id="payment_status" name="payment_status" value="">
+                                        <input type="hidden" id="midtrans_order_id" name="midtrans_order_id"
+                                            value="">
+                                        <input type="hidden" name="coupon_id" id="coupon_id">
 
-    <!-- Success Modal -->
-    <div class="modal fade" id="bookingSuccessModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title">Booking Dikonfirmasi!</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body text-center p-4">
-                    <i class="bi bi-check-circle text-success" style="font-size: 4rem;"></i>
-                    <h4 class="mt-3">Terima Kasih!</h4>
-                    <p>Pemesanan anda telah berhasil di booking.</p>
-                    <div class="alert alert-info mt-3">
-                        <p class="mb-0">Email konfirmasi dan pesan WhatsApp telah dikirim ke alamat email Anda.</p>
-                    </div>
-                    <div class="booking-details mt-4 text-start">
-                        <h5>Booking Detail:</h5>
-                        <div id="modal-booking-details"></div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Tutup</button>
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label for="customer-name" class="form-label">Nama Lengkap</label>
+                                                <input type="text" class="form-control" id="customer-name"
+                                                    name="name" placeholder="Nama pelanggan"
+                                                    value="{{ old('name') }}" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="customer-email" class="form-label">Email</label>
+                                                <input type="email" class="form-control" id="customer-email"
+                                                    name="email" placeholder="email@domain.com"
+                                                    value="{{ old('email') }}" required>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label for="customer-phone" class="form-label">Nomor HP/WhatsApp</label>
+                                                <input type="tel" class="form-control" id="customer-phone"
+                                                    name="phone" placeholder="08xxxxxxxxxx"
+                                                    value="{{ old('phone') }}" required>
+                                            </div>
+                                            <div class="col-12">
+                                                <label for="customer-notes" class="form-label">Catatan (Opsional)</label>
+                                                <textarea class="form-control" id="customer-notes" name="notes" rows="3"
+                                                    placeholder="Tulis catatan jika ada...">{{ old('notes') }}</textarea>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        @else
+                            <!-- Authenticated but not admin/moderator/employee (=> member): hidden inputs -->
+                            <form id="customer-info-form" class="d-none">
+                                @csrf
+                                <input type="hidden" id="total_amount" name="total_amount" value="0">
+                                <input type="hidden" id="payment_status" name="payment_status" value="">
+                                <input type="hidden" id="midtrans_order_id" name="midtrans_order_id" value="">
+                                <!-- hidden input untuk dikirim ke backend -->
+                                <input type="hidden" name="coupon_id" id="coupon_id">
+
+                                <input type="hidden" id="customer-name" value="{{ auth()->user()->name }}">
+                                <input type="hidden" id="customer-email" value="{{ auth()->user()->email }}">
+                                <input type="hidden" id="customer-phone" value="{{ auth()->user()->phone ?? '' }}">
+                                <input type="hidden" id="customer-notes" value="">
+                            </form>
+                        @endif
+                    @else
+                        <!-- Guest: tampilkan form input pelanggan -->
+                        <div class="card shadow-sm border-0">
+                            <div class="card-header bg-white border-bottom">
+                                <h5 class="mb-0 fw-semibold">
+                                    <i class="bi bi-person-lines-fill me-2"></i> Informasi Anda
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="customer-info-form">
+                                    @csrf
+                                    <input type="hidden" id="total_amount" name="total_amount" value="0">
+                                    <input type="hidden" id="payment_status" name="payment_status" value="">
+                                    <input type="hidden" id="midtrans_order_id" name="midtrans_order_id"
+                                        value="">
+                                    <input type="hidden" name="coupon_id" id="coupon_id">
+
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label for="customer-name" class="form-label">Nama Lengkap</label>
+                                            <input type="text" class="form-control" id="customer-name" name="name"
+                                                placeholder="Nama Anda" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="customer-email" class="form-label">Email</label>
+                                            <input type="email" class="form-control" id="customer-email"
+                                                name="email" placeholder="email@domain.com" required>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label for="customer-phone" class="form-label">Nomor HP/WhatsApp</label>
+                                            <input type="tel" class="form-control" id="customer-phone"
+                                                name="phone" placeholder="08xxxxxxxxxx" required>
+                                        </div>
+                                        <div class="col-12">
+                                            <label for="customer-notes" class="form-label">Catatan (Opsional)</label>
+                                            <textarea class="form-control" id="customer-notes" name="notes" rows="3"
+                                                placeholder="Tulis catatan jika ada..."></textarea>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    @endauth
                 </div>
             </div>
+
+
+            <!-- Booking Footer -->
+            <div class="booking-footer mt-4 d-flex justify-content-between">
+                <button class="btn btn-outline-secondary" id="prev-step" disabled>
+                    <i class="bi bi-arrow-left"></i> Kembali
+                </button>
+                <button class="btn btn-primary" id="next-step">
+                    Selanjutnya <i class="bi bi-arrow-right"></i>
+                </button>
+            </div>
         </div>
-    </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        $(document).ready(function() {
 
-            const categories = @json($categories);
+        <!-- Success Modal -->
+        <div class="modal fade" id="bookingSuccessModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title">Booking Dikonfirmasi!</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center p-4">
+                        <i class="bi bi-check-circle text-success" style="font-size: 4rem;"></i>
+                        <h4 class="mt-3">Terima Kasih!</h4>
+                        <p>Pemesanan anda telah berhasil di booking.</p>
+                        <div class="alert alert-info mt-3">
+                            <p class="mb-0">Email konfirmasi dan pesan WhatsApp telah dikirim ke alamat email Anda.
+                            </p>
+                        </div>
+                        <div class="booking-details mt-4 text-start">
+                            <h5>Booking Detail:</h5>
+                            <div id="modal-booking-details"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Tutup</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-            const container = $('#categories-container'); // Target the container by ID
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            $(document).ready(function() {
 
-            let html = '';
-            $.each(categories, function(index, category) {
-                html += `
+                const categories = @json($categories);
+
+                const container = $('#categories-container'); // Target the container by ID
+
+                let html = '';
+                $.each(categories, function(index, category) {
+                    html += `
             <div class="col">
                 <div class="card border h-100 category-card text-center rounded p-2" data-category="${category.id}">
                     <div class="card-body">
@@ -528,338 +552,332 @@
                 </div>
             </div>
         `;
-            });
+                });
 
-            container.html(html); // Insert all generated HTML at once
-
-
-            const employees = @json($employees);
-            // console.log(employees);
-
-            // Booking state
-            let bookingState = {
-                currentStep: 1,
-                selectedCategory: null,
-                selectedService: null,
-                selectedEmployee: null,
-                selectedDate: null,
-                selectedTime: null
-            };
-
-            // Initialize the booking system
-            updateProgressBar();
-            generateCalendar();
-
-            // Step navigation
-            $("#next-step").click(function() {
-                const currentStep = bookingState.currentStep;
-
-                // Validate current step before proceeding
-                if (!validateStep(currentStep)) {
-                    return;
-                }
-
-                if (currentStep < 5) {
-                    goToStep(currentStep + 1);
-                } else {
-                    // Submit booking
-                    if ($("#customer-info-form")[0].checkValidity()) {
-                        submitBooking();
-                    } else {
-                        $("#customer-info-form")[0].reportValidity();
-                    }
-                }
-            });
-
-            $("#prev-step").click(function () {
-    if (bookingState.currentStep > 1) {
-        const prevStep = bookingState.currentStep - 1;
-
-        // Jika kembali ke step sebelum step 5, reset peopleCount
-        if (bookingState.currentStep === 5) { 
-            window.peopleCount = window.minPeople || 1;
-
-            // Update sessionStorage agar konsisten
-            let stored = JSON.parse(sessionStorage.getItem("selectedService") || "{}");
-            stored.peopleCount = window.peopleCount;
-            sessionStorage.setItem("selectedService", JSON.stringify(stored));
-
-            // Update tampilan jumlah dan harga
-            updatePeopleCountDisplay();
-        }
-
-        goToStep(prevStep);
-    }
-});
+                container.html(html); // Insert all generated HTML at once
 
 
-            // Category selection
-            $(document).on("click", ".category-card", function() {
-                $(".category-card").removeClass("selected");
-                $(this).addClass("selected");
+                const employees = @json($employees);
+                // console.log(employees);
 
-                const categoryId = $(this).data("category");
-                // console.log(categoryId);
-                bookingState.selectedCategory = categoryId;
-
-                // Reset subsequent selections
-                bookingState.selectedService = null;
-                bookingState.selectedEmployee = null;
-                bookingState.selectedDate = null;
-                bookingState.selectedTime = null;
-
-                // Update the service step with services for this category
-                updateServicesStep(categoryId);
-            });
-
-            // Service selection
-            $(document).on("click", ".service-card", function() {
-                $(".service-card").removeClass("selected");
-                $(this).addClass("selected");
-
-                const serviceId = $(this).data("service");
-                const serviceTitle = $(this).find('.card-title').text();
-                // const servicePrice = $(this).find('.fw-bold').text().replace('$', '');
-                const servicePrice = $(this).find('.fw-bold').text();
-                const maxPeople = $(this).data("max-people");
-                const extraPricePerPerson = $(this).data("extra-price");
-                const dpAmount = parseInt($(this).data("dp-amount") || 0);
-                const serviceDuration = $(this).find('.card-text:contains("Duration:")').text().replace(
-                    'Duration: ', '');
-
-                // Store the selected service in booking state
-                bookingState.selectedService = {
-                    id: serviceId,
-                    title: serviceTitle,
-                    price: servicePrice,
-                    duration: serviceDuration,
-                    max_people: maxPeople,
-                    extra_price_per_person: extraPricePerPerson,
-                    dp_amount: dpAmount,
+                // Booking state
+                let bookingState = {
+                    currentStep: 1,
+                    selectedCategory: null,
+                    selectedService: null,
+                    selectedEmployee: null,
+                    selectedDate: null,
+                    selectedTime: null
                 };
 
-                // Reset subsequent selections
-                bookingState.selectedEmployee = null;
-                bookingState.selectedDate = null;
-                bookingState.selectedTime = null;
-
-                // Clear previous selections UI
-                $(".employee-card").removeClass("selected");
-                $("#selected-date").text("");
-                $("#selected-time").text("");
-                $("#employees-container").empty(); // Clear previous employees while loading new ones
-
-                // Show loading state for employees
-                $("#employees-container").html(
-                    '<div class="col-12 text-center py-5"><div class="spinner-border text-primary" role="status"></div></div>'
-                );
-
-                // Update the employee step with employees for this service
-                updateEmployeesStep(serviceId);
-
-                // Show the employee step immediately (loading will happen inside updateEmployeesStep)
-                $("#services-step").addClass("d-none");
-                $("#employees-step").removeClass("d-none");
-                $(".step-indicator[data-step='services']").removeClass("active current").addClass(
-                    "completed");
-                $(".step-indicator[data-step='employees']").addClass("active current");
-            });
-
-            // Employee selection
-            $(document).on("click", ".employee-card", function() {
-                $(".employee-card").removeClass("selected");
-                $(this).addClass("selected");
-
-                const employeeId = $(this).data("employee");
-                // alert(employeeId);
-                const employee = employees.find(e => e.id === employeeId);
-
-                bookingState.selectedEmployee = employee;
-
-                // Reset subsequent selections
-                bookingState.selectedDate = null;
-                bookingState.selectedTime = null;
-
-                // Update the calendar
-                updateCalendar();
-            });
-
-
-            // Date selection
-            $(document).on("click", ".calendar-day:not(.disabled)", function() {
-                $(".calendar-day").removeClass("selected");
-                $(this).addClass("selected");
-
-                const date = $(this).data("date");
-                bookingState.selectedDate = date;
-
-                // Reset time selection
-                bookingState.selectedTime = null;
-
-                // Update time slots based on employee availability
-                updateTimeSlots(date);
-            });
-
-            // Time slot selection
-            $(document).on("click", ".time-slot:not(.disabled)", function() {
-                $(".time-slot").removeClass("selected");
-                $(this).addClass("selected");
-
-                const time = $(this).data("time");
-                bookingState.selectedTime = time;
-            });
-
-            // Calendar navigation
-            $("#prev-month").click(function() {
-                navigateMonth(-1);
-            });
-
-            $("#next-month").click(function() {
-                navigateMonth(1);
-            });
-
-            // Functions
-            function goToStep(step) {
-                // Hide all steps
-                $(".booking-step").removeClass("active");
-
-                // Show the target step
-                $(`#step${step}`).addClass("active");
-
-                // Update the step indicators
-                $(".step").removeClass("active completed");
-
-                for (let i = 1; i <= 5; i++) {
-                    if (i < step) {
-                        $(`.step[data-step="${i}"]`).addClass("completed");
-                    } else if (i === step) {
-                        $(`.step[data-step="${i}"]`).addClass("active");
-                    }
-                }
-
-                // Update the current step
-                bookingState.currentStep = step;
-
-                // Update the navigation buttons
-                updateNavigationButtons();
-
-                // Update the progress bar
+                // Initialize the booking system
                 updateProgressBar();
+                generateCalendar();
 
-                // If we're on the confirmation step, update the summary
-                if (step === 5) {
-                    updateSummary();
-                }
+                // Step navigation
+                $("#next-step").click(function() {
+                    const currentStep = bookingState.currentStep;
 
-                // Scroll to top of booking container
-                $(".booking-container")[0].scrollIntoView({
-                    behavior: "smooth"
-                });
-            }
-
-
-            function updateProgressBar() {
-                const progress = ((bookingState.currentStep - 1) / 4) * 100;
-                $(".progress-bar-steps .progress").css("width", `${progress}%`);
-            }
-
-
-            function updateNavigationButtons() {
-                // Enable/disable previous button
-                if (bookingState.currentStep === 1) {
-                    $("#prev-step").prop("disabled", true);
-                } else {
-                    $("#prev-step").prop("disabled", false);
-                }
-
-                // Update next button text
-                if (bookingState.currentStep === 5) {
-                    $("#next-step").html('Konfirmasi Booking <i class="bi bi-check-circle"></i>');
-                } else {
-                    $("#next-step").html('Selanjutnya <i class="bi bi-arrow-right"></i>');
-                }
-            }
-
-
-            function validateStep(step) {
-                switch (step) {
-                    case 1:
-                        if (!bookingState.selectedCategory) {
-                            alert("Silahkan pilih kategori");
-                            return false;
-                        }
-                        return true;
-                    case 2:
-                        if (!bookingState.selectedService) {
-                            alert("Silahkan pilih servis");
-                            return false;
-                        }
-                        return true;
-                    case 3:
-                        if (!bookingState.selectedEmployee) {
-                            alert("Silahkan pilih cabang");
-                            return false;
-                        }
-                        return true;
-                    case 4:
-                        if (!bookingState.selectedDate) {
-                            alert("Silahkan pilih tanggal");
-                            return false;
-                        }
-                        if (!bookingState.selectedTime) {
-                            alert("Silahkan pilih slot");
-                            return false;
-                        }
-                        return true;
-                    default:
-                        return true;
-                }
-            }
-
-
-            // Fungsi untuk memformat angka menjadi format Rupiah (untuk tampilan)
-            function formatRupiah(amount) {
-                 return new Intl.NumberFormat('id-ID', {
-                    style: 'currency',
-                    currency: 'IDR',
-                    minimumFractionDigits: 0
-                }).format(amount);
-            }
-
-function updateServicesStep(categoryId) {
-    // Show loading state
-    $("#services-container").html(
-        '<div class="text-center py-5"><div class="spinner-border text-primary" role="status"></div></div>'
-    );
-
-    $.ajax({
-        url: `/categories/${categoryId}/services`,
-        type: 'GET',
-        dataType: 'json',
-        success: function(response) {
-            if (response.success && response.services) {
-                const services = response.services;
-
-                $(".selected-category-name").text(
-                    `Selected Category: ${services[0]?.category?.title || ''}`
-                );
-
-                $("#services-container").empty();
-
-                services.forEach((service, index) => {
-                    const formattedPrice = formatRupiah(service.price);
-                    const formattedSalePrice = service.sale_price ? formatRupiah(service.sale_price) : null;
-
-                    let priceDisplay;
-                    if (formattedSalePrice) {
-                        priceDisplay =
-                            `<span class="text-decoration-line-through text-muted">${formattedPrice}</span> 
-                             <span class="fw-bold">${formattedSalePrice}</span>`;
-                    } else {
-                        priceDisplay = `<span class="fw-bold">${formattedPrice}</span>`;
+                    // Validate current step before proceeding
+                    if (!validateStep(currentStep)) {
+                        return;
                     }
 
-                    const serviceCard = `
+                    if (currentStep < 5) {
+                        goToStep(currentStep + 1);
+                    } else {
+                        // Submit booking
+                        if ($("#customer-info-form")[0].checkValidity()) {
+                            submitBooking();
+                        } else {
+                            $("#customer-info-form")[0].reportValidity();
+                        }
+                    }
+                });
+
+                $("#prev-step").click(function() {
+                    if (bookingState.currentStep > 1) {
+                        const prevStep = bookingState.currentStep - 1;
+
+                        // Jika kembali ke step sebelum step 5, reset peopleCount
+                        if (bookingState.currentStep === 5) {
+                            window.peopleCount = window.minPeople || 1;
+
+                            // Update sessionStorage agar konsisten
+                            let stored = JSON.parse(sessionStorage.getItem("selectedService") || "{}");
+                            stored.peopleCount = window.peopleCount;
+                            sessionStorage.setItem("selectedService", JSON.stringify(stored));
+
+                            // Update tampilan jumlah dan harga
+                            updatePeopleCountDisplay();
+                        }
+
+                        goToStep(prevStep);
+                    }
+                });
+
+
+                // Category selection
+                $(document).on("click", ".category-card", function() {
+                    $(".category-card").removeClass("selected");
+                    $(this).addClass("selected");
+
+                    const categoryId = $(this).data("category");
+                    // console.log(categoryId);
+                    bookingState.selectedCategory = categoryId;
+
+                    // Reset subsequent selections
+                    bookingState.selectedService = null;
+                    bookingState.selectedEmployee = null;
+                    bookingState.selectedDate = null;
+                    bookingState.selectedTime = null;
+
+                    // Update the service step with services for this category
+                    updateServicesStep(categoryId);
+                });
+
+                // Service selection
+                $(document).on("click", ".service-card", function() {
+                    $(".service-card").removeClass("selected");
+                    $(this).addClass("selected");
+
+                    const serviceId = $(this).data("service");
+                    const serviceTitle = $(this).find('.card-title').text();
+                    // const servicePrice = $(this).find('.fw-bold').text().replace('$', '');
+                    const servicePrice = $(this).find('.fw-bold').text();
+                    const maxPeople = $(this).data("max-people");
+                    const extraPricePerPerson = $(this).data("extra-price");
+                    const dpAmount = parseInt($(this).data("dp-amount") || 0);
+                    const serviceDuration = $(this).find('.card-text:contains("Duration:")').text().replace(
+                        'Duration: ', '');
+
+                    // Store the selected service in booking state
+                    bookingState.selectedService = {
+                        id: serviceId,
+                        title: serviceTitle,
+                        price: servicePrice,
+                        duration: serviceDuration,
+                        max_people: maxPeople,
+                        extra_price_per_person: extraPricePerPerson,
+                        dp_amount: dpAmount,
+                    };
+
+                    // Reset subsequent selections
+                    bookingState.selectedEmployee = null;
+                    bookingState.selectedDate = null;
+                    bookingState.selectedTime = null;
+
+                    // Clear previous selections UI
+                    $(".employee-card").removeClass("selected");
+                    $("#selected-date").text("");
+                    $("#selected-time").text("");
+                    $("#employees-container").empty(); // Clear previous employees while loading new ones
+
+                    // Show loading state for employees
+                    $("#employees-container").html(
+                        '<div class="col-12 text-center py-5"><div class="spinner-border text-primary" role="status"></div></div>'
+                    );
+
+                    // Update the employee step with employees for this service
+                    updateEmployeesStep(serviceId);
+
+                    // Show the employee step immediately (loading will happen inside updateEmployeesStep)
+                    $("#services-step").addClass("d-none");
+                    $("#employees-step").removeClass("d-none");
+                    $(".step-indicator[data-step='services']").removeClass("active current").addClass(
+                        "completed");
+                    $(".step-indicator[data-step='employees']").addClass("active current");
+                });
+
+                // Employee selection
+                $(document).on("click", ".employee-card", function() {
+                    $(".employee-card").removeClass("selected");
+                    $(this).addClass("selected");
+
+                    const employeeId = $(this).data("employee");
+                    // alert(employeeId);
+                    const employee = employees.find(e => e.id === employeeId);
+
+                    bookingState.selectedEmployee = employee;
+
+                    // Reset subsequent selections
+                    bookingState.selectedDate = null;
+                    bookingState.selectedTime = null;
+
+                    // Update the calendar
+                    updateCalendar();
+                });
+
+
+                // Date selection
+                $(document).on("click", ".calendar-day:not(.disabled)", function() {
+                    $(".calendar-day").removeClass("selected");
+                    $(this).addClass("selected");
+
+                    const date = $(this).data("date");
+                    bookingState.selectedDate = date;
+
+                    // Reset time selection
+                    bookingState.selectedTime = null;
+
+                    // Update time slots based on employee availability
+                    updateTimeSlots(date);
+                });
+
+                // Time slot selection
+                $(document).on("click", ".time-slot:not(.disabled)", function() {
+                    $(".time-slot").removeClass("selected");
+                    $(this).addClass("selected");
+
+                    const time = $(this).data("time");
+                    bookingState.selectedTime = time;
+                });
+
+                // Calendar navigation
+                $("#prev-month").click(function() {
+                    navigateMonth(-1);
+                });
+
+                $("#next-month").click(function() {
+                    navigateMonth(1);
+                });
+
+                // Functions
+                function goToStep(step, skipLoad = false) {
+                    // Tampilkan step yang aktif
+                    $(".booking-step").removeClass("active");
+                    $("#step" + step).addClass("active");
+
+                    // Update progress bar steps
+                    $(".step").removeClass("active completed");
+                    for (let i = 1; i <= 5; i++) {
+                        if (i < step) $(`.step[data-step="${i}"]`).addClass("completed");
+                        if (i === step) $(`.step[data-step="${i}"]`).addClass("active");
+                    }
+
+                    // Simpan state current step
+                    bookingState.currentStep = step;
+
+                    // Update UI tombol
+                    updateProgressBar();
+                    updateStepButtons(step);
+
+                    // 🔥 Load addons/background hanya jika skipLoad = false
+                    if (!skipLoad && step === 5) {
+                        loadServiceAddons();
+
+                        if (bookingState?.selectedService?.id) {
+                            loadServiceBackgrounds(bookingState.selectedService.id);
+                        }
+                    }
+                }
+
+
+
+                function updateProgressBar() {
+                    const progress = ((bookingState.currentStep - 1) / 4) * 100;
+                    $(".progress-bar-steps .progress").css("width", `${progress}%`);
+                }
+
+
+                function updateNavigationButtons() {
+                    // Enable/disable previous button
+                    if (bookingState.currentStep === 1) {
+                        $("#prev-step").prop("disabled", true);
+                    } else {
+                        $("#prev-step").prop("disabled", false);
+                    }
+
+                    // Update next button text
+                    if (bookingState.currentStep === 5) {
+                        $("#next-step").html('Konfirmasi Booking <i class="bi bi-check-circle"></i>');
+                    } else {
+                        $("#next-step").html('Selanjutnya <i class="bi bi-arrow-right"></i>');
+                    }
+                }
+
+
+                function validateStep(step) {
+                    switch (step) {
+                        case 1:
+                            if (!bookingState.selectedCategory) {
+                                alert("Silahkan pilih kategori");
+                                return false;
+                            }
+                            return true;
+                        case 2:
+                            if (!bookingState.selectedService) {
+                                alert("Silahkan pilih servis");
+                                return false;
+                            }
+                            return true;
+                        case 3:
+                            if (!bookingState.selectedEmployee) {
+                                alert("Silahkan pilih cabang");
+                                return false;
+                            }
+                            return true;
+                        case 4:
+                            if (!bookingState.selectedDate) {
+                                alert("Silahkan pilih tanggal");
+                                return false;
+                            }
+                            if (!bookingState.selectedTime) {
+                                alert("Silahkan pilih slot");
+                                return false;
+                            }
+                            return true;
+                        default:
+                            return true;
+                    }
+                }
+
+
+                // Fungsi untuk memformat angka menjadi format Rupiah (untuk tampilan)
+                function formatRupiah(amount) {
+                    return new Intl.NumberFormat('id-ID', {
+                        style: 'currency',
+                        currency: 'IDR',
+                        minimumFractionDigits: 0
+                    }).format(amount);
+                }
+
+                function updateServicesStep(categoryId) {
+                    // Show loading state
+                    $("#services-container").html(
+                        '<div class="text-center py-5"><div class="spinner-border text-primary" role="status"></div></div>'
+                    );
+
+                    $.ajax({
+                        url: `/categories/${categoryId}/services`,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success && response.services) {
+                                const services = response.services;
+
+                                $(".selected-category-name").text(
+                                    `Selected Category: ${services[0]?.category?.title || ''}`
+                                );
+
+                                $("#services-container").empty();
+
+                                services.forEach((service, index) => {
+                                    const formattedPrice = formatRupiah(service.price);
+                                    const formattedSalePrice = service.sale_price ? formatRupiah(
+                                        service.sale_price) : null;
+
+                                    let priceDisplay;
+                                    if (formattedSalePrice) {
+                                        priceDisplay =
+                                            `<span class="text-decoration-line-through text-muted">${formattedPrice}</span> 
+                             <span class="fw-bold">${formattedSalePrice}</span>`;
+                                    } else {
+                                        priceDisplay =
+                                            `<span class="fw-bold">${formattedPrice}</span>`;
+                                    }
+
+                                    const serviceCard = `
                         <div class="col animate-slide-in" style="animation-delay: ${index * 100}ms">
                             <div class="card border h-100 service-card text-center p-2" 
                                  data-service="${service.id}" 
@@ -880,176 +898,176 @@ function updateServicesStep(categoryId) {
                         </div>
                     `;
 
-                    $("#services-container").append(serviceCard);
+                                    $("#services-container").append(serviceCard);
+                                });
+
+                                // Jangan attach event click ulang setiap kali updateServicesStep dipanggil!
+                                // Hanya attach event sekali di luar fungsi, tapi kalau mau tetap di sini:
+                                // gunakan event delegation (pada container) supaya event listener tidak duplikat.
+                            } else {
+                                $("#services-container").html(
+                                    '<div class="col-12 text-center py-5"><p>No services available for this category.</p></div>'
+                                );
+                            }
+                        },
+                        error: function(xhr) {
+                            console.error(xhr);
+                            $("#services-container").html(
+                                '<div class="col-12 text-center w-100 py-5"><p>Error loading services. Please try again.</p></div>'
+                            );
+                        }
+                    });
+                }
+
+                // Event delegation: pasang sekali event listener di luar fungsi updateServicesStep
+                $("#services-container").off("click", ".service-card").on("click", ".service-card", function() {
+                    const serviceId = $(this).data("service");
+                    const serviceTitle = $(this).find(".card-title").text();
+                    const servicePrice = parseInt($(this).data("price"));
+                    const maxPeople = parseInt($(this).data("max-people")) || 1;
+                    const minPeople = parseInt($(this).data("min-people")) || 1;
+                    const extraPricePerPerson = parseInt($(this).data("extra-price")) || 0;
+                    const dpAmount = parseInt($(this).data("dp-amount")) || 0;
+
+                    const peopleCount = minPeople;
+
+                    // Simpan ke sessionStorage atau variabel global
+                    sessionStorage.setItem("selectedService", JSON.stringify({
+                        serviceId,
+                        serviceTitle,
+                        servicePrice,
+                        maxPeople,
+                        minPeople,
+                        extraPricePerPerson,
+                        dpAmount,
+                        peopleCount
+                    }));
+
+                    // Simpan ke variabel global
+                    window.selectedServicePrice = servicePrice;
+                    window.maxPeople = maxPeople;
+                    window.minPeople = minPeople;
+                    window.extraPricePerPerson = extraPricePerPerson;
+                    window.dpAmount = dpAmount;
+                    window.peopleCount = peopleCount;
+
+                    // Update UI
+                    $("#summary-service").text(serviceTitle);
+                    updatePeopleCountDisplay(); // menghitung total
                 });
 
-                // Jangan attach event click ulang setiap kali updateServicesStep dipanggil!
-                // Hanya attach event sekali di luar fungsi, tapi kalau mau tetap di sini:
-                // gunakan event delegation (pada container) supaya event listener tidak duplikat.
-            } else {
-                $("#services-container").html(
-                    '<div class="col-12 text-center py-5"><p>No services available for this category.</p></div>'
-                );
-            }
-        },
-        error: function(xhr) {
-            console.error(xhr);
-            $("#services-container").html(
-                '<div class="col-12 text-center w-100 py-5"><p>Error loading services. Please try again.</p></div>'
-            );
-        }
-    });
-}
 
-// Event delegation: pasang sekali event listener di luar fungsi updateServicesStep
-$("#services-container").off("click", ".service-card").on("click", ".service-card", function () {
-    const serviceId = $(this).data("service");
-    const serviceTitle = $(this).find(".card-title").text();
-    const servicePrice = parseInt($(this).data("price"));
-    const maxPeople = parseInt($(this).data("max-people")) || 1;
-    const minPeople = parseInt($(this).data("min-people")) || 1;
-    const extraPricePerPerson = parseInt($(this).data("extra-price")) || 0;
-    const dpAmount = parseInt($(this).data("dp-amount")) || 0;
+                // Variabel global dan updatePeopleCountDisplay tetap di luar supaya tidak hilang/reset
+                const peopleCountEl = document.getElementById("people-count");
+                const decreaseBtn = document.getElementById("decrease-btn");
+                const increaseBtn = document.getElementById("increase-btn");
 
-    const peopleCount = minPeople;
+                window.peopleCount = 1;
+                window.maxPeople = 1;
+                window.minPeople = 1;
+                window.selectedServicePrice = 0;
+                window.extraPricePerPerson = 0;
 
-    // Simpan ke sessionStorage atau variabel global
-    sessionStorage.setItem("selectedService", JSON.stringify({
-        serviceId,
-        serviceTitle,
-        servicePrice,
-        maxPeople,
-        minPeople,
-        extraPricePerPerson,
-        dpAmount,
-        peopleCount
-    }));
+                function updatePeopleCountDisplay() {
+                    peopleCountEl.textContent = window.peopleCount;
 
-    // Simpan ke variabel global
-    window.selectedServicePrice = servicePrice;
-    window.maxPeople = maxPeople;
-    window.minPeople = minPeople;
-    window.extraPricePerPerson = extraPricePerPerson;
-    window.dpAmount = dpAmount;
-    window.peopleCount = peopleCount;
+                    const additionalPeople = window.peopleCount - window.minPeople;
+                    const additionalFee = additionalPeople * window.extraPricePerPerson;
+                    const total = window.selectedServicePrice + additionalFee;
 
-    // Update UI
-    $("#summary-service").text(serviceTitle);
-    updatePeopleCountDisplay(); // menghitung total
-});
+                    // Update ringkasan utama
+                    document.getElementById("summary-price").textContent = formatRupiah(total);
+
+                    // Update ringkasan pembayaran
+                    document.getElementById("original-price").textContent = formatRupiah(total);
+                    document.getElementById("final-price").textContent = formatRupiah(total);
+
+                    // Update DP dan sisa pembayaran kalau metode dp dipilih
+                    const paymentMethod = document.getElementById("payment-method").value;
+
+                    if (paymentMethod === "dp") {
+                        document.getElementById("dp-row").classList.remove("d-none");
+                        document.getElementById("sisa-row").classList.remove("d-none");
+
+                        const dpAmount = window.dpAmount || 0;
+                        const sisa = total - dpAmount;
+
+                        document.getElementById("dp-amount").textContent = formatRupiah(dpAmount);
+                        document.getElementById("sisa-payment").textContent = formatRupiah(sisa);
+                    } else {
+                        document.getElementById("dp-row").classList.add("d-none");
+                        document.getElementById("sisa-row").classList.add("d-none");
+                    }
+                    basePrice = total;
+                }
+                document.getElementById("payment-method").addEventListener("change", () => {
+                    updatePeopleCountDisplay();
+                });
 
 
-// Variabel global dan updatePeopleCountDisplay tetap di luar supaya tidak hilang/reset
-const peopleCountEl = document.getElementById("people-count");
-const decreaseBtn = document.getElementById("decrease-btn");
-const increaseBtn = document.getElementById("increase-btn");
+                decreaseBtn.addEventListener("click", () => {
+                    if (window.peopleCount > window.minPeople) {
+                        window.peopleCount--;
+                        updatePeopleCountDisplay();
+                    }
+                });
 
-window.peopleCount = 1;
-window.maxPeople = 1;
-window.minPeople = 1;
-window.selectedServicePrice = 0;
-window.extraPricePerPerson = 0;
+                increaseBtn.addEventListener("click", () => {
+                    if (window.peopleCount < window.maxPeople) {
+                        window.peopleCount++;
+                        updatePeopleCountDisplay();
+                    }
+                    // ... semua kode kamu di atas
 
-function updatePeopleCountDisplay() {
-    peopleCountEl.textContent = window.peopleCount;
+                    document.addEventListener("DOMContentLoaded", function() {
+                        basePrice = window.selectedServicePrice || 0;
+                        updatePaymentSummary();
+                    });
 
-    const additionalPeople = window.peopleCount - window.minPeople;
-    const additionalFee = additionalPeople * window.extraPricePerPerson;
-    const total = window.selectedServicePrice + additionalFee;
-
-    // Update ringkasan utama
-    document.getElementById("summary-price").textContent = formatRupiah(total);
-
-    // Update ringkasan pembayaran
-    document.getElementById("original-price").textContent = formatRupiah(total);
-    document.getElementById("final-price").textContent = formatRupiah(total);
-
-    // Update DP dan sisa pembayaran kalau metode dp dipilih
-    const paymentMethod = document.getElementById("payment-method").value;
-
-    if (paymentMethod === "dp") {
-        document.getElementById("dp-row").classList.remove("d-none");
-        document.getElementById("sisa-row").classList.remove("d-none");
-
-        const dpAmount = window.dpAmount || 0;
-        const sisa = total - dpAmount;
-
-        document.getElementById("dp-amount").textContent = formatRupiah(dpAmount);
-        document.getElementById("sisa-payment").textContent = formatRupiah(sisa);
-    } else {
-        document.getElementById("dp-row").classList.add("d-none");
-        document.getElementById("sisa-row").classList.add("d-none");
-    }
-        basePrice = total;
-}
-document.getElementById("payment-method").addEventListener("change", () => {
-    updatePeopleCountDisplay();
-});
-
-
-decreaseBtn.addEventListener("click", () => {
-    if (window.peopleCount > window.minPeople) {
-        window.peopleCount--;
-        updatePeopleCountDisplay();
-    }
-});
-
-increaseBtn.addEventListener("click", () => {
-    if (window.peopleCount < window.maxPeople) {
-        window.peopleCount++;
-        updatePeopleCountDisplay();
-    }
-    // ... semua kode kamu di atas
-
-document.addEventListener("DOMContentLoaded", function () {
-  basePrice = window.selectedServicePrice || 0;
-  updatePaymentSummary();
-});
-
-});
+                });
 
 
 
 
-            function updateEmployeesStep(serviceId) {
-                // Show loading state
-                $("#employees-container").html(
-                    '<div class="text-center py-5"><div class="spinner-border text-primary" role="status"></div></div>'
-                );
+                function updateEmployeesStep(serviceId) {
+                    // Show loading state
+                    $("#employees-container").html(
+                        '<div class="text-center py-5"><div class="spinner-border text-primary" role="status"></div></div>'
+                    );
 
-                // Make AJAX request to get employees for this service
-                $.ajax({
-                    url: `/services/${serviceId}/employees`,
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.success && response.employees) {
-                            const employees = response.employees;
-                            const service = response.service;
+                    // Make AJAX request to get employees for this service
+                    $.ajax({
+                        url: `/services/${serviceId}/employees`,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success && response.employees) {
+                                const employees = response.employees;
+                                const service = response.service;
 
-                            // Determine the price display
-                            let priceDisplay;
-                            if (service.sale_price) {
-                                // If sale price exists, show both with strike-through on original price
-                                priceDisplay =
-                                    `<span class="">${service.sale_price}</span>`;
-                            } else {
-                                // If no sale price, just show regular price normally
-                                priceDisplay =
-                                    `<span class="fw-bold">${service.price}</span>`;
-                            }
+                                // Determine the price display
+                                let priceDisplay;
+                                if (service.sale_price) {
+                                    // If sale price exists, show both with strike-through on original price
+                                    priceDisplay =
+                                        `<span class="">${service.sale_price}</span>`;
+                                } else {
+                                    // If no sale price, just show regular price normally
+                                    priceDisplay =
+                                        `<span class="fw-bold">${service.price}</span>`;
+                                }
 
-                            // Update service name display
-                            $(".selected-service-name").html(
-                                `Selected Service: ${service.title} (${bookingState.selectedService.price})`
+                                // Update service name display
+                                $(".selected-service-name").html(
+                                    `Selected Service: ${service.title} (${bookingState.selectedService.price})`
                                 );
 
-                            // Clear employees container
-                            $("#employees-container").empty();
+                                // Clear employees container
+                                $("#employees-container").empty();
 
-                            // Add employees with animation delay
-                            employees.forEach((employee, index) => {
-                                const employeeCard = `
+                                // Add employees with animation delay
+                                employees.forEach((employee, index) => {
+                                    const employeeCard = `
                                 <div class="col animate-slide-in" style="animation-delay: ${index * 100}ms">
                                     <div class="card border h-100 employee-card text-center p-2" data-employee="${employee.id}">
                                         <div class="card-body">
@@ -1065,145 +1083,145 @@ document.addEventListener("DOMContentLoaded", function () {
                                     </div>
                                 </div>
                             `;
-                                $("#employees-container").append(employeeCard);
-                            });
-                        } else {
+                                    $("#employees-container").append(employeeCard);
+                                });
+                            } else {
+                                $("#employees-container").html(
+                                    '<div class="col-12 text-center w-100 py-5"><p>No employees available for this service.</p></div>'
+                                );
+                            }
+                        },
+                        error: function(xhr) {
+                            console.error(xhr);
                             $("#employees-container").html(
-                                '<div class="col-12 text-center w-100 py-5"><p>No employees available for this service.</p></div>'
+                                '<div class="col-12 text-center w-100 py-5"><p>Error loading employees. Please try again.</p></div>'
                             );
                         }
-                    },
-                    error: function(xhr) {
-                        console.error(xhr);
-                        $("#employees-container").html(
-                            '<div class="col-12 text-center w-100 py-5"><p>Error loading employees. Please try again.</p></div>'
-                        );
-                    }
-                });
-            }
+                    });
+                }
 
-            function generateCalendar() {
-                const today = new Date();
-                const currentMonth = today.getMonth();
-                const currentYear = today.getFullYear();
+                function generateCalendar() {
+                    const today = new Date();
+                    const currentMonth = today.getMonth();
+                    const currentYear = today.getFullYear();
 
-                renderCalendar(currentMonth, currentYear);
-            }
+                    renderCalendar(currentMonth, currentYear);
+                }
 
-            function renderCalendar(month, year) {
-                const firstDay = new Date(year, month, 1);
-                const lastDay = new Date(year, month + 1, 0);
-                const daysInMonth = lastDay.getDate();
-                const startingDay = (firstDay.getDay() + 6) % 7; // 0 = Monday
+                function renderCalendar(month, year) {
+                    const firstDay = new Date(year, month, 1);
+                    const lastDay = new Date(year, month + 1, 0);
+                    const daysInMonth = lastDay.getDate();
+                    const startingDay = (firstDay.getDay() + 6) % 7; // 0 = Monday
 
-                // Update month display
-                const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus",
-                    "September", "Oktober", "November", "Desember"
-                ];
-                $("#current-month").text(`${monthNames[month]} ${year}`);
+                    // Update month display
+                    const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus",
+                        "September", "Oktober", "November", "Desember"
+                    ];
+                    $("#current-month").text(`${monthNames[month]} ${year}`);
 
-                // Clear calendar
-                $("#calendar-body").empty();
+                    // Clear calendar
+                    $("#calendar-body").empty();
 
-                // Build calendar
-                let date = 1;
-                for (let i = 0; i < 6; i++) {
-                    // Create a table row
-                    const row = $("<tr></tr>");
+                    // Build calendar
+                    let date = 1;
+                    for (let i = 0; i < 6; i++) {
+                        // Create a table row
+                        const row = $("<tr></tr>");
 
-                    // Create cells for each day of the week
-                    for (let j = 0; j < 7; j++) {
-                        if (i === 0 && j < startingDay) {
-                            // Empty cells before the first day of the month
-                            row.append("<td></td>");
-                        } else if (date > daysInMonth) {
-                            // Break if we've reached the end of the month
-                            break;
-                        } else {
-                            // Create a cell for this date
-                            const today = new Date();
-                            const cellDate = new Date(year, month, date);
-                            const formattedDate =
-                                `${year}-${(month + 1).toString().padStart(2, '0')}-${date.toString().padStart(2, '0')}`;
+                        // Create cells for each day of the week
+                        for (let j = 0; j < 7; j++) {
+                            if (i === 0 && j < startingDay) {
+                                // Empty cells before the first day of the month
+                                row.append("<td></td>");
+                            } else if (date > daysInMonth) {
+                                // Break if we've reached the end of the month
+                                break;
+                            } else {
+                                // Create a cell for this date
+                                const today = new Date();
+                                const cellDate = new Date(year, month, date);
+                                const formattedDate =
+                                    `${year}-${(month + 1).toString().padStart(2, '0')}-${date.toString().padStart(2, '0')}`;
 
-                            // Check if this date is in the past
-                            const isPast = cellDate < new Date(today.setHours(0, 0, 0, 0));
+                                // Check if this date is in the past
+                                const isPast = cellDate < new Date(today.setHours(0, 0, 0, 0));
 
-                            // Create the cell with appropriate classes
-                            const cell = $(
-                                `<td class="text-center calendar-day${isPast ? ' disabled' : ''}" data-date="${formattedDate}">${date}</td>`
-                            );
+                                // Create the cell with appropriate classes
+                                const cell = $(
+                                    `<td class="text-center calendar-day${isPast ? ' disabled' : ''}" data-date="${formattedDate}">${date}</td>`
+                                );
 
-                            row.append(cell);
-                            date++;
+                                row.append(cell);
+                                date++;
+                            }
+                        }
+
+                        // Add the row to the calendar if it has cells
+                        if (row.children().length > 0) {
+                            $("#calendar-body").append(row);
                         }
                     }
+                }
 
-                    // Add the row to the calendar if it has cells
-                    if (row.children().length > 0) {
-                        $("#calendar-body").append(row);
+                function navigateMonth(direction) {
+                    const currentMonthText = $("#current-month").text();
+                    const [monthName, year] = currentMonthText.split(" ");
+
+                    const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus",
+                        "September", "Oktober", "November", "Desember"
+                    ];
+                    let month = monthNames.indexOf(monthName);
+                    let yearNum = parseInt(year);
+
+                    month += direction;
+
+                    if (month < 0) {
+                        month = 11;
+                        yearNum--;
+                    } else if (month > 11) {
+                        month = 0;
+                        yearNum++;
                     }
-                }
-            }
 
-            function navigateMonth(direction) {
-                const currentMonthText = $("#current-month").text();
-                const [monthName, year] = currentMonthText.split(" ");
-
-                const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus",
-                    "September", "Oktober", "November", "Desember"
-                ];
-                let month = monthNames.indexOf(monthName);
-                let yearNum = parseInt(year);
-
-                month += direction;
-
-                if (month < 0) {
-                    month = 11;
-                    yearNum--;
-                } else if (month > 11) {
-                    month = 0;
-                    yearNum++;
+                    renderCalendar(month, yearNum);
                 }
 
-                renderCalendar(month, yearNum);
-            }
 
+                function updateCalendar() {
+                    // Update employee name display
+                    const employee = bookingState.selectedEmployee;
+                    $(".selected-employee-name").text(`Selected Crew: ${employee.user.name}`);
 
-            function updateCalendar() {
-                // Update employee name display
-                const employee = bookingState.selectedEmployee;
-                $(".selected-employee-name").text(`Selected Staff: ${employee.user.name}`);
+                    // Clear previous selections
+                    bookingState.selectedDate = null;
+                    bookingState.selectedTime = null;
+                    $(".calendar-day").removeClass("selected");
+                    $(".time-slot").removeClass("selected");
 
-                // Clear previous selections
-                bookingState.selectedDate = null;
-                bookingState.selectedTime = null;
-                $(".calendar-day").removeClass("selected");
-                $(".time-slot").removeClass("selected");
-
-                // Show loading state for time slots
-                $("#time-slots-container").html(`
+                    // Show loading state for time slots
+                    $("#time-slots-container").html(`
                 <div class="text-center w-100 py-4">
                     <div class="spinner-border text-primary" role="status">
                         <span class="visually-hidden">Loading...</span>
                     </div>
                 </div>
             `);
-            }
+                }
 
-            function updateCalendar() {
-                // Update employee name display
-                const employee = bookingState.selectedEmployee;
-                $(".selected-employee-name").text(`Selected Staff: ${employee.user.name}`);
+                function updateCalendar() {
+                    // Update employee name display
+                    const employee = bookingState.selectedEmployee;
+                    $(".selected-employee-name").text(`Selected Crew: ${employee.user.name}`);
 
-                // Clear previous selections
-                bookingState.selectedDate = null;
-                bookingState.selectedTime = null;
-                $(".calendar-day").removeClass("selected");
-                $(".time-slot").removeClass("selected");
+                    // Clear previous selections
+                    bookingState.selectedDate = null;
+                    bookingState.selectedTime = null;
+                    $(".calendar-day").removeClass("selected");
+                    $(".time-slot").removeClass("selected");
 
-                // Show initial state instead of loading spinner
-                $("#time-slots-container").html(`
+                    // Show initial state instead of loading spinner
+                    $("#time-slots-container").html(`
                     <div class="text-center w-100 py-4">
                         <div class="alert alert-info">
                             <i class="bi bi-calendar-event me-2"></i>
@@ -1211,11 +1229,11 @@ document.addEventListener("DOMContentLoaded", function () {
                         </div>
                     </div>
                 `);
-            }
+                }
 
-            function updateTimeSlots(selectedDate) {
-                if (!selectedDate) {
-                    $("#time-slots-container").html(`
+                function updateTimeSlots(selectedDate) {
+                    if (!selectedDate) {
+                        $("#time-slots-container").html(`
                     <div class="text-center w-100 py-4">
                         <div class="alert alert-warning">
                             <i class="bi bi-exclamation-triangle me-2"></i>
@@ -1223,14 +1241,14 @@ document.addEventListener("DOMContentLoaded", function () {
                         </div>
                     </div>
                 `);
-                    return;
-                }
+                        return;
+                    }
 
-                const employeeId = bookingState.selectedEmployee.id;
-                const apiDate = new Date(selectedDate).toISOString().split('T')[0];
+                    const employeeId = bookingState.selectedEmployee.id;
+                    const apiDate = new Date(selectedDate).toISOString().split('T')[0];
 
-                // Show loading state only when actually fetching
-                $("#time-slots-container").html(`
+                    // Show loading state only when actually fetching
+                    $("#time-slots-container").html(`
                     <div class="text-center w-100 py-4">
                         <div class="spinner-border text-primary" role="status">
                             <span class="visually-hidden">Loading...</span>
@@ -1239,13 +1257,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     </div>
                 `);
 
-                $.ajax({
-                    url: `/employees/${employeeId}/availability/${apiDate}`,
-                    success: function(response) {
-                        $("#time-slots-container").empty();
+                    $.ajax({
+                        url: `/employees/${employeeId}/availability/${apiDate}`,
+                        success: function(response) {
+                            $("#time-slots-container").empty();
 
-                        if (response.available_slots.length === 0) {
-                            $("#time-slots-container").html(`
+                            if (response.available_slots.length === 0) {
+                                $("#time-slots-container").html(`
                     <div class="text-center w-100 py-4">
                         <div class="alert alert-warning">
                             <i class="bi bi-clock-history me-2"></i>
@@ -1257,11 +1275,11 @@ document.addEventListener("DOMContentLoaded", function () {
                         </button>
                     </div>
                 `);
-                            return;
-                        }
+                                return;
+                            }
 
-                        // Add slot duration info
-                        $("#time-slots-container").append(`
+                            // Add slot duration info
+                            $("#time-slots-container").append(`
                             <div class="slot-info mb-3">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <small class="text-muted">
@@ -1274,10 +1292,12 @@ document.addEventListener("DOMContentLoaded", function () {
                             </div>
                         `);
 
-                        // Add each time slot
-                        const $slotsContainer = $("<div class='slots-grid d-flex flex-wrap justify-content-center gap-2'></div>");
-                        response.available_slots.forEach(slot => {
-                            const slotElement = $(`
+                            // Add each time slot
+                            const $slotsContainer = $(
+                                "<div class='slots-grid d-flex flex-wrap justify-content-center gap-2'></div>"
+                            );
+                            response.available_slots.forEach(slot => {
+                                const slotElement = $(`
                             <div class="time-slot btn btn-outline-primary mb-2"
                                 data-start="${slot.start}"
                                 data-end="${slot.end}"
@@ -1288,23 +1308,23 @@ document.addEventListener("DOMContentLoaded", function () {
                             </div>
                         `);
 
-                            slotElement.on('click', function() {
-                                $(".time-slot").removeClass("selected active");
-                                $(this).addClass("selected active");
-                                bookingState.selectedTime = {
-                                    start: $(this).data('start'),
-                                    end: $(this).data('end'),
-                                    display: $(this).text()
-                                };
-                                updateBookingSummary();
-                            });
+                                slotElement.on('click', function() {
+                                    $(".time-slot").removeClass("selected active");
+                                    $(this).addClass("selected active");
+                                    bookingState.selectedTime = {
+                                        start: $(this).data('start'),
+                                        end: $(this).data('end'),
+                                        display: $(this).text()
+                                    };
+                                    updateBookingSummary();
+                                });
 
-                            $slotsContainer.append(slotElement);
-                        });
-                        $("#time-slots-container").append($slotsContainer);
-                    },
-                    error: function(xhr) {
-                        $("#time-slots-container").html(`
+                                $slotsContainer.append(slotElement);
+                            });
+                            $("#time-slots-container").append($slotsContainer);
+                        },
+                        error: function(xhr) {
+                            $("#time-slots-container").html(`
                             <div class="text-center w-100 py-4">
                                 <div class="alert alert-danger">
                                     <i class="bi bi-exclamation-octagon me-2"></i>
@@ -1315,68 +1335,69 @@ document.addEventListener("DOMContentLoaded", function () {
                                         </button>
                                     </div>
                                 `);
-                    }
-                });
-            }
-
-
-
-            function updateSummary() {
-                // Find the selected category
-                const selectedCategory = categories.find(cat => cat.id == bookingState.selectedCategory);
-
-                // Update summary with booking details
-                $("#summary-category").text(selectedCategory ? selectedCategory.title : 'Not selected');
-
-                // Update service info - using the stored service object
-                if (bookingState.selectedService) {
-                    $("#summary-service").text(
-                        `${bookingState.selectedService.title} (${bookingState.selectedService.price})`);
-                    $("#summary-duration").text(`${bookingState.selectedEmployee.slot_duration} menit`);
-                    $("#summary-price").text(bookingState.selectedService.price);
-                    $("#summary-max-people").text(bookingState.selectedService.max_people + " orang");
-                }
-
-                // Update employee info
-                if (bookingState.selectedEmployee) {
-                    $("#summary-employee").text(bookingState.selectedEmployee.user.name);
-                }
-
-                // Update date/time info
-                if (bookingState.selectedDate && bookingState.selectedTime) {
-                    const formattedDate = new Date(bookingState.selectedDate).toLocaleDateString('id-ID', {
-                        weekday: 'long',
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
+                        }
                     });
-
-                    $("#summary-datetime").text(
-                        `${formattedDate} pukul ${bookingState.selectedTime.display || bookingState.selectedTime}`);
                 }
-            }
 
 
 
-            // function submitBooking() {
+                function updateSummary() {
+                    // Find the selected category
+                    const selectedCategory = categories.find(cat => cat.id == bookingState.selectedCategory);
 
-           // ✅ Dummy function supaya tidak error 
-function updateBookingSummary() {
-    console.log("updateBookingSummary dipanggil");
-}
+                    // Update summary with booking details
+                    $("#summary-category").text(selectedCategory ? selectedCategory.title : 'Not selected');
 
-// ✅ Simpan booking ke server
-function saveBooking(data) {
-    $.ajax({
-        url: '/bookings',
-        method: 'POST',
-        data: data,
-        success: function(res) {
-            // ✅ tampilkan modal sukses
-            $('#bookingSuccessModal').modal('show');
+                    // Update service info - using the stored service object
+                    if (bookingState.selectedService) {
+                        $("#summary-service").text(
+                            `${bookingState.selectedService.title} (${bookingState.selectedService.price})`);
+                        $("#summary-duration").text(`${bookingState.selectedEmployee.slot_duration} menit`);
+                        $("#summary-price").text(bookingState.selectedService.price);
+                        $("#summary-max-people").text(bookingState.selectedService.max_people + " orang");
+                    }
 
-            // isi detail booking di modal
-            $('#modal-booking-details').html(`
+                    // Update employee info
+                    if (bookingState.selectedEmployee) {
+                        $("#summary-employee").text(bookingState.selectedEmployee.user.name);
+                    }
+
+                    // Update date/time info
+                    if (bookingState.selectedDate && bookingState.selectedTime) {
+                        const formattedDate = new Date(bookingState.selectedDate).toLocaleDateString('id-ID', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        });
+
+                        $("#summary-datetime").text(
+                            `${formattedDate} pukul ${bookingState.selectedTime.display || bookingState.selectedTime}`
+                        );
+                    }
+                }
+
+
+
+                // function submitBooking() {
+
+                // ✅ Dummy function supaya tidak error 
+                function updateBookingSummary() {
+                    console.log("updateBookingSummary dipanggil");
+                }
+
+                // ✅ Simpan booking ke server
+                function saveBooking(data) {
+                    $.ajax({
+                        url: '/bookings',
+                        method: 'POST',
+                        data: data,
+                        success: function(res) {
+                            // ✅ tampilkan modal sukses
+                            $('#bookingSuccessModal').modal('show');
+
+                            // isi detail booking di modal
+                            $('#modal-booking-details').html(`
                 <ul class="list-unstyled">
                     <li><strong>Nama:</strong> ${data.name}</li>
                     <li><strong>Email:</strong> ${data.email}</li>
@@ -1390,317 +1411,330 @@ function saveBooking(data) {
                 </ul>
             `);
 
-            // ✅ redirect setelah modal ditutup
-            $('#bookingSuccessModal').on('hidden.bs.modal', function () {
-                let redirectUrl = '/'; // default guest
+                            // ✅ redirect setelah modal ditutup
+                            $('#bookingSuccessModal').on('hidden.bs.modal', function() {
+                                let redirectUrl = '/'; // default guest
 
-                if (typeof currentAuthUser !== 'undefined' && currentAuthUser) {
-                    if (currentAuthUser.role === 'member') {
-                        redirectUrl = '/member/dashboard';
-                    } else if (
-                        currentAuthUser.role === 'admin' ||
-                        currentAuthUser.role === 'moderator' ||
-                        currentAuthUser.role === 'employee'
-                    ) {
-                        redirectUrl = '/dashboard';
+                                if (typeof currentAuthUser !== 'undefined' && currentAuthUser) {
+                                    if (currentAuthUser.role === 'member') {
+                                        redirectUrl = '/member/dashboard';
+                                    } else if (
+                                        currentAuthUser.role === 'admin' ||
+                                        currentAuthUser.role === 'moderator' ||
+                                        currentAuthUser.role === 'employee'
+                                    ) {
+                                        redirectUrl = '/dashboard';
+                                    }
+                                }
+
+                                window.location.href = redirectUrl;
+                            });
+                        },
+                        error: function(xhr) {
+                            console.error(xhr.responseJSON);
+                            alert('Booking gagal. Hubungi support.');
+                            $("#next-step").prop('disabled', false).html(
+                                'Confirm Booking <i class="bi bi-check-circle"></i>');
+                        }
+                    });
+                }
+
+
+                // ✅ Function untuk submit booking
+                function submitBooking() {
+                    const form = $('#customer-info-form');
+                    const csrfToken = form.find('input[name="_token"]').val();
+
+                    const paymentMethod = $('#payment-method').val(); // dp / full
+                    const totalAmount = parseInt($("#summary-price").text().replace(/[^0-9]/g, ''), 10);
+
+                    const dpAmount = bookingState.selectedService.dp_amount || Math.round(totalAmount / 2);
+                    const paymentAmount = paymentMethod === 'dp' ? dpAmount : totalAmount;
+
+                    let bookingData = {
+                        employee_id: bookingState.selectedEmployee.id,
+                        service_id: bookingState.selectedService.id,
+                        name: $('#customer-name').val(),
+                        email: $('#customer-email').val(),
+                        phone: $('#customer-phone').val(),
+                        notes: $('#customer-notes').val(),
+                        amount: paymentAmount,
+                        total_amount: totalAmount, // ✅ sudah dipotong diskon
+                        people_count: parseInt($("#people-count").text(), 10),
+                        booking_date: bookingState.selectedDate,
+                        booking_time: bookingState.selectedTime.start || bookingState.selectedTime,
+                        _token: csrfToken
+                    };
+
+                    // 🔹 Masukkan user_id kalau login
+                    if (typeof currentAuthUser !== 'undefined' && currentAuthUser) {
+                        bookingData.user_id = currentAuthUser.id;
+                    }
+
+                    // 🔹 Masukkan coupon_id kalau ada
+                    const couponId = $("#coupon_id").val();
+                    if (couponId) {
+                        bookingData.coupon_id = couponId;
+                    }
+
+                    console.log("Booking data dikirim:", bookingData); // ✅ Debug, pastikan coupon_id ada
+
+                    const nextBtn = $("#next-step");
+                    nextBtn.prop('disabled', true).html(
+                        '<span class="spinner-border spinner-border-sm"></span> Processing...');
+
+                    // 🔹 Jika role admin/moderator/employee → langsung cash/manual
+                    if (typeof currentAuthUser !== 'undefined' && currentAuthUser &&
+                        (['admin', 'moderator', 'employee'].includes(currentAuthUser.role))) {
+
+                        bookingData.payment_method = 'Cash';
+
+                        if (paymentMethod === 'dp') {
+                            bookingData.payment_status = 'DP';
+                            bookingData.status = 'Confirmed';
+                        } else {
+                            bookingData.payment_status = 'Paid';
+                            bookingData.status = 'Confirmed';
+                        }
+
+                        saveBooking(bookingData);
+                        return;
+                    }
+
+                    // 🔹 Jika role member/guest → Midtrans
+                    bookingData.payment_method = 'Midtrans';
+                    bookingData.status = 'Confirmed';
+                    bookingData.payment_status = (paymentMethod === 'dp') ? 'DP' : 'Paid';
+
+                    if (typeof snap !== 'undefined') {
+                        $.ajax({
+                            url: '/midtrans/token',
+                            method: 'POST',
+                            data: bookingData,
+                            success: function(response) {
+                                const snapToken = response.token;
+
+                                snap.pay(snapToken, {
+                                    onSuccess: function(result) {
+                                        bookingData.payment_result = JSON.stringify(result);
+                                        bookingData.midtrans_order_id = result.order_id ||
+                                            result.transaction_id;
+                                        saveBooking(bookingData);
+                                    },
+                                    onPending: function(result) {
+                                        bookingData.payment_result = JSON.stringify(result);
+                                        bookingData.midtrans_order_id = result.order_id ||
+                                            result.transaction_id;
+                                        bookingData.status = 'Processing';
+                                        bookingData.payment_status = (paymentMethod === 'dp') ?
+                                            'DP' : 'Pending';
+                                        saveBooking(bookingData);
+                                    },
+                                    onError: function() {
+                                        alert('Payment failed. Please try again.');
+                                        nextBtn.prop('disabled', false).html(
+                                            'Confirm Booking <i class="bi bi-check-circle"></i>'
+                                        );
+                                    },
+                                    onClose: function() {
+                                        alert('Payment popup closed. Booking is cancelled.');
+                                        nextBtn.prop('disabled', false).html(
+                                            'Confirm Booking <i class="bi bi-check-circle"></i>'
+                                        );
+                                    }
+                                });
+                            },
+                            error: function() {
+                                alert('Failed to initiate payment.');
+                                nextBtn.prop('disabled', false).html(
+                                    'Confirm Booking <i class="bi bi-check-circle"></i>');
+                            }
+                        });
+                    } else {
+                        alert("Midtrans Snap belum diload. Pastikan script Snap sudah ditambahkan.");
+                        nextBtn.prop('disabled', false).html('Confirm Booking <i class="bi bi-check-circle"></i>');
                     }
                 }
 
-                window.location.href = redirectUrl;
+
+
+
+
+
+
+
+
             });
-        },
-        error: function(xhr) {
-            console.error(xhr.responseJSON);
-            alert('Booking gagal. Hubungi support.');
-            $("#next-step").prop('disabled', false).html('Confirm Booking <i class="bi bi-check-circle"></i>');
-        }
-    });
-}
+        </script>
 
+        @if ($setting->footer)
+            {!! $setting->footer !!}
+        @endif
 
-// ✅ Function untuk submit booking
-function submitBooking() {
-    const form = $('#customer-info-form');
-    const csrfToken = form.find('input[name="_token"]').val();
+        <script>
+            const summaryPriceEl = document.getElementById("summary-price");
+            const originalPriceEl = document.getElementById("original-price");
+            const finalPriceEl = document.getElementById("final-price");
+            const discountRow = document.getElementById("discount-row");
+            const discountAmountEl = document.getElementById("discount-amount");
 
-    const paymentMethod = $('#payment-method').val(); // dp / full
-    const totalAmount = parseInt($("#summary-price").text().replace(/[^0-9]/g, ''), 10);
+            const dpRow = document.getElementById("dp-row");
+            const sisaRow = document.getElementById("sisa-row");
+            const dpAmountEl = document.getElementById("dp-amount");
+            const sisaPaymentEl = document.getElementById("sisa-payment");
 
-    const dpAmount = bookingState.selectedService.dp_amount || Math.round(totalAmount / 2);
-    const paymentAmount = paymentMethod === 'dp' ? dpAmount : totalAmount;
+            const paymentMethodEl = document.getElementById("payment-method");
+            const couponInput = document.getElementById("coupon-code");
+            const applyCouponBtn = document.getElementById("apply-coupon");
+            const couponSuccessMsg = document.getElementById("coupon-success-msg");
+            const couponErrorMsg = document.getElementById("coupon-error-msg");
+            const couponIdHidden = document.getElementById("coupon_id");
 
-    let bookingData = {
-        employee_id: bookingState.selectedEmployee.id,
-        service_id: bookingState.selectedService.id,
-        name: $('#customer-name').val(),
-        email: $('#customer-email').val(),
-        phone: $('#customer-phone').val(),
-        notes: $('#customer-notes').val(),
-        amount: paymentAmount,
-        total_amount: totalAmount, // ✅ sudah dipotong diskon
-        people_count: parseInt($("#people-count").text(), 10),
-        booking_date: bookingState.selectedDate,
-        booking_time: bookingState.selectedTime.start || bookingState.selectedTime,
-        _token: csrfToken
-    };
+            let basePrice = 0;
+            let discountValue = 0;
 
-    // 🔹 Masukkan user_id kalau login
-    if (typeof currentAuthUser !== 'undefined' && currentAuthUser) {
-        bookingData.user_id = currentAuthUser.id;
-    }
-
-    // 🔹 Masukkan coupon_id kalau ada
-    const couponId = $("#coupon_id").val();
-    if (couponId) {
-        bookingData.coupon_id = couponId;
-    }
-
-    console.log("Booking data dikirim:", bookingData); // ✅ Debug, pastikan coupon_id ada
-
-    const nextBtn = $("#next-step");
-    nextBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Processing...');
-
-    // 🔹 Jika role admin/moderator/employee → langsung cash/manual
-    if (typeof currentAuthUser !== 'undefined' && currentAuthUser &&
-        (['admin', 'moderator', 'employee'].includes(currentAuthUser.role))) {
-
-        bookingData.payment_method = 'Cash';
-
-        if (paymentMethod === 'dp') {
-            bookingData.payment_status = 'DP';
-            bookingData.status = 'Confirmed';
-        } else {
-            bookingData.payment_status = 'Paid';
-            bookingData.status = 'Confirmed';
-        }
-
-        saveBooking(bookingData);
-        return;
-    }
-
-    // 🔹 Jika role member/guest → Midtrans
-    bookingData.payment_method = 'Midtrans';
-    bookingData.status = 'Confirmed';
-    bookingData.payment_status = (paymentMethod === 'dp') ? 'DP' : 'Paid';
-
-    if (typeof snap !== 'undefined') {
-        $.ajax({
-            url: '/midtrans/token',
-            method: 'POST',
-            data: bookingData,
-            success: function(response) {
-                const snapToken = response.token;
-
-                snap.pay(snapToken, {
-                    onSuccess: function(result) {
-                        bookingData.payment_result = JSON.stringify(result);
-                        bookingData.midtrans_order_id = result.order_id || result.transaction_id;
-                        saveBooking(bookingData);
-                    },
-                    onPending: function(result) {
-                        bookingData.payment_result = JSON.stringify(result);
-                        bookingData.midtrans_order_id = result.order_id || result.transaction_id;
-                        bookingData.status = 'Processing';
-                        bookingData.payment_status = (paymentMethod === 'dp') ? 'DP' : 'Pending';
-                        saveBooking(bookingData);
-                    },
-                    onError: function() {
-                        alert('Payment failed. Please try again.');
-                        nextBtn.prop('disabled', false).html('Confirm Booking <i class="bi bi-check-circle"></i>');
-                    },
-                    onClose: function() {
-                        alert('Payment popup closed. Booking is cancelled.');
-                        nextBtn.prop('disabled', false).html('Confirm Booking <i class="bi bi-check-circle"></i>');
-                    }
-                });
-            },
-            error: function() {
-                alert('Failed to initiate payment.');
-                nextBtn.prop('disabled', false).html('Confirm Booking <i class="bi bi-check-circle"></i>');
+            function formatRupiah(number) {
+                return new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                }).format(number);
             }
-        });
-    } else {
-        alert("Midtrans Snap belum diload. Pastikan script Snap sudah ditambahkan.");
-        nextBtn.prop('disabled', false).html('Confirm Booking <i class="bi bi-check-circle"></i>');
-    }
-}
+
+            function updatePaymentSummary() {
+                let priceAfterDiscount = basePrice - discountValue;
+                if (priceAfterDiscount < 0) priceAfterDiscount = 0;
+
+                originalPriceEl.textContent = formatRupiah(basePrice);
+                summaryPriceEl.textContent = formatRupiah(priceAfterDiscount);
+
+                if (discountValue > 0) {
+                    discountRow.classList.remove("d-none");
+                    discountAmountEl.textContent = `- ${formatRupiah(discountValue)}`;
+
+                    finalPriceEl.textContent = formatRupiah(priceAfterDiscount);
+                    finalPriceEl.parentElement.classList.remove("d-none");
+                } else {
+                    discountRow.classList.add("d-none");
+                    finalPriceEl.parentElement.classList.add("d-none");
+                }
+
+                const method = paymentMethodEl.value;
+                if (method === "dp") {
+                    const dp = window.dpAmount || Math.round(priceAfterDiscount / 2);
+                    const sisa = priceAfterDiscount - dp;
+                    dpRow.classList.remove("d-none");
+                    sisaRow.classList.remove("d-none");
+                    dpAmountEl.textContent = formatRupiah(dp);
+                    sisaPaymentEl.textContent = formatRupiah(sisa);
+                } else {
+                    dpRow.classList.add("d-none");
+                    sisaRow.classList.add("d-none");
+                }
+            }
+
+            async function applyCoupon() {
+                const code = couponInput.value.trim().toUpperCase();
+                if (!code) {
+                    alert("Masukkan kode kupon!");
+                    return;
+                }
+
+                couponSuccessMsg.classList.add("d-none");
+                couponErrorMsg.classList.add("d-none");
+
+                try {
+                    const response = await fetch('/validate-coupon', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                'content')
+                        },
+                        body: JSON.stringify({
+                            code
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok || !data.id) {
+                        throw new Error(data.message || "Kupon tidak valid atau sudah digunakan.");
+                    }
+
+                    // ✅ Hitung diskon
+                    if (data.type === "percent") {
+                        discountValue = Math.round(basePrice * (data.value / 100));
+                    } else if (data.type === "fixed") {
+                        discountValue = data.value;
+                    } else {
+                        discountValue = 0;
+                    }
+
+                    // ✅ Set hidden coupon_id agar terkirim ke TransactionController
+                    couponIdHidden.value = data.id;
+
+                    couponSuccessMsg.textContent = `Kupon berhasil diterapkan: ${code}`;
+                    couponSuccessMsg.classList.remove("d-none");
+                    couponErrorMsg.classList.add("d-none");
+
+                    updatePaymentSummary();
+                } catch (error) {
+                    couponIdHidden.value = ""; // reset kalau gagal
+                    couponSuccessMsg.classList.add("d-none");
+                    couponErrorMsg.textContent = error.message || "Kupon tidak valid.";
+                    couponErrorMsg.classList.remove("d-none");
+                    console.error("Error validasi kupon:", error);
+                }
+            }
+
+            if (applyCouponBtn) {
+                applyCouponBtn.addEventListener("click", applyCoupon);
+            }
+
+            document.addEventListener("DOMContentLoaded", function() {
+                const originalText = originalPriceEl.textContent.replace(/[^\d]/g, '');
+                basePrice = parseInt(originalText) || 0;
+                updatePaymentSummary();
+            });
+
+            if (paymentMethodEl) {
+                paymentMethodEl.addEventListener('change', () => {
+                    // ❌ Jangan reset coupon_id supaya tetap terkirim ke backend
+                    discountValue = 0;
+                    couponSuccessMsg.classList.add('d-none');
+                    couponErrorMsg.classList.add('d-none');
+                    updatePaymentSummary();
+                });
+            }
+
+            const prevStepBtn = document.getElementById('prev-step');
+            if (prevStepBtn) {
+                prevStepBtn.addEventListener('click', () => {
+                    // ❌ Jangan reset coupon_id
+                    discountValue = 0;
+                    couponSuccessMsg.classList.add('d-none');
+                    couponErrorMsg.classList.add('d-none');
+                    updatePaymentSummary();
+                });
+            }
+        </script>
 
 
 
 
-
-
-
-
-
-        });
-    </script>
-
-    @if ($setting->footer)
-        {!! $setting->footer !!}
-    @endif
-
-<script>
-  const summaryPriceEl   = document.getElementById("summary-price");
-  const originalPriceEl  = document.getElementById("original-price");
-  const finalPriceEl     = document.getElementById("final-price");
-  const discountRow      = document.getElementById("discount-row");
-  const discountAmountEl = document.getElementById("discount-amount");
-
-  const dpRow        = document.getElementById("dp-row");
-  const sisaRow      = document.getElementById("sisa-row");
-  const dpAmountEl   = document.getElementById("dp-amount");
-  const sisaPaymentEl= document.getElementById("sisa-payment");
-
-  const paymentMethodEl  = document.getElementById("payment-method");
-  const couponInput      = document.getElementById("coupon-code");
-  const applyCouponBtn   = document.getElementById("apply-coupon");
-  const couponSuccessMsg = document.getElementById("coupon-success-msg");
-  const couponErrorMsg   = document.getElementById("coupon-error-msg");
-  const couponIdHidden   = document.getElementById("coupon_id");
-
-  let basePrice = 0;
-  let discountValue = 0;
-
-  function formatRupiah(number) {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(number);
-  }
-
-  function updatePaymentSummary() {
-    let priceAfterDiscount = basePrice - discountValue;
-    if (priceAfterDiscount < 0) priceAfterDiscount = 0;
-
-    originalPriceEl.textContent = formatRupiah(basePrice);
-    summaryPriceEl.textContent  = formatRupiah(priceAfterDiscount);
-
-    if (discountValue > 0) {
-      discountRow.classList.remove("d-none");
-      discountAmountEl.textContent = `- ${formatRupiah(discountValue)}`;
-
-      finalPriceEl.textContent = formatRupiah(priceAfterDiscount);
-      finalPriceEl.parentElement.classList.remove("d-none");
-    } else {
-      discountRow.classList.add("d-none");
-      finalPriceEl.parentElement.classList.add("d-none");
-    }
-
-    const method = paymentMethodEl.value;
-    if (method === "dp") {
-      const dp   = window.dpAmount || Math.round(priceAfterDiscount / 2);
-      const sisa = priceAfterDiscount - dp;
-      dpRow.classList.remove("d-none");
-      sisaRow.classList.remove("d-none");
-      dpAmountEl.textContent   = formatRupiah(dp);
-      sisaPaymentEl.textContent= formatRupiah(sisa);
-    } else {
-      dpRow.classList.add("d-none");
-      sisaRow.classList.add("d-none");
-    }
-  }
-
-  async function applyCoupon() {
-    const code = couponInput.value.trim().toUpperCase();
-    if (!code) {
-      alert("Masukkan kode kupon!");
-      return;
-    }
-
-    couponSuccessMsg.classList.add("d-none");
-    couponErrorMsg.classList.add("d-none");
-
-    try {
-      const response = await fetch('/validate-coupon', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify({ code })
-      });
-
-      const data = await response.json();
-
-      if (!response.ok || !data.id) {
-        throw new Error(data.message || "Kupon tidak valid atau sudah digunakan.");
-      }
-
-      // ✅ Hitung diskon
-      if (data.type === "percent") {
-        discountValue = Math.round(basePrice * (data.value / 100));
-      } else if (data.type === "fixed") {
-        discountValue = data.value;
-      } else {
-        discountValue = 0;
-      }
-
-      // ✅ Set hidden coupon_id agar terkirim ke TransactionController
-      couponIdHidden.value = data.id;
-
-      couponSuccessMsg.textContent = `Kupon berhasil diterapkan: ${code}`;
-      couponSuccessMsg.classList.remove("d-none");
-      couponErrorMsg.classList.add("d-none");
-
-      updatePaymentSummary();
-    } catch (error) {
-      couponIdHidden.value = ""; // reset kalau gagal
-      couponSuccessMsg.classList.add("d-none");
-      couponErrorMsg.textContent = error.message || "Kupon tidak valid.";
-      couponErrorMsg.classList.remove("d-none");
-      console.error("Error validasi kupon:", error);
-    }
-  }
-
-  if (applyCouponBtn) {
-    applyCouponBtn.addEventListener("click", applyCoupon);
-  }
-
-  document.addEventListener("DOMContentLoaded", function () {
-    const originalText = originalPriceEl.textContent.replace(/[^\d]/g, '');
-    basePrice = parseInt(originalText) || 0;
-    updatePaymentSummary();
-  });
-
-  if (paymentMethodEl) {
-    paymentMethodEl.addEventListener('change', () => {
-      // ❌ Jangan reset coupon_id supaya tetap terkirim ke backend
-      discountValue = 0;
-      couponSuccessMsg.classList.add('d-none');
-      couponErrorMsg.classList.add('d-none');
-      updatePaymentSummary();
-    });
-  }
-
-  const prevStepBtn = document.getElementById('prev-step');
-  if (prevStepBtn) {
-    prevStepBtn.addEventListener('click', () => {
-      // ❌ Jangan reset coupon_id
-      discountValue = 0;
-      couponSuccessMsg.classList.add('d-none');
-      couponErrorMsg.classList.add('d-none');
-      updatePaymentSummary();
-    });
-  }
-</script>
-
-
-
-
-<script>
-    @if(auth()->check())
-        window.currentAuthUser = {
-            id: {{ auth()->user()->id }},
-            role: "{{ optional(auth()->user()->roles->first())->name ?? 'member' }}",
-            name: "{{ auth()->user()->name }}"
-        };
-    @else
-        window.currentAuthUser = null;
-    @endif
-</script>
+        <script>
+            @if (auth()->check())
+                window.currentAuthUser = {
+                    id: {{ auth()->user()->id }},
+                    role: "{{ optional(auth()->user()->roles->first())->name ?? 'member' }}",
+                    name: "{{ auth()->user()->name }}"
+                };
+            @else
+                window.currentAuthUser = null;
+            @endif
+        </script>
 
 
 </body>
@@ -1708,30 +1742,34 @@ function submitBooking() {
 @if (session('login_success'))
     <!-- Toast Container -->
     <div class="position-fixed top-0 end-0 p-3" style="z-index: 1080; max-width: 95%;">
-        <div id="loginToast" class="toast align-items-center text-white bg-success border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+        <div id="loginToast" class="toast align-items-center text-white bg-success border-0 shadow-lg" role="alert"
+            aria-live="assertive" aria-atomic="true">
             <div class="d-flex">
                 <div class="toast-body fw-semibold">
                     <i class="bi bi-check-circle-fill me-2"></i>
                     {{ session('login_success') }}
                 </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
             </div>
         </div>
     </div>
 
     <!-- Toast JS with fade in/out -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const toastEl = document.getElementById('loginToast');
-            
+
             // Tambahkan animasi fade
             toastEl.classList.add('fade', 'show-toast');
 
-            const toast = new bootstrap.Toast(toastEl, { delay: 5000 });
+            const toast = new bootstrap.Toast(toastEl, {
+                delay: 5000
+            });
             toast.show();
 
             // Bersihkan DOM setelah toast hilang
-            toastEl.addEventListener('hidden.bs.toast', function () {
+            toastEl.addEventListener('hidden.bs.toast', function() {
                 toastEl.remove();
             });
         });
@@ -1740,10 +1778,25 @@ function submitBooking() {
     <!-- Custom CSS untuk fade in/out -->
     <style>
         @keyframes fadeInOut {
-            0% { opacity: 0; transform: translateY(-20%); }
-            10% { opacity: 1; transform: translateY(0); }
-            90% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-20%); }
+            0% {
+                opacity: 0;
+                transform: translateY(-20%);
+            }
+
+            10% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            90% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-20%);
+            }
         }
 
         .toast.show-toast {
@@ -1757,6 +1810,7 @@ function submitBooking() {
                 min-width: 0;
                 border-radius: 0.5rem;
             }
+
             .position-fixed {
                 top: 1rem;
                 right: 0.5rem;
@@ -1767,4 +1821,3 @@ function submitBooking() {
 @endif
 
 </html>
-

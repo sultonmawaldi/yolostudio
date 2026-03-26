@@ -1,40 +1,42 @@
 @extends('adminlte::page')
 
-@section('title', 'Edit Category')
+@section('title', 'Edit Kategori')
 
 @section('content_header')
 
     <div class="container-fluid">
-        <div class="row mb-1">
+        <div class="row mb-3 align-items-center">
+
+            {{-- Judul --}}
             <div class="col-sm-6">
-                <h1 style="text-decoration: underline;" class="m-0 text-decoration-underline">Edit {{ $category->title }}</h1>
+                <h1 class="m-0 font-weight-bold">
+                    <i class="fas fa-edit text-primary mr-2"></i>
+                    Edit Kategori
+                    <small class="text-muted">({{ $category->title }})</small>
+                </h1>
             </div>
+
+            {{-- Breadcrumb --}}
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-                    <li class="breadcrumb-item active">Edit Category</li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ route('dashboard') }}">
+                            <i class="fas fa-home"></i> Beranda
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="/admin/category">Kategori</a>
+                    </li>
+                    <li class="breadcrumb-item active">Edit Kategori</li>
                 </ol>
             </div>
+
         </div>
     </div>
 
 @stop
 
 @section('content')
-
-    @if (count($errors) > 0)
-        <div class="alert alert-dismissable alert-danger mt-3">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            <strong>Whoops!</strong> There were some problems with your input.<br>
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
 
     <div class="container-fluid">
         <div class=" justify-content-between pb-5">
@@ -47,42 +49,51 @@
                     <div class="col-md-8">
                         <div class="card card-light">
                             <div class="card-header">
-                                <h3 class="card-title">Edit Category
-                                </h3>
+                                <h3 class="card-title">Edit Kategori</h3>
                                 <div class="card-tools">
-                                    <button type="button" class="btn btn-tool" data-card-widget="collapse"
-                                        title="Collapse">
-                                        <i class="fas fa-minus" aria-hidden="true">
-                                        </i>
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Tutup">
+                                        <i class="fas fa-minus" aria-hidden="true"></i>
                                     </button>
                                 </div>
                             </div>
+
                             <div class="card-body">
+
                                 <div class="form-group">
-                                    <label for="inputStatus">Title
-                                    </label>
+                                    <label for="title">Judul</label>
+
                                     <input class="form-control @error('title') is-invalid @enderror" type="text"
-                                        id="title" name="title" placeholder="Title here.."
+                                        id="title" name="title" placeholder="Masukkan judul..."
                                         value="{{ old('title', $category->title) }}">
-                                    <small class="text-muted">The name is how it appears on your site.</small>
+
+                                    <small class="text-muted d-block">
+                                        Nama ini akan tampil di website Anda.
+                                    </small>
+
                                     @error('title')
-                                        <p class="text-danger">{{ $message }}</p>
+                                        <small class="text-danger d-block mt-1">
+                                            {{ $message }}
+                                        </small>
                                     @enderror
                                 </div>
+
                                 <div class="form-group">
-                                    <label class="mb-0" for="inputStatus">Slug
-                                    </label>
+                                    <label class="mb-0" for="slug">Slug</label>
 
                                     <input style="background-color: rgb(220, 220, 220);"
                                         class="form-control @error('slug') is-invalid @enderror" type="text"
-                                        id="slug" name="slug" placeholder="slug here.."
+                                        id="slug" name="slug" placeholder="slug disini..."
                                         value="{{ old('slug', $category->slug) }}">
-                                    <small class="text-muted">&nbsp;&nbsp;The “slug” is the URL-friendly version of the
-                                        name. It is usually all lowercase and contains only letters, numbers, and hyphens.
+
+                                    <small class="text-muted d-block">
+                                        Slug adalah versi URL dari nama kategori. Biasanya menggunakan huruf kecil
+                                        dan hanya berisi huruf, angka, serta tanda hubung.
                                     </small>
 
                                     @error('slug')
-                                        <p class="text-danger mb-0">{{ $message }}</p>
+                                        <small class="text-danger d-block mt-1">
+                                            {{ $message }}
+                                        </small>
                                     @enderror
                                 </div>
 
@@ -91,207 +102,242 @@
 
                         <div class="card card-light">
                             <div class="card-header">
-                                <h3 class="card-title">Description
-                                </h3>
-                                <small>&nbsp;&nbsp;The description is not prominent by default; however, some themes may
-                                    show it.
+                                <h3 class="card-title">Deskripsi</h3>
+                                <small class="text-muted d-block">
+                                    Deskripsi biasanya tidak selalu ditampilkan, tetapi beberapa tema mungkin
+                                    menampilkannya.
                                 </small>
+
                                 <div class="card-tools">
-                                    <button type="button" class="btn btn-tool" data-card-widget="collapse"
-                                        title="Collapse">
-                                        <i class="fas fa-minus" aria-hidden="true">
-                                        </i>
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Tutup">
+                                        <i class="fas fa-minus" aria-hidden="true"></i>
                                     </button>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="form-group">
-                                    <textarea class="form-control" name="body" id="" value="{{ old('body') }}" cols="30" rows="5">{{ old('body', $category->body) }}</textarea>
-                                    @error('body')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <!-- /.card-body -->
-                        </div>
-                        <!-- /.card -->
-                        {{-- seo --}}
-                        {{-- <div class="card card-light">
-                            <div class="card-header">
-                                <h3 class="card-title">SEO
-                                </h3>
-                                <small>&nbsp;&nbsp;Search engine details
-                                </small>
-                                <div class="card-tools">
-                                    <button type="button" class="btn btn-tool" data-card-widget="collapse"
-                                        title="Collapse">
-                                        <i class="fas fa-minus" aria-hidden="true">
-                                        </i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="card-body pt-3 pb-0">
-                                <div class="form-group">
-                                    <label for="">SEO Title
-                                    </label>
-                                    <input placeholder="Post title here for seo..." type="text"
-                                        class="form-control @error('meta_title') is-invalid @enderror" name="meta_title"
-                                        id="" value="{{ old('meta_title', $category->meta_title) }}">
-                                    @error('meta_title')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="card-body  pt-0 pb-0">
-                                <div class="form-group">
-                                    <label for="">SEO Description
-                                    </label>
-                                    <textarea placeholder="Post description here for seo..."
-                                        class="form-control @error('meta_description') is-invalid @enderror" name="meta_description" id=""
-                                        cols="0" rows="4" value="{{ old('meta_description', $category->meta_description) }}">{{ old('meta_description', $category->meta_description) }}</textarea>
-                                    @error('meta_description')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="card-body pt-0 pb-0">
-                                <div class="form-group">
-                                    <label for="">SEO Keywords
-                                    </label>
-                                    <input type="text"
-                                        class="form-control @error('meta_keywords') is-invalid @enderror"
-                                        placeholder="keyword1, keyword2, keyword3" name="meta_keywords" id=""
-                                        value="{{ old('meta_keywords', $category->meta_keywords) }}">
-                                    @error('meta_keywords')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
                                 </div>
                             </div>
 
-                        </div> --}}
+                            <div class="card-body">
+                                <div class="form-group">
+
+                                    <textarea class="form-control @error('body') is-invalid @enderror" name="body" cols="30" rows="5">{{ old('body', $category->body) }}</textarea>
+
+                                    @error('body')
+                                        <small class="text-danger d-block mt-1">
+                                            {{ $message }}
+                                        </small>
+                                    @enderror
+
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
                     <div class="col-md-4">
                         <div class="sticky-top">
+
                             <div class="card card-primary sticky-bottom">
+
                                 <div class="card-header">
-                                    <h3 class="card-title">Category Details</h3>
+                                    <h3 class="card-title">Detail Kategori</h3>
                                     <div class="card-tools">
                                         <button type="button" class="btn btn-tool" data-card-widget="collapse"
-                                            title="Collapse">
+                                            title="Tutup">
                                             <i class="fas fa-minus" aria-hidden="true"></i>
                                         </button>
                                     </div>
                                 </div>
 
                                 <div class="card-body pb-0">
+
                                     <div class="form-group">
                                         <label for="inputStatus">Status</label>
-                                        <select required="required" name="status" id="inputStatus" class="form-control custom-select">
-                                            <option disabled value="">Select Option</option>
-                                            <option value="1" {{ old('published', $category->status) == 1 ? 'selected' : '' }}>PUBLISHED</option>
-                                            <option value="0" {{ old('published', $category->status) == 0 ? 'selected' : '' }}>DRAFT</option>
-                                        </select>
-                                    </div>
-                                    {{-- <div class="form-group">
-                                        <div class="custom-control custom-switch">
-                                            <input type="checkbox" class="custom-control-input" id="featured"
-                                                name="featured" value="1"
-                                                {{ old('featured',$category->status) == 1 ? 'checked' : '' }}>
-                                            <label class="custom-control-label" for="featured">Featured</label>
-                                            <small>categories prioritize content on the homepage.</small>
-                                        </div>
-                                    </div> --}}
 
-                                    <div class="form-group pt-0 pb-0 text-right">
-                                        <button onclick="return confirm('Are you sure you want to update this item?');" type="submit" class="btn btn-danger">Update
+                                        <select required="required" name="status" id="inputStatus"
+                                            class="form-control custom-select">
+
+                                            <option disabled value="">Pilih Status</option>
+
+                                            <option value="1"
+                                                {{ old('published', $category->status) == 1 ? 'selected' : '' }}>
+                                                DITERBITKAN
+                                            </option>
+
+                                            <option value="0"
+                                                {{ old('published', $category->status) == 0 ? 'selected' : '' }}>
+                                                DRAFT
+                                            </option>
+
+                                        </select>
+
+                                    </div>
+
+                                    <div class="form-group mt-4 d-flex justify-content-end">
+                                        <a href="{{ route('category.index') }}" class="btn btn-secondary mr-2">
+                                            Batal
+                                        </a>
+
+                                        <button type="submit" class="btn btn-danger">
+                                            <i class="fas fa-save mr-1"></i> Perbarui
                                         </button>
                                     </div>
+
                                 </div>
+
                             </div>
 
+
                             <div class="card card-primary">
+
                                 <div class="card-header">
-                                    <h3 class="card-title">Featured Image</h3>
+                                    <h3 class="card-title">Gambar Kategori</h3>
+
                                     <div class="card-tools">
                                         <button type="button" class="btn btn-tool" data-card-widget="collapse"
-                                            title="Collapse">
+                                            title="Tutup">
                                             <i class="fas fa-minus" aria-hidden="true"></i>
                                         </button>
                                     </div>
                                 </div>
 
-                                <div class="card-body pt-0 pb-0">
-                                    <div class="form-group">
-                                       @if ($category->image)
-                                       <div class="form-group">
-                                        <label for="delete_image">Delete Image</label>
-                                        <input type="checkbox" name="delete_image" id="delete_image">
-                                    </div>
-                                       @endif
-                                        <div class="justify-content-between">
-                                            <div>
-                                                {{-- <small class="text-red">&nbsp;&nbsp;Note: Webp Image | size: Width-1280px
-                                                    Height: 720px
-                                                </small><br> --}}
-                                                <input class="form-control mt-2" name="image" accept="image/*" type="file" id="imgInp">
+                                <div class="card-body pt-0 pb-0 mt-4">
 
-                                            </div>
-                                            <div>
+                                    <div class="form-group">
+
+                                        <div class="form-group">
+
+                                            {{-- Upload gambar --}}
+                                            <label>Upload Gambar Baru</label>
+                                            <input class="form-control mt-0" name="image" accept="image/*"
+                                                type="file" id="imgInp">
+
+                                            {{-- Preview gambar --}}
+                                            <div class="text-center mt-3">
+
                                                 @if ($category->image)
-                                                    <img class="img-fluid"
-                                                        style="width: 150px; margin-top:10px; border:1px solid black;"
+                                                    <img class="img-fluid rounded shadow-sm"
+                                                        style="width:160px;border:1px solid #ddd;padding:4px"
                                                         id="blah"
                                                         src="{{ asset('uploads/images/category/' . $category->image) }}"
-                                                        alt="your image">
+                                                        alt="gambar">
+
+                                                    <div class="mt-2">
+                                                        <div class="custom-control custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input"
+                                                                id="delete_image" name="delete_image">
+
+                                                            <label class="custom-control-label text-danger"
+                                                                for="delete_image">
+                                                                Hapus gambar ini
+                                                            </label>
+                                                        </div>
+                                                    </div>
                                                 @else
-                                                    <img style="width: 150px; margin-top:10px; border:1px solid black;"
+                                                    <img class="img-fluid rounded"
+                                                        style="width:160px;border:1px solid #ddd;padding:4px"
                                                         id="blah" src="{{ asset('uploads/images/no-image.jpg') }}"
-                                                        alt="your image">
+                                                        alt="gambar">
                                                 @endif
+
                                             </div>
+
                                         </div>
 
                                     </div>
+
                                 </div>
+
                             </div>
+
                         </div>
                     </div>
                 </div>
+
             </form>
+
         </div>
 
     </div>
+
 @stop
+
 
 @section('css')
 
 @stop
 
+
 @section('js')
+
     <script>
         $('#title').on("change keyup paste click", function() {
+
             var Text = $(this).val().trim();
             Text = Text.toLowerCase();
             Text = Text.replace(/[^a-zA-Z0-9]+/g, '-');
             $('#slug').val(Text);
+
         });
     </script>
 
-    {{-- show image --}}
+
     <script>
         imgInp.onchange = evt => {
+
             const [file] = imgInp.files
+
             if (file) {
+
                 blah.src = URL.createObjectURL(file)
+
             }
+
         }
     </script>
+    @if (session('success') || session('error'))
+        <script>
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            });
 
-    <script>
-        $(document).ready(function() {
-            $(".alert").delay(6000).slideUp(300);
-        });
-    </script>
+            @if (session('success'))
+                Toast.fire({
+                    icon: 'success',
+                    title: "{{ session('success') }}"
+                });
+            @endif
+
+            @if (session('error'))
+                Toast.fire({
+                    icon: 'error',
+                    title: "{{ session('error') }}"
+                });
+            @endif
+        </script>
+    @endif
+
+    @if ($errors->any())
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Terjadi Kesalahan',
+                    html: `
+        <ul style="text-align:left;">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+        `,
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#d33'
+                });
+            });
+        </script>
+    @endif
+
 
 @stop

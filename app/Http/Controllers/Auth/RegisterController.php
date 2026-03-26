@@ -15,13 +15,11 @@ class RegisterController extends Controller
 
     /**
      * Redirect setelah register berhasil
-     *
-     * @var string
      */
     protected $redirectTo = '/';
 
     /**
-     * Konstruktor
+     * Constructor
      */
     public function __construct()
     {
@@ -29,10 +27,34 @@ class RegisterController extends Controller
     }
 
     /**
+     * Normalisasi nomor HP ke format +62xxxxxxxxx
+     */
+    private function normalizePhone($phone)
+    {
+        // Hapus semua karakter selain angka
+        $phone = preg_replace('/\D/', '', $phone);
+
+        // Jika diawali 0 → ubah ke format Indonesia
+        if (Str::startsWith($phone, '0')) {
+            $phone = substr($phone, 1);
+        }
+
+        // Jika diawali 62 → hapus 62
+        if (Str::startsWith($phone, '62')) {
+            $phone = substr($phone, 2);
+        }
+
+        return '+62' . $phone;
+    }
+
+    /**
      * Validasi input pendaftaran
      */
     protected function validator(array $data)
     {
+        // Normalisasi phone dulu sebelum validasi unique
+        $normalizedPhone = $this->normalizePhone($data['phone'] ?? '');
+
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
 
@@ -44,46 +66,53 @@ class RegisterController extends Controller
                 'unique:users,email',
             ],
 
-            // ✅ Nomor HP tanpa awalan 0, hanya angka, panjang 9–13 digit
             'phone' => [
                 'required',
-                'regex:/^[1-9][0-9]{8,12}$/',
-                'unique:users,phone',
+                'regex:/^[0-9+\s\-()]+$/',
+                function ($attribute, $value, $fail) use ($normalizedPhone) {
+                    if (User::where('phone', $normalizedPhone)->exists()) {
+                        $fail('Nomor HP ini sudah terdaftar.');
+                    }
+                },
             ],
 
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+
         ], [
-            'phone.regex' => 'Nomor HP harus berisi 9–13 digit angka dan tidak boleh diawali dengan 0.',
-            'phone.unique' => 'Nomor HP ini sudah terdaftar.',
+            'phone.required' => 'Nomor HP wajib diisi.',
+            'phone.regex' => 'Format nomor HP tidak valid.',
+            'email.unique' => 'Email ini sudah terdaftar.',
+
+            'password.required' => 'Kata sandi wajib diisi.',
+            'password.min' => 'Kata sandi minimal 8 karakter.',
+            'password.confirmed' => 'Konfirmasi kata sandi tidak sesuai.',
         ]);
     }
 
     /**
-     * Membuat user baru setelah validasi berhasil.
+     * Membuat user baru setelah validasi berhasil
      */
     protected function create(array $data)
     {
-        // 🔹 Bersihkan nomor HP (hapus semua non-digit)
-        $number = preg_replace('/\D/', '', $data['phone']);
+        $formattedPhone = $this->normalizePhone($data['phone']);
 
-        // Tidak perlu hapus nol di depan karena regex sudah memastikan tidak ada 0
-        $formattedPhone = '+62' . $number;
+        // Format role UID profesional
+        $roleUid = sprintf(
+            'MBR-%s-%s',
+            date('ymd'),
+            strtoupper(Str::random(5))
+        );
 
-        // 🔹 Format role_uid profesional, contoh: MBR-251028-A9T2F
-        $rolePrefix = 'MBR';
-        $roleUid = sprintf('%s-%s-%s', $rolePrefix, date('ymd'), strtoupper(Str::random(5)));
-
-        // 🔹 Buat user baru
         $user = User::create([
             'role_uid' => $roleUid,
-            'name'     => $data['name'],
-            'email'    => $data['email'],
+            'name'     => trim($data['name']),
+            'email'    => strtolower(trim($data['email'])),
             'phone'    => $formattedPhone,
             'password' => Hash::make($data['password']),
             'status'   => 1,
         ]);
 
-        // 🔹 Beri role member
+        // Assign role member (spatie)
         $user->assignRole('member');
 
         return $user;

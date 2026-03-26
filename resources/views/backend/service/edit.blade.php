@@ -1,396 +1,460 @@
 @extends('adminlte::page')
 
-@section('title', 'Edit Service')
+@section('title', 'Edit Layanan')
 
 @section('content_header')
+
     <div class="container-fluid">
-        <div class="row">
+        <div class="row mb-3 align-items-center">
+
+            {{-- Judul --}}
             <div class="col-sm-6">
-                <h1 class="m-0">Edit Service</h1>
+                <h1 class="m-0 font-weight-bold">
+                    <i class="fas fa-edit text-primary mr-2"></i>
+                    Edit Layanan
+                    <small class="text-muted">({{ $service->title }})</small>
+                </h1>
             </div>
+
+            {{-- Breadcrumb --}}
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-                    <li class="breadcrumb-item active">Edit Service</li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ route('dashboard') }}">
+                            <i class="fas fa-home"></i> Beranda
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="/admin/service">Layanan</a>
+                    </li>
+                    <li class="breadcrumb-item active">Edit Layanan</li>
                 </ol>
             </div>
+
         </div>
     </div>
+
 @stop
 
 @section('content')
-    @if (count($errors) > 0)
-        <div class="alert alert-dismissable alert-danger mt-3">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            <strong>Whoops!</strong> There were some problems with your input.<br>
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-    @if (session('success'))
-        <div class="alert alert-success alert-dismissable">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            <strong>{{ session('success') }}</strong>
-        </div>
-    @endif
-    <div class="">
+
+    <div>
         <form action="{{ route('service.update', $service->id) }}" method="post" enctype="multipart/form-data">
             @csrf
             @method('PATCH')
+
             <div class="row">
+
+                {{-- KONTEN KIRI --}}
                 <div class="col-md-8">
+
                     <div class="card card-light">
                         <div class="card-header">
-                            <h3 class="card-title">Edit Service
-                            </h3>
+                            <h3 class="card-title">Edit Layanan</h3>
                             <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                                    <i class="fas fa-minus" aria-hidden="true">
-                                    </i>
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
                                 </button>
                             </div>
                         </div>
+
                         <div class="card-body">
+
                             <div class="form-group">
-                                <label for="inputStatus">Title
-                                </label>
+                                <label for="title">Judul</label>
+
                                 <input class="form-control @error('title') is-invalid @enderror" type="text"
-                                    id="title" name="title" placeholder="Title here.."
+                                    name="title" id="title" placeholder="Masukkan judul layanan..."
                                     value="{{ old('title', $service->title) }}">
-                                @error('title')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
-                            <div class="form-group">
-                                <label for="inputStatus">Slug
-                                </label>
-                                <small>&nbsp;&nbsp;Unique url of the Service
+
+                                <small class="text-muted d-block">
+                                    Nama ini akan tampil sebagai judul layanan di website Anda.
                                 </small>
+
+                                @error('title')
+                                    <small class="text-danger d-block mt-1">
+                                        {{ $message }}
+                                    </small>
+                                @enderror
+                            </div>
+
+                            <div class="form-group">
+                                <label for="slug">Slug</label>
+
                                 <input class="form-control bg-light @error('slug') is-invalid @enderror" type="text"
-                                    id="slug" name="slug" placeholder="slug here.."
+                                    name="slug" id="slug" placeholder="slug-layanan..."
                                     value="{{ old('slug', $service->slug) }}">
+
+                                <small class="text-muted d-block">
+                                    URL unik untuk layanan.
+                                </small>
+
                                 @error('slug')
-                                    <span class="text-danger">{{ $message }}</span>
+                                    <small class="text-danger d-block mt-1">
+                                        {{ $message }}
+                                    </small>
                                 @enderror
                             </div>
-                            {{-- <div class="form-group">
-                                <label for="">Service Description
-                                </label>
 
-                                <textarea style="height: 600px;" id="summernote" name="body" value="{{ old('body',$service->body) }}"> {{ old('body',$service->body) }}</textarea>
-                                @error('body')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div> --}}
                         </div>
-                        <!-- /.card-body -->
                     </div>
+
+
+                    {{-- HARGA --}}
                     <div class="card card-light">
+
                         <div class="card-header">
-                            <h3 class="card-title">Price
-                            </h3>
-                            <small class="text-muted pl-2"> NO CURRENCY SIGN - NO SPACE</small>
+                            <h3 class="card-title">Harga</h3>
+                            <small class="text-muted pl-2">Tanpa tanda mata uang dan tanpa spasi</small>
 
                             <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                                    <i class="fas fa-minus" aria-hidden="true">
-                                    </i>
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
                                 </button>
                             </div>
                         </div>
+
                         <div class="card-body">
+
                             <div class="row">
+
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="mb-0" for="price">Price</label>
-                                        <input class="form-control" type="number" name="price"
-                                            value="{{ old('price', $service->price) }}">
-                                        <p class="mb-0 text-muted small">Main Price</p>
+                                        <label class="mb-0" for="price">Harga</label>
+
+                                        <input class="form-control @error('price') is-invalid @enderror" type="number"
+                                            name="price" id="price" value="{{ old('price', $service->price) }}">
+
+                                        <small class="text-muted d-block">
+                                            Harga utama.
+                                        </small>
+
                                         @error('price')
-                                            <span class="text-danger">
+                                            <small class="text-danger d-block mt-1">
                                                 {{ $message }}
-                                            </span>
+                                            </small>
                                         @enderror
                                     </div>
                                 </div>
+
+
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="mb-0" for="sale_price">Sale Price</label>
-                                        <input class="form-control" type="number" name="sale_price"
+                                        <label class="mb-0" for="sale_price">Harga Promo</label>
+
+                                        <input class="form-control @error('sale_price') is-invalid @enderror" type="number"
+                                            name="sale_price" id="sale_price"
                                             value="{{ old('sale_price', $service->sale_price) }}">
-                                        <p class="mb-0 text-muted small">Price for sale</p>
+
+                                        <small class="text-muted d-block">
+                                            Harga diskon.
+                                        </small>
+
                                         @error('sale_price')
-                                            <span class="text-danger">
+                                            <small class="text-danger d-block mt-1">
                                                 {{ $message }}
-                                            </span>
+                                            </small>
                                         @enderror
                                     </div>
                                 </div>
+
+
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="mb-0" for="extra_price_per_person">Harga Tambahan Per Orang</label>
-                                        <input class="form-control" type="number" name="extra_price_per_person"
-                                            value="{{ old('extra_price_per_person', $service->extra_price_per_person) }}">
-                                        <p class="mb-0 text-muted small">Price for sale</p>
-                                        @error('extra_price_per_person')
-                                            <span class="text-danger">
-                                                {{ $message }}
-                                            </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="mb-0" for="max_people">Dp Amount</label>
-                                        <input class="form-control" type="number" name="dp_amount"
+                                        <label class="mb-0" for="dp_amount">Jumlah DP</label>
+
+                                        <input class="form-control @error('dp_amount') is-invalid @enderror" type="number"
+                                            name="dp_amount" id="dp_amount"
                                             value="{{ old('dp_amount', $service->dp_amount) }}">
-                                        <p class="mb-0 text-muted small">Maximum number of people allowed for this service
-                                        </p>
+
+                                        <small class="text-muted d-block">
+                                            Jumlah DP yang harus dibayar saat pemesanan.
+                                        </small>
+
                                         @error('dp_amount')
-                                            <span class="text-danger">
+                                            <small class="text-danger d-block mt-1">
                                                 {{ $message }}
-                                            </span>
+                                            </small>
                                         @enderror
                                     </div>
                                 </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+
+                                        <label class="mb-0" for="reward_points">Poin Hadiah</label>
+
+                                        <input class="form-control @error('reward_points') is-invalid @enderror"
+                                            type="number" name="reward_points" id="reward_points" min="0"
+                                            placeholder="Jumlah poin hadiah"
+                                            value="{{ old('reward_points', $service->reward_points) }}">
+
+                                        <small class="text-muted d-block">
+                                            Poin yang didapat pelanggan setelah membeli layanan ini.
+                                        </small>
+
+                                        @error('reward_points')
+                                            <small class="text-danger d-block mt-1">
+                                                {{ $message }}
+                                            </small>
+                                        @enderror
+
+                                    </div>
+                                </div>
+
                             </div>
+
                         </div>
-                        <!-- /.card-body -->
                     </div>
+
+
+                    {{-- JUMLAH ORANG --}}
                     <div class="card card-light">
+
                         <div class="card-header">
-                            <h3 class="card-title">Jumlah Orang
-                            </h3>
+                            <h3 class="card-title">Jumlah Orang</h3>
 
                             <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse"
-                                    title="Collapse">
-                                    <i class="fas fa-minus" aria-hidden="true">
-                                    </i>
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
                                 </button>
                             </div>
                         </div>
+
+
                         <div class="card-body">
                             <div class="row">
 
-                                <!-- MIN PEOPLE (dipindah ke kiri) -->
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="mb-0" for="min_people">Min People</label>
-                                        <input class="form-control" type="number" name="min_people"
+                                        <label class="mb-0" for="min_people">Minimal Orang</label>
+
+                                        <input class="form-control @error('min_people') is-invalid @enderror"
+                                            type="number" name="min_people" id="min_people"
                                             value="{{ old('min_people', $service->min_people) }}">
-                                        <p class="mb-0 text-muted small">Minimum number of people allowed for this service
-                                        </p>
+
+                                        <small class="text-muted d-block">
+                                            Jumlah minimal orang untuk layanan ini.
+                                        </small>
+
                                         @error('min_people')
-                                            <span class="text-danger">
+                                            <small class="text-danger d-block mt-1">
                                                 {{ $message }}
-                                            </span>
+                                            </small>
                                         @enderror
                                     </div>
                                 </div>
 
-                                <!-- MAX PEOPLE (dipindah ke kanan) -->
+
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="mb-0" for="max_people">Max People</label>
-                                        <input class="form-control" type="number" name="max_people"
+                                        <label class="mb-0" for="max_people">Maksimal Orang</label>
+
+                                        <input class="form-control @error('max_people') is-invalid @enderror"
+                                            type="number" name="max_people" id="max_people"
                                             value="{{ old('max_people', $service->max_people) }}">
-                                        <p class="mb-0 text-muted small">Maximum number of people allowed for this service
-                                        </p>
+
+                                        <small class="text-muted d-block">
+                                            Jumlah maksimal orang untuk layanan ini.
+                                        </small>
+
                                         @error('max_people')
-                                            <span class="text-danger">
+                                            <small class="text-danger d-block mt-1">
                                                 {{ $message }}
-                                            </span>
+                                            </small>
                                         @enderror
                                     </div>
                                 </div>
 
                             </div>
                         </div>
-                        <!-- /.card-body -->
 
                     </div>
 
+
+                    {{-- RINGKASAN --}}
                     <div class="card card-light">
+
                         <div class="card-header">
-                            <h3 class="card-title">Excerpt
-                            </h3>
-                            <small>&nbsp;&nbsp;Small Description of the Service
-                            </small>
+                            <h3 class="card-title">Ringkasan</h3>
+                            <small>&nbsp;&nbsp;Deskripsi singkat layanan</small>
+
                             <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse"
-                                    title="Collapse">
-                                    <i class="fas fa-minus" aria-hidden="true">
-                                    </i>
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
                                 </button>
                             </div>
                         </div>
+
+
                         <div class="card-body">
                             <div class="form-group">
-                                <textarea class="form-control" name="excerpt" id="" value="{{ old('excerpt') }}" cols="30"
-                                    rows="5">{{ old('excerpt', $service->excerpt) }}</textarea>
-                            </div>
-                        </div>
-                        <!-- /.card-body -->
-                    </div>
-                    <!-- /.card -->
-                    {{-- seo --}}
-                    {{-- <div class="card card-light">
-                        <div class="card-header">
-                            <h3 class="card-title">SEO
-                            </h3>
-                            <small>&nbsp;&nbsp;Search engine details
-                            </small>
-                            <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse"
-                                    title="Collapse">
-                                    <i class="fas fa-minus" aria-hidden="true">
-                                    </i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="card-body pt-3 pb-0">
-                            <div class="form-group">
-                                <label for="">SEO Title
-                                </label>
-                                <input placeholder="Service title here for seo..." type="text" class="form-control"
-                                    name="meta_title" id="" value="{{ old('meta_title',$service->meta_title) }}">
-                            </div>
-                        </div>
-                        <div class="card-body  pt-0 pb-0">
-                            <div class="form-group">
-                                <label for="">SEO Description
-                                </label>
-                                <textarea placeholder="Service description here for seo..." class="form-control" name="meta_description"
-                                    id="" cols="0" rows="4" value="{{ old('meta_description',$service->meta_description) }}">{{ old('meta_description',$service->meta_description) }}</textarea>
-                            </div>
-                        </div>
-                        <div class="card-body pt-0 pb-0">
-                            <div class="form-group">
-                                <label for="">SEO Keywords
-                                </label>
-                                <input type="text" class="form-control" placeholder="keyword1, keyword2, keyword3"
-                                    name="meta_keyword" id="" value="{{ old('meta_keyword',$service->meta_keyword) }}">
+                                <textarea class="form-control" name="excerpt" cols="30" rows="5">{{ old('excerpt', $service->excerpt) }}</textarea>
                             </div>
                         </div>
 
-                        <!-- /.card-body -->
-                    </div> --}}
+                    </div>
+
                 </div>
+
+
+                {{-- SIDEBAR --}}
                 <div class="col-md-4">
+
                     <div class="sticky-top">
+
                         <div class="card card-primary sticky-bottom">
+
                             <div class="card-header">
-                                <h3 class="card-title">Service Details
-                                </h3>
+                                <h3 class="card-title">Detail Layanan</h3>
+
                                 <div class="card-tools">
-                                    <button type="button" class="btn btn-tool" data-card-widget="collapse"
-                                        title="Collapse">
-                                        <i class="fas fa-minus" aria-hidden="true">
-                                        </i>
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
                                     </button>
                                 </div>
                             </div>
-                            <div class="card-body pb-0">
-                                <div class="form-group select2-dark">
-                                    <label>Category
-                                    </label>
-                                    <small>&nbsp;&nbsp;Select category for Service</small>
 
-                                    <select id="category" name="category_id" class="select2" multiple=""
-                                        data-placeholder="Search Category" style="width: 100%;">
-                                        <option value="">None</option>
+
+                            <div class="card-body pb-0">
+
+                                <div class="form-group select2-dark">
+
+                                    <label for="category">Kategori</label>
+
+                                    <select id="category" name="category_id"
+                                        class="select2 form-control @error('category_id') is-invalid @enderror"
+                                        data-placeholder="Pilih kategori" style="width:100%;">
+
+                                        <option></option>
+
                                         @foreach ($categories as $category)
                                             <option value="{{ $category->id }}"
-                                                {{ isset($service->category->id) && $service->category->id == $category->id ? 'selected' : '' }}>
+                                                {{ old('category_id', $service->category_id) == $category->id ? 'selected' : '' }}>
                                                 {{ $category->title }}
                                             </option>
                                         @endforeach
+
                                     </select>
 
+                                    <small class="text-muted d-block">
+                                        Pilih kategori layanan.
+                                    </small>
 
                                     @error('category_id')
-                                        <span class="text-danger">{{ $message }}</span>
+                                        <small class="text-danger d-block mt-1">
+                                            {{ $message }}
+                                        </small>
                                     @enderror
 
-
                                 </div>
+
+
                                 <div class="form-group">
-                                    <label for="inputStatus">Status</label>
-                                    <select required="required" name="status" id="inputStatus"
-                                        class="form-control custom-select">
-                                        <option disabled value="">Select Option</option>
+
+                                    <label>Status</label>
+
+                                    <select required name="status" class="form-control custom-select">
+
+                                        <option disabled value="">Pilih Status</option>
+
                                         <option value="1"
                                             {{ isset($service->status) && $service->status == 1 ? 'selected' : '' }}>
-                                            PUBLISHED
+                                            DITERBITKAN
                                         </option>
+
                                         <option value="0"
                                             {{ isset($service->status) && $service->status == 0 ? 'selected' : '' }}>
                                             DRAFT
                                         </option>
+
                                     </select>
                                 </div>
 
 
-                                {{-- <div class="form-group">
-                                    <div class="custom-control custom-switch">
-                                        <input type="checkbox" class="custom-control-input" id="featured"
-                                            name="featured" value="1" {{ old('featured',$service->featured) == 1 ? 'checked' : '' }}>
-                                        <label class="custom-control-label" for="featured">Featured
-                                        </label>
-                                        <small>Featured shall be shown on home as priorty</small>
-                                    </div>
-                                </div> --}}
-                                <div class="form-group pt-0 pb-0 text-right">
-                                    <button onclick="return confirm('Are you sure you want to update this item?');"
-                                        type="submit" class="btn btn-danger">Update
+                                <div class="form-group mt-4 d-flex justify-content-end">
+                                    <a href="{{ route('service.index') }}" class="btn btn-secondary mr-2">
+                                        Batal
+                                    </a>
+
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="fas fa-save me-1"></i> Perbarui
                                     </button>
+
                                 </div>
+
                             </div>
-                            <!-- /.card-body -->
+
                         </div>
-                        <div class="card card-primary ">
+
+
+                        {{-- GAMBAR --}}
+                        <div class="card card-primary">
+
                             <div class="card-header">
-                                <h3 class="card-title">Featured Image
-                                </h3>
+                                <h3 class="card-title">Gambar Layanan</h3>
+
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse"
-                                        title="Collapse">
-                                        <i class="fas fa-minus" aria-hidden="true">
-                                        </i>
+                                        title="Tutup">
+                                        <i class="fas fa-minus"></i>
                                     </button>
                                 </div>
                             </div>
-                            <div class="card-body pt-0 pb-0">
+
+                            <div class="card-body pt-0 pb-0 mt-4">
                                 <div class="form-group">
-                                    <small class="text-red">&nbsp;&nbsp;Note: size: Width-1200px Height: 800px
+
+                                    {{-- Catatan ukuran --}}
+                                    <small class="text-danger">
+                                        Catatan: ukuran ideal Lebar 1200px Tinggi 800px
                                     </small>
-                                    <input name="image" accept="image/*" type="file" id="imgInp">
-                                    @if ($service->image)
-                                        <img class="img-fluid"
-                                            style="width: 150px; margin-top:10px; border:1px solid black;" id="blah"
-                                            src="{{ asset('uploads/images/service/' . $service->image) }}"
-                                            alt="your image">
-                                    @else
-                                        <img style="width: 150px; margin-top:10px; border:1px solid black;" id="blah"
-                                            src="{{ asset('uploads/images/no-image.jpg') }}" alt="your image">
-                                    @endif
+
+                                    {{-- Upload gambar --}}
+                                    <label class="mt-2">Upload Gambar Baru</label>
+                                    <input class="form-control" name="image" accept="image/*" type="file"
+                                        id="imgInp">
+
+                                    {{-- Preview gambar --}}
+                                    <div class="text-center mt-3">
+
+                                        @if ($service->image)
+                                            <img class="img-fluid rounded shadow-sm"
+                                                style="width:160px;border:1px solid #ddd;padding:4px" id="blah"
+                                                src="{{ asset('uploads/images/service/' . $service->image) }}"
+                                                alt="gambar layanan">
+
+                                            {{-- Checkbox hapus gambar --}}
+                                            <div class="mt-2">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input" id="delete_image"
+                                                        name="delete_image">
+
+                                                    <label class="custom-control-label text-danger" for="delete_image">
+                                                        Hapus gambar ini
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        @else
+                                            <img class="img-fluid rounded"
+                                                style="width:160px;border:1px solid #ddd;padding:4px" id="blah"
+                                                src="{{ asset('uploads/images/no-image.jpg') }}" alt="gambar default">
+                                        @endif
+
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
+
                     </div>
+
                 </div>
-            </div>
+
         </form>
+
     </div>
-    </div>
+
 @stop
 
 @section('css')
@@ -414,6 +478,42 @@
             border-bottom: 1px solid #e9ecef;
             border-top-left-radius: calc(0.3rem - 1px);
             border-top-right-radius: calc(0.3rem - 1px);
+        }
+
+        /* container tinggi sama seperti input */
+        .select2-container--default .select2-selection--single {
+            height: 38px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            padding: 0 35px 0 10px;
+            /* beri ruang untuk X dan arrow */
+            position: relative;
+        }
+
+        /* teks di dalam select */
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            padding: 0 !important;
+            margin: 0;
+            line-height: normal;
+        }
+
+        /* posisi panah dropdown */
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 100%;
+            right: 8px;
+        }
+
+        /* tombol clear (X) agar di samping dropdown */
+        .select2-container--default .select2-selection--single .select2-selection__clear {
+            position: absolute;
+            right: 28px;
+            /* posisi sebelum panah */
+            top: 50%;
+            transform: translateY(-50%);
+            margin: 0;
+            font-size: 16px;
         }
     </style>
 
@@ -537,54 +637,64 @@
     </script>
 
     <script>
-        // In your Javascript (external .js resource or <script> tag)
-        $(document).ready(function() {
-            $('#category').select2({
-                allowClear: true,
-                maximumSelectionLength: 1 // Restrict to single selection
-            });
+        $('#category').select2({
+            placeholder: "Pilih kategori",
+            width: '100%',
+            dropdownParent: $('#category').parent(),
+            allowClear: true,
+            minimumResultsForSearch: Infinity
         });
     </script>
 
     {{-- disable multiple select2 --}}
 
 
-    {{-- Sucess and error notification alert --}}
-    <script>
-        $(document).ready(function() {
-            // show error message
-            @if ($errors->any())
-                //var errorMessage = @json($errors->any()); // Get the first validation error message
-                var Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 5500
-                });
+    {{-- Sweet Alert Notification --}}
+    @if (session('success') || session('error'))
+        <script>
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            });
 
-                Toast.fire({
-                    icon: 'error',
-                    title: 'There are form validation errors. Please fix them.'
-                });
-            @endif
-
-            // success message
             @if (session('success'))
-                var successMessage = @json(session('success')); // Get the first sucess message
-                var Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 5500
-                });
-
                 Toast.fire({
                     icon: 'success',
-                    title: successMessage
+                    title: "{{ session('success') }}"
                 });
             @endif
 
-        });
-    </script>
+            @if (session('error'))
+                Toast.fire({
+                    icon: 'error',
+                    title: "{{ session('error') }}"
+                });
+            @endif
+        </script>
+    @endif
+
+
+    @if ($errors->any())
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Terjadi Kesalahan',
+                    html: `
+        <ul style="text-align:left;">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+        `,
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#d33'
+                });
+            });
+        </script>
+    @endif
 
 @stop

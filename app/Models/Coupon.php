@@ -74,4 +74,14 @@ class Coupon extends Model
     {
         $this->update(['status' => 'unused', 'active' => true]);
     }
+
+    public function services()
+    {
+        return $this->belongsToMany(
+            Service::class,
+            'coupon_service',
+            'coupon_id',
+            'service_id'
+        );
+    }
 }

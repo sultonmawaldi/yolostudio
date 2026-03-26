@@ -15,12 +15,39 @@ class EmployeeController extends Controller
      */
     public function index()
     {
-        $employees = Employee::with('user')->get();
+        $employees = Employee::query()
+            ->whereHas('user', function ($q) {
+                $q->role('employee');
+            })
+            ->with(['user' => function ($q) {
+                $q->role('employee')
+                    ->orderBy('created_at', 'asc'); // 🔑 URUT STUDIO
+            }])
+            ->join('users', 'employees.user_id', '=', 'users.id')
+            ->orderBy('users.created_at', 'asc') // 🔥 KUNCI URUTAN
+            ->select('employees.*')
+            ->get();
+
+        $employeesData = $employees->map(function ($emp) {
+            if (!$emp->user) return null;
+
+            return [
+                'id' => $emp->id,
+                'role' => 'employee',
+                'user' => [
+                    'name' => $emp->user->name,
+                    'image_url' => $emp->user->profileImage(),
+                ],
+            ];
+        })->filter()->values();
+
 
         return response()->json([
-            'employees' => $employees
+            'employees' => $employeesData
         ]);
     }
+
+
 
 
     /**

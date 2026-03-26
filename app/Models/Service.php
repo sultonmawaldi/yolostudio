@@ -100,8 +100,10 @@ class Service extends Model
     {
         return $this->belongsToMany(Addon::class, 'addon_service')
             ->withTimestamps()
-            ->where('addons.is_active', true);
+            ->where('addons.is_active', true)
+            ->orderBy('addons.sort_order');
     }
+
 
     // Background service (aktif & urut)
     public function backgrounds()
@@ -129,5 +131,10 @@ class Service extends Model
     public function pricelists()
     {
         return $this->hasMany(Pricelist::class);
+    }
+
+    public function coupons()
+    {
+        return $this->belongsToMany(Coupon::class, 'coupon_service');
     }
 }

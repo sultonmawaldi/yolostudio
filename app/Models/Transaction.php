@@ -13,10 +13,14 @@ class Transaction extends Model
         'user_id',
         'appointment_id',
         'transaction_code',
-        'payment_method',
+
+        'dp_method',
+        'pelunasan_method',
+
         'amount',
         'total_amount',
-        'payment_status', // Pending, DP, Paid
+        'payment_status',
+
         'midtrans_order_id',
         'payment_result',
         'payload',
@@ -82,7 +86,22 @@ class Transaction extends Model
     {
         static::creating(function ($transaction) {
             $transaction->public_token = bin2hex(random_bytes(8));
-            $transaction->public_token_expires_at = now()->addDays(7); // aktif 7 hari
+            $transaction->public_token_expires_at = now()->addDays(7);
+        });
+
+        // 🔥 TAMBAHKAN INI
+        static::updated(function ($transaction) {
+            if (
+                in_array($transaction->payment_status, ['Paid', 'settlement', 'capture']) &&
+                $transaction->coupon_id
+            ) {
+                Coupon::where('id', $transaction->coupon_id)
+                    ->where('status', 'unused')
+                    ->update([
+                        'status' => 'used',
+                        'used_at' => now()
+                    ]);
+            }
         });
     }
 

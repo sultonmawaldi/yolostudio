@@ -257,7 +257,7 @@ return [
     */
 
     'use_route_url' => false,
-    'dashboard_url' => 'dashboard',
+    'dashboard_url' => 'admin/dashboard',
     'logout_url' => 'logout',
     'login_url' => 'login',
     'register_url' => 'register',
@@ -323,22 +323,21 @@ return [
             'route' => 'dashboard'
         ],
         [
-            'text' => ' All Appointments',
-            'route' => 'appointments',
+            'text' => 'All Appointments',
+            'route' => 'appointments.index',
             'icon' => 'fas fa-calendar-check',
-            'can'  => 'appointments.view | appointments.create | appointments.edit | appointments.delete',
-
+            'can'  => 'appointments.view',
         ],
         [
             'text' => 'Transactions',
             'icon' => 'fas fa-receipt',
-            'can'  => 'transactions.view | transactions.create | transactions.edit | transactions.delete',
+            //'can'  => 'transactions.view | transactions.create | transactions.edit | transactions.delete',
             'submenu' => [
                 [
                     'text' => 'View All',
                     'icon' => 'fas fa-fw fa-eye',
                     'route' => 'transactions.index',
-                    'can'   => 'transactions.view'
+                    //'can'   => 'transactions.view'
                 ],
             ],
         ],
@@ -346,13 +345,13 @@ return [
         [
             'text' => 'Photo Results',
             'icon' => 'fas fa-camera-retro',
-            'can'  => 'transactions.view | transactions.edit', // atau sesuaikan permission kamu
+            //'can'  => 'transactions.view | transactions.edit', // hapus/comment
             'submenu' => [
                 [
                     'text' => 'Manage Results',
                     'icon' => 'fas fa-images',
                     'route' => 'photo-results.index',
-                    'can'  => 'transactions.view',
+                    //'can'  => 'transactions.view', // hapus/comment
                 ],
             ],
         ],
@@ -433,7 +432,8 @@ return [
         [
             'text' => 'Addons',
             'icon' => 'fas fa-puzzle-piece',
-            'can'  => 'addons.view',
+            'can'  => 'addons.view | addons.create | addons.edit | addons.delete', // sama seperti services
+            'active' => ['addons.*'], // optional, tapi direkomendasikan
             'submenu' => [
                 [
                     'text' => 'Add New Addon',
@@ -450,14 +450,11 @@ return [
             ],
         ],
 
-
-
-        // ** Tambahan menu Coupons **
         [
             'text' => 'Coupons',
-            'route' => 'coupons.index',
             'icon' => 'fas fa-ticket-alt',
-            'can'  => 'coupons.view',
+            'can'  => 'coupons.view | coupons.create | coupons.edit | coupons.delete', // sama seperti services/addons
+            'active' => ['coupons.*'], // optional, tapi direkomendasikan
             'submenu' => [
                 [
                     'text' => 'Add New Coupon',
@@ -477,7 +474,8 @@ return [
         [
             'text' => 'Service Background',
             'icon' => 'fas fa-palette',
-            'can'  => 'service-backgrounds.view',
+            'can'  => 'service-backgrounds.view | service-backgrounds.create | service-backgrounds.edit | service-backgrounds.delete', // sama seperti services/addons/coupons
+            'active' => ['service-backgrounds.*'], // optional, tapi direkomendasikan
             'submenu' => [
                 [
                     'text' => 'Add New Background',
@@ -495,6 +493,49 @@ return [
         ],
 
         [
+            'text' => 'Gallery',
+            'icon' => 'fas fa-images',
+            'can'  => 'gallery.view | gallery.create | gallery.edit | gallery.delete', // sama seperti services/addons/coupons
+            'active' => ['gallery.*'], // optional, tapi direkomendasikan
+            'submenu' => [
+                [
+                    'text' => 'Add New Gallery',
+                    'icon' => 'fas fa-plus',
+                    'route' => 'gallery.create',
+                    'can'  => 'gallery.create',
+                ],
+                [
+                    'text' => 'View All Gallery',
+                    'icon' => 'fas fa-eye',
+                    'route' => 'gallery.index',
+                    'can'  => 'gallery.view',
+                ],
+            ],
+        ],
+
+        [
+            'text'   => 'Studios',
+            'icon'   => 'fas fa-camera',
+            'can'    => 'studio.view | studio.create | studio.edit | studio.delete', // konsisten seperti menu lainnya
+            'active' => ['studio.*'],
+            'submenu' => [
+                [
+                    'text'  => 'Add New Studio',
+                    'icon'  => 'fas fa-plus',
+                    'route' => 'studio.create',
+                    'can'   => 'studio.create',
+                ],
+                [
+                    'text'  => 'View All Studios',
+                    'icon'  => 'fas fa-eye',
+                    'route' => 'studio.index',
+                    'can'   => 'studio.view',
+                ],
+            ],
+        ],
+
+
+        [
             'text' => 'profile',
             'route' => 'profile',
             'icon' => 'fas fa-fw fa-user',
@@ -506,45 +547,6 @@ return [
             'icon' => 'fas fa-fw fa-cog',
             'can'  => 'setting update',
         ],
-
-        // [
-        //     'text' => 'multilevel',
-        //     'icon' => 'fas fa-fw fa-share',
-        //     'submenu' => [
-        //         [
-        //             'text' => 'level_one',
-        //             'url' => '#',
-        //         ],
-        //         [
-        //             'text' => 'level_one',
-        //             'url' => '#',
-        //             'submenu' => [
-        //                 [
-        //                     'text' => 'level_two',
-        //                     'url' => '#',
-        //                 ],
-        //                 [
-        //                     'text' => 'level_two',
-        //                     'url' => '#',
-        //                     'submenu' => [
-        //                         [
-        //                             'text' => 'level_three',
-        //                             'url' => '#',
-        //                         ],
-        //                         [
-        //                             'text' => 'level_three',
-        //                             'url' => '#',
-        //                         ],
-        //                     ],
-        //                 ],
-        //             ],
-        //         ],
-        //         [
-        //             'text' => 'level_one',
-        //             'url' => '#',
-        //         ],
-        //     ],
-        // ],
 
     ],
 

@@ -14,6 +14,7 @@ use App\Models\Pricelist;
 use App\Models\Addon;
 use Illuminate\Support\Number;
 use View;
+use App\Models\Outlet;
 
 class FrontendController extends Controller
 {
@@ -137,10 +138,12 @@ class FrontendController extends Controller
         }
 
         try {
-            // Ambil pivot untuk service yang dipilih
-            $pivot = $employee->services()->where('service_id', $serviceId)->first()?->pivot;
+            // Ambil relasi employee - service
+            $service = $employee->services()
+                ->where('service_id', $serviceId)
+                ->first();
 
-            if (!$pivot) {
+            if (!$service || !$service->pivot) {
                 return response()->json([
                     'employee_id' => $employee->id,
                     'available_slots' => [],
@@ -148,6 +151,9 @@ class FrontendController extends Controller
                 ]);
             }
 
+            $pivot = $service->pivot;
+
+            // Slot group dari pivot
             $slotGroupId = $pivot->slot_group_id ?? null;
 
             if (!$slotGroupId) {
@@ -167,8 +173,21 @@ class FrontendController extends Controller
                 ]);
             }
 
-            $slotDuration  = $pivot->duration ?? 15;
-            $breakDuration = $pivot->break_duration ?? 0;
+            /**
+             * ===============================
+             * SYSTEM (SLOT GROUP)
+             * ===============================
+             */
+            $systemSlotDuration  = (int) ($slotGroup->slot_duration ?? 15);
+            $systemBreakDuration = (int) ($slotGroup->break_duration ?? 0);
+
+            /**
+             * ===============================
+             * UI (EMPLOYEE SERVICE / PIVOT)
+             * ===============================
+             */
+            $uiSessionDuration = (int) ($pivot->duration ?? 0);
+            $uiBreakDuration   = (int) ($pivot->break_duration ?? 0);
 
             $workingHours = $slotGroup->working_hours ?? [];
             $dayOfWeek = strtolower($date->format('l'));
@@ -189,14 +208,20 @@ class FrontendController extends Controller
             $isToday = $date->isToday();
 
             foreach ($intervals as $interval) {
+                if (!isset($interval['start'], $interval['end'])) {
+                    continue;
+                }
+
                 $current = Carbon::parse($date->toDateString() . ' ' . $interval['start']);
                 $endTime = Carbon::parse($date->toDateString() . ' ' . $interval['end']);
 
-                while ($current->copy()->addMinutes($slotDuration)->lte($endTime)) {
-                    $slotEnd = $current->copy()->addMinutes($slotDuration);
+                while ($current->copy()->addMinutes($uiSessionDuration)->lte($endTime)) {
+                    // slot end = DURASI SERVICE
+                    $slotEnd = $current->copy()->addMinutes($uiSessionDuration);
 
-                    if ($isToday && $slotEnd->lte($now)) {
-                        $current->addMinutes($slotDuration + $breakDuration);
+
+                    if ($isToday && $current->lt($now)) {
+                        $current->addMinutes($systemSlotDuration + $systemBreakDuration);
                         continue;
                     }
 
@@ -211,32 +236,45 @@ class FrontendController extends Controller
                         })
                         ->exists();
 
-
                     $slots[] = [
-                        'service_id' => $serviceId,
-                        'service_name' => $pivot->service->name ?? 'Service',
-                        'start' => $current->format('H:i'),
-                        'end' => $slotEnd->format('H:i'),
+                        // Service
+                        'service_id'   => $serviceId,
+                        'service_name' => $service->name ?? 'Service',
+
+                        // SLOT TIME (SYSTEM)
+                        'start'   => $current->format('H:i'),
+                        'end'     => $slotEnd->format('H:i'),
                         'display' => $current->format('g:i A') . ' - ' . $slotEnd->format('g:i A'),
-                        'slot_duration' => $slotDuration,
-                        'break_duration' => $breakDuration,
+
+                        // SYSTEM (jangan dipakai UI)
+                        'system_slot_duration'  => $systemSlotDuration,
+                        'system_break_duration' => $systemBreakDuration,
+
+                        // UI (PAKAI INI DI FRONTEND)
+                        'session_duration' => $uiSessionDuration,
+                        'break_duration'   => $uiBreakDuration,
+
                         'is_booked' => $isBooked,
                     ];
 
-                    $current->addMinutes($slotDuration + $breakDuration);
+                    $current->addMinutes($systemSlotDuration + $systemBreakDuration);
                 }
             }
 
             return response()->json([
                 'employee_id' => $employee->id,
                 'date' => $date->toDateString(),
-                'available_slots' => $slots,
                 'slot_group_id' => $slotGroupId,
+                'available_slots' => $slots,
             ]);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Error processing availability: ' . $e->getMessage()], 500);
+            return response()->json([
+                'error' => 'Error processing availability',
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
+
 
 
 
@@ -310,89 +348,6 @@ class FrontendController extends Controller
         }
 
         return $slots;
-    }
-
-    public function getAvailabilityForReschedule(Appointment $appointment, Request $request)
-    {
-        $date = $request->get('date') ? Carbon::parse($request->get('date')) : now();
-        $employee = $appointment->employee;
-        $service = $appointment->service;
-        $slotGroupId = $appointment->slot_group_id;
-
-        if (!$employee || !$service || !$slotGroupId) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Data appointment tidak lengkap'
-            ], 422);
-        }
-
-        $slotGroup = \App\Models\SlotGroup::find($slotGroupId);
-        $slotDuration  = $slotGroup->slot_duration ?? 15;
-        $breakDuration = $slotGroup->break_duration ?? 0;
-
-        // Ambil working hours
-        $workingHours = $slotGroup->working_hours ?? [];
-        $dayOfWeek = strtolower($date->format('l'));
-        $intervals = $workingHours[$dayOfWeek] ?? [];
-
-        if (empty($intervals)) {
-            return response()->json([
-                'employee_id' => $employee->id,
-                'available_slots' => [],
-                'message' => 'Studio tutup pada hari ini'
-            ]);
-        }
-
-        $slots = [];
-        $now = now();
-        $isToday = $date->isToday();
-
-        // Ambil semua appointment di slot group ini, kecuali appointment ini sendiri
-        $existingAppointments = Appointment::where('employee_id', $employee->id)
-            ->where('slot_group_id', $slotGroupId)
-            ->where('booking_date', $date->toDateString())
-            ->whereNotIn('status', ['Cancelled'])
-            ->where('id', '!=', $appointment->id)
-            ->get(['booking_start_time', 'booking_end_time']);
-
-        foreach ($intervals as $interval) {
-            $current = Carbon::parse($date->toDateString() . ' ' . $interval['start']);
-            $endTime = Carbon::parse($date->toDateString() . ' ' . $interval['end']);
-
-            while ($current->copy()->addMinutes($slotDuration)->lte($endTime)) {
-                $slotEnd = $current->copy()->addMinutes($slotDuration);
-
-                // Skip slot yang start-nya sudah lewat
-                if ($isToday && $current->lte($now)) {
-                    $current->addMinutes($slotDuration + $breakDuration);
-                    continue;
-                }
-
-
-                $isBooked = $existingAppointments->contains(function ($a) use ($current, $slotEnd, $date) {
-                    $start = Carbon::parse($date->toDateString() . ' ' . $a->booking_start_time);
-                    $end = Carbon::parse($date->toDateString() . ' ' . $a->booking_end_time);
-                    return $current->lt($end) && $slotEnd->gt($start);
-                });
-
-                $slots[] = [
-                    'start' => $current->format('H:i'),
-                    'end' => $slotEnd->format('H:i'),
-                    'display' => $current->format('g:i A') . ' - ' . $slotEnd->format('g:i A'),
-                    'is_booked' => $isBooked,
-                ];
-
-                $current->addMinutes($slotDuration + $breakDuration);
-            }
-        }
-
-        return response()->json([
-            'success' => true,
-            'appointment_id' => $appointment->id,
-            'employee_id' => $employee->id,
-            'available_slots' => $slots,
-            'slot_group_id' => $slotGroupId,
-        ]);
     }
 
 

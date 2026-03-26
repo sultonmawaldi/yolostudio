@@ -37,18 +37,18 @@ class AdminNotificationBookingUpdated extends Notification implements ShouldQueu
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-        ->greeting('Hello Admin')
-        ->subject('Booking Status Updated for: ' . $this->appointment['name'])
-        ->line('**Booking Status Updated for:**'. ' '.$this->appointment['name'])  // make content strong
-        ->line('Name: '. $this->appointment['name'])
-        ->line('Phone: '. $this->appointment['phone'])
-        ->line('Staff: '. $this->appointment->employee->user['name'])
-        ->line('Service: '. $this->appointment->service['title'])
-        ->line('Amount: '. $this->appointment['amount'])
-        ->line('Appointment Date : ' . Carbon::parse($this->appointment['booking_date'])->format('d M Y'))
-        ->line('Slot Time: '. $this->appointment['booking_time'])
-        ->line('Status: '. $this->appointment['status'])
-        ->line('Thank you for using our application !');
+            ->greeting('Hello Admin')
+            ->subject('Booking Status Updated for: ' . $this->appointment['name'])
+            ->line('**Booking Status Updated for:**' . ' ' . $this->appointment['name'])  // make content strong
+            ->line('Name: ' . $this->appointment['name'])
+            ->line('Phone: ' . $this->appointment['phone'])
+            ->line('Crew: ' . $this->appointment->employee->user['name'])
+            ->line('Service: ' . $this->appointment->service['title'])
+            ->line('Amount: ' . $this->appointment['amount'])
+            ->line('Appointment Date : ' . Carbon::parse($this->appointment['booking_date'])->format('d M Y'))
+            ->line('Slot Time: ' . $this->appointment['booking_time'])
+            ->line('Status: ' . $this->appointment['status'])
+            ->line('Thank you for using our application !');
     }
 
     /**

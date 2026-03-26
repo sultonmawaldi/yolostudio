@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Selfphoto Studio & Photobox')
+
 @section('content')
     <div class="min-h-full bg-gray-50 dark:bg-gray-900">
 
@@ -267,8 +269,8 @@
             }
 
             /* ==========================================================
-                                                                                                                     ✦ Fade-in smooth ✦
-                                                                                                                  ========================================================== */
+                                                                                                                                                                                                                             ✦ Fade-in smooth ✦
+                                                                                                                                                                                                                          ========================================================== */
             @keyframes fade-in {
                 0% {
                     opacity: 0;
@@ -286,9 +288,9 @@
             }
 
             /* ==========================================================
-                                                                                                                     ✦ Latar Corak Transparan ✦
-                                                                                                                     (tidak ganggu hover/transform)
-                                                                                                                  ========================================================== */
+                                                                                                                                                                                                                             ✦ Latar Corak Transparan ✦
+                                                                                                                                                                                                                             (tidak ganggu hover/transform)
+                                                                                                                                                                                                                          ========================================================== */
             #features {
                 position: relative;
                 overflow: hidden;
@@ -311,8 +313,8 @@
             }
 
             /* ==========================================================
-                                                                                                                     ✦ Kartu Elegan ✦
-                                                                                                                  ========================================================== */
+                                                                                                                                                                                                                             ✦ Kartu Elegan ✦
+                                                                                                                                                                                                                          ========================================================== */
             .card-service {
                 background: rgba(255, 255, 255, 0.75);
                 border-radius: 1.25rem;
@@ -337,8 +339,8 @@
             }
 
             /* ==========================================================
-                                                                                                                     ✦ Swiper Settings ✦
-                                                                                                                  ========================================================== */
+                                                                                                                                                                                                                             ✦ Swiper Settings ✦
+                                                                                                                                                                                                                          ========================================================== */
             .swiper {
                 overflow: hidden;
                 padding: 2rem 0;
@@ -356,8 +358,8 @@
             }
 
             /* ==========================================================
-                                                                                                                     ✦ Pagination ✦
-                                                                                                                  ========================================================== */
+                                                                                                                                                                                                                             ✦ Pagination ✦
+                                                                                                                                                                                                                          ========================================================== */
             .swiper-pagination-bullet {
                 background: rgba(59, 130, 246, 0.4);
                 transition: all 0.4s ease;
@@ -370,8 +372,8 @@
             }
 
             /* ==========================================================
-                                                                                                                     ✦ Fade-in Saat Scroll ✦
-                                                                                                                  ========================================================== */
+                                                                                                                                                                                                                             ✦ Fade-in Saat Scroll ✦
+                                                                                                                                                                                                                          ========================================================== */
             .scroll-fade {
                 opacity: 0;
                 transform: translateY(20px);
@@ -508,125 +510,113 @@
 
         {{-- Cabang Kami --}}
         <section
-            class="relative py-20 bg-gradient-to-b from-white via-sky-100 to-blue-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 text-gray-900 dark:text-white overflow-hidden">
+            class="relative py-20 bg-gradient-to-b 
+    from-white via-sky-100 to-blue-200 
+    dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 
+    overflow-hidden">
+
+
             {{-- Background Pattern --}}
             <div aria-hidden="true" class="absolute inset-0"
                 style="
-        background-image: url('https://www.transparenttextures.com/patterns/diagonal-noise.png');
-        opacity: 0.15;
-        background-repeat: repeat;
-        background-size: auto;
-        pointer-events: none;
-        mix-blend-mode: normal;">
+            background-image: url('https://www.transparenttextures.com/patterns/diagonal-noise.png');
+            opacity: 0.15;
+            background-repeat: repeat;
+            pointer-events: none;">
             </div>
-
 
             <div class="relative max-w-7xl mx-auto px-6 text-center">
 
-                <!-- ✦ Temukan Kami Di Kotamu ✦ -->
-                <div class="relative text-center mb-8 overflow-visible py-6">
-                    <!-- Aura Cahaya -->
+                {{-- TITLE --}}
+                <div class="relative text-center mb-8 py-6">
                     <div
-                        class="absolute inset-0 -z-10 bg-gradient-radial from-blue-400/10 via-cyan-300/5 to-transparent blur-3xl animate-pulse-slow">
+                        class="absolute inset-0 -z-10 bg-gradient-radial 
+                       from-blue-400/10 via-cyan-300/5 to-transparent 
+                       blur-3xl animate-pulse-slow">
                     </div>
 
-                    <!-- Section Title -->
-                    <div class="text-center mb-2 overflow-visible relative px-2">
-                        <!-- Judul -->
-                        <h2 class="font-extrabold leading-tight text-center 
-             bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-600 
-             bg-clip-text text-transparent drop-shadow-[0_3px_10px_rgba(56,189,248,0.25)]
-             font-[Playfair_Display]
-             title-glow scroll-fade"
-                            style="font-size: clamp(1rem, 5vw, 3rem); letter-spacing: 0.03em;">
-                            ✦ Temukan Kami Di Kotamu ✦
-                        </h2>
+                    <h2 class="font-extrabold leading-tight 
+                       bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-600 
+                       bg-clip-text text-transparent
+                       drop-shadow-[0_3px_10px_rgba(56,189,248,0.25)]
+                       font-[Playfair_Display]
+                       scroll-fade"
+                        style="font-size: clamp(1.2rem, 5vw, 3rem); letter-spacing: 0.03em;">
+                        ✦ Temukan Kami Di Kotamu ✦
+                    </h2>
 
-                        <!-- Garis -->
-                        <div class="mt-3 w-24 sm:w-32 md:w-44 h-[3px] mx-auto rounded-full 
-             bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-600 
-             shadow-[0_0_12px_rgba(56,189,248,0.4)]
-             scroll-fade"
-                            style="transition-delay: 0.1s;">
-                        </div>
-
-                        <!-- Aksen bawah lembut -->
-                        <div class="absolute left-1/2 -bottom-6 -translate-x-1/2 w-40 h-16 bg-blue-400/10 blur-2xl rounded-full scroll-fade"
-                            style="transition-delay: 0.15s;"></div>
+                    <div class="mt-3 w-24 sm:w-32 md:w-44 h-[3px] mx-auto rounded-full
+                       bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-600
+                       shadow-[0_0_12px_rgba(56,189,248,0.4)]
+                       scroll-fade"
+                        style="transition-delay: .1s;">
                     </div>
                 </div>
 
-
-                <p class="text-lg sm:text-xl text-gray-700 dark:text-gray-300 mt-2 max-w-3xl mx-auto scroll-fade"
-                    style="transition-delay: 0.2s;">
-                    YOLO Studio hadir lebih dekat denganmu di tiga kota keren di Banten!
-                    Temukan vibes dan spot foto terbaik di lokasi terdekatmu 💫
+                {{-- SUBTITLE --}}
+                <p class="text-lg sm:text-xl text-gray-900 dark:text-white max-w-3xl mx-auto">
+                    YOLO Studio hadir lebih dekat denganmu.
+                    Pilih studio terdekat dan mulai sesi fotomu 💫
                 </p>
 
-                {{-- Card Grid Cabang --}}
+
+
+
+
+                {{-- GRID STUDIO DINAMIS --}}
                 <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 mt-16">
 
-                    {{-- Cabang Cilegon --}}
-                    <div class="group bg-white/70 dark:bg-white/10 rounded-2xl p-8 backdrop-blur-lg shadow-lg 
-                  transition transform hover:-translate-y-2 hover:shadow-2xl scroll-fade"
-                        style="transition-delay: 0.25s;">
-                        <div class="mb-5">
-                            <img src="{{ asset('uploads/images/cabang-cilegon.webp') }}" alt="YOLO Cilegon"
-                                class="rounded-xl w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105">
-                        </div>
-                        <h3 class="text-2xl font-bold mb-2 text-blue-700 dark:text-blue-300">YOLO Studio Cilegon</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-4">📍 Jl. Raya Cilegon No.123, Kota Cilegon</p>
-                        <a href="{{ url('/cilegon') }}"
-                            class="inline-block mt-2 bg-blue-600 text-white font-semibold px-6 py-2 rounded-full shadow 
-                  hover:bg-blue-500 transition transform hover:-translate-y-1">
-                            Kunjungi Cabang
-                        </a>
-                    </div>
+                    @foreach ($studios as $i => $studio)
+                        <div class="group bg-white/70 dark:bg-white/10 
+                           rounded-2xl p-8 backdrop-blur-lg shadow-lg 
+                           transition transform hover:-translate-y-2 hover:shadow-2xl
+                           scroll-fade"
+                            style="transition-delay: {{ 0.25 + $i * 0.1 }}s;">
 
-                    {{-- Cabang Serang --}}
-                    <div class="group bg-white/70 dark:bg-white/10 rounded-2xl p-8 backdrop-blur-lg shadow-lg 
-                  transition transform hover:-translate-y-2 hover:shadow-2xl scroll-fade"
-                        style="transition-delay: 0.35s;">
-                        <div class="mb-5">
-                            <img src="{{ asset('uploads/images/cabang-serang.webp') }}" alt="YOLO Serang"
-                                class="rounded-xl w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105">
-                        </div>
-                        <h3 class="text-2xl font-bold mb-2 text-blue-700 dark:text-blue-300">YOLO Studio Serang</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-4">📍 Jl. Veteran No.45, Kota Serang</p>
-                        <a href="{{ url('/serang') }}"
-                            class="inline-block mt-2 bg-blue-600 text-white font-semibold px-6 py-2 rounded-full shadow 
-                  hover:bg-blue-500 transition transform hover:-translate-y-1">
-                            Kunjungi Cabang
-                        </a>
-                    </div>
+                            {{-- IMAGE --}}
+                            <div class="mb-5">
+                                <img src="{{ asset('uploads/studios/' . $studio->image) }}" alt="{{ $studio->name }}"
+                                    class="rounded-xl w-full h-auto
+                                transition-transform duration-500 group-hover:scale-105">
+                            </div>
 
-                    {{-- Cabang Pandeglang --}}
-                    <div class="group bg-white/70 dark:bg-white/10 rounded-2xl p-8 backdrop-blur-lg shadow-lg 
-                  transition transform hover:-translate-y-2 hover:shadow-2xl scroll-fade"
-                        style="transition-delay: 0.45s;">
-                        <div class="mb-5">
-                            <img src="{{ asset('uploads/images/cabang-pandeglang.webp') }}" alt="YOLO Pandeglang"
-                                class="rounded-xl w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105">
+                            {{-- TITLE --}}
+                            <h3
+                                class="text-2xl font-bold mb-2 
+                               text-blue-700 dark:text-blue-300">
+                                {{ $studio->name }}
+                            </h3>
+
+
+                            {{-- LINK --}}
+                            <a href="/studio"
+                                class="inline-block mt-2 bg-blue-600 text-white 
+          font-semibold px-6 py-2 rounded-full shadow 
+          hover:bg-blue-500 transition transform hover:-translate-y-1
+          no-underline">
+                                Lihat Studio
+                            </a>
+
                         </div>
-                        <h3 class="text-2xl font-bold mb-2 text-blue-700 dark:text-blue-300">YOLO Studio Pandeglang</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-4">📍 Jl. Mandalawangi No.21, Pandeglang</p>
-                        <a href="{{ url('/pandeglang') }}"
-                            class="inline-block mt-2 bg-blue-600 text-white font-semibold px-6 py-2 rounded-full shadow 
-                  hover:bg-blue-500 transition transform hover:-translate-y-1">
-                            Kunjungi Cabang
-                        </a>
-                    </div>
+                    @endforeach
 
                 </div>
             </div>
 
             {{-- Floating Shapes --}}
             <div aria-hidden="true"
-                class="absolute top-0 left-0 w-72 h-72 bg-sky-300 opacity-30 rounded-full blur-3xl animate-blob"></div>
+                class="absolute top-0 left-0 w-72 h-72 
+               bg-sky-300 opacity-30 rounded-full 
+               blur-3xl animate-blob">
+            </div>
+
             <div aria-hidden="true"
-                class="absolute bottom-0 right-0 w-72 h-72 bg-blue-400 opacity-30 rounded-full blur-3xl animate-blob animation-delay-2000">
+                class="absolute bottom-0 right-0 w-72 h-72 
+               bg-blue-400 opacity-30 rounded-full 
+               blur-3xl animate-blob animation-delay-2000">
             </div>
         </section>
+
 
         <script>
             document.addEventListener('DOMContentLoaded', () => {

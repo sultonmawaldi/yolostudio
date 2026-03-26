@@ -9,6 +9,7 @@ use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Rappasoft\LaravelAuthenticationLog\Traits\AuthenticationLoggable;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\ResetPasswordNotification;
 
 class User extends Authenticatable
 {
@@ -140,5 +141,10 @@ class User extends Authenticatable
     public function pointLogs()
     {
         return $this->hasMany(PointLog::class);
+    }
+
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 }

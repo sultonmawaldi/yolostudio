@@ -32,7 +32,7 @@
                     <div class="modal-body">
                         <p><strong>User:</strong> <span id="modalUserName"></span></p>
                         <p><strong>Service:</strong> <span id="modalService"></span></p>
-                        <p><strong>Staff:</strong> <span id="modalStaff"></span></p>
+                        <p><strong>Crew:</strong> <span id="modalCrew"></span></p>
                         <p><strong>Amount:</strong> <span id="modalAmount"></span></p>
                         <p><strong>Date:</strong> <span id="modalDate"></span></p>
                         <p><strong>Time:</strong> <span id="modalTime"></span></p>
@@ -68,7 +68,7 @@
                             <p><strong>Service:</strong> <span id="Service">N/A</span></p>
                             <p><strong>Email:</strong> <span id="modalEmail">N/A</span></p>
                             <p><strong>Phone:</strong> <span id="modalPhone">N/A</span></p>
-                            <p><strong>Staff:</strong> <span id="Staff">N/A</span></p>
+                            <p><strong>Crew:</strong> <span id="modalCrew">N/A</span></p>
                             <p><strong>Start:</strong> <span id="modalStartTime">N/A</span></p>
                             <p><strong>Amount:</strong> <span id="Amount">N/A</span></p>
                             <p><strong>Notes:</strong> <span id="Notes">N/A</span></p>
@@ -78,7 +78,7 @@
                             <div class="form-group ">
                                 <label><strong>Status:</strong></label>
                                 <select name="status" class="form-control" id="modalStatusSelect">
-                                    <option value="Pending">Pending payment</option>
+                                    <option value="Pending">Pending</option>
                                     <option value="Processing">Processing</option>
                                     <option value="Confirmed">Confirmed</option>
                                     <option value="Cancelled">Cancelled</option>
@@ -805,7 +805,7 @@ if ($usingOldInput) {
                                                                     <th>#</th>
                                                                     <th>User</th>
                                                                     <th>Service</th>
-                                                                    <th>Staff</th>
+                                                                    <th>crew</th>
                                                                     <th>Date</th>
                                                                     <th>Time</th>
                                                                     <th>Status</th>
@@ -830,9 +830,7 @@ if ($usingOldInput) {
                                                                                     'Confirmed' => '#2ecc71',
                                                                                     'Cancelled' => '#ff0000',
                                                                                     'Completed' => '#008000',
-                                                                                    'On Hold' => '#95a5a6',
                                                                                     'Rescheduled' => '#f1c40f',
-                                                                                    'No Show' => '#e67e22',
                                                                                 ];
                                                                             @endphp
                                                                             @php
@@ -893,7 +891,7 @@ if ($usingOldInput) {
                                                                     <th>#</th>
                                                                     <th>User</th>
                                                                     <th>Service</th>
-                                                                    <th>Staff</th>
+                                                                    <th>Crew</th>
                                                                     <th>Date</th>
                                                                     <th>Time</th>
                                                                     <th>Status</th>
@@ -918,9 +916,7 @@ if ($usingOldInput) {
                                                                                     'Confirmed' => '#2ecc71',
                                                                                     'Cancelled' => '#ff0000',
                                                                                     'Completed' => '#008000',
-                                                                                    'On Hold' => '#95a5a6',
                                                                                     'Rescheduled' => '#f1c40f',
-                                                                                    'No Show' => '#e67e22',
                                                                                 ];
                                                                             @endphp
                                                                             @php
@@ -940,7 +936,7 @@ if ($usingOldInput) {
                                                                                 data-target="#CustomerBookings"
                                                                                 data-name="{{ $appointment->name }}"
                                                                                 data-service="{{ $appointment->service->title }}"
-                                                                                data-staff="{{ $appointment->employee->user->name }}"
+                                                                                data-crew="{{ $appointment->employee->user->name }}"
                                                                                 data-date="{{ $appointment->booking_date }}"
                                                                                 data-time="{{ $appointment->booking_time }}"
                                                                                 data-amount="{{ $appointment->amount }}"
@@ -1098,12 +1094,13 @@ if ($usingOldInput) {
 
             // Bind change and add-more events to all days
             ['monday',
-            'tuesday',
-            'wednesday',
-            'thursday',
-            'friday',
-            'saturday',
-            'sunday',].forEach(function(day) {
+                'tuesday',
+                'wednesday',
+                'thursday',
+                'friday',
+                'saturday',
+                'sunday',
+            ].forEach(function(day) {
                 $('#' + day).on('change', function() {
                     toggleDayFields(day);
                 }).trigger('change');
@@ -1189,7 +1186,7 @@ if ($usingOldInput) {
             $('#Service').text($(this).data('service'));
             $('#modalEmail').text($(this).data('email'));
             $('#modalPhone').text($(this).data('phone'));
-            $('#Staff').text($(this).data('employee'));
+            $('#modalCrew').text($(this).data('employee'));
             $('#modalStartTime').text($(this).data('start'));
             $('#Amount').text($(this).data('amount'));
             $('#Notes').text($(this).data('notes'));
@@ -1239,7 +1236,7 @@ if ($usingOldInput) {
 
             $('#modalUserName').text(button.data('name'));
             $('#modalService').text(button.data('service'));
-            $('#modalStaff').text(button.data('staff'));
+            $('#modalCrew').text(button.data('crew'));
             $('#modalDate').text(button.data('date'));
             $('#modalAmount').text(button.data('amount'));
             $('#modalTime').text(button.data('time'));

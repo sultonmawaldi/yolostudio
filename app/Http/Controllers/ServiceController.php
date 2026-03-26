@@ -22,7 +22,7 @@ class ServiceController extends Controller
     {
         $services = Service::latest()->get();
 
-        return view('backend.service.index',compact('services'));
+        return view('backend.service.index', compact('services'));
     }
 
     /**
@@ -31,7 +31,7 @@ class ServiceController extends Controller
     public function create()
     {
         $categories = Category::whereStatus(1)->get();
-        return view('backend.service.create',compact('categories'));
+        return view('backend.service.create', compact('categories'));
     }
 
     /**
@@ -55,6 +55,7 @@ class ServiceController extends Controller
             'min_people'        => 'nullable|integer|min:0',
             'extra_price_per_person' => 'nullable|numeric|min:0',
             'dp_amount'         => 'required|integer|min:0',
+            'reward_points'      => 'nullable|integer|min:0',
             'featured'          => 'nullable',
             'status'            => 'nullable',
             'other'             => 'nullable',
@@ -64,15 +65,14 @@ class ServiceController extends Controller
         $data['status'] = $request->status ?? 0;
         $data['excerpt'] = $request->excerpt ?? '';
 
-        if($request->file('image'))
-        {
-            $imageName = time().'.'.$request->image->getClientOriginalExtension();
-            $request->image->move(public_path('uploads/images/service/'),$imageName);
+        if ($request->file('image')) {
+            $imageName = time() . '.' . $request->image->getClientOriginalExtension();
+            $request->image->move(public_path('uploads/images/service/'), $imageName);
             $data['image'] = $imageName;
         }
 
         Service::create($data);
-        return redirect()->route('service.index')->with('success','Service has been added successfully.');
+        return redirect()->route('service.index')->with('success', 'Layanan telah berhasil ditambahkan');
     }
 
     /**
@@ -89,7 +89,7 @@ class ServiceController extends Controller
     public function edit(Service $service)
     {
         $categories = Category::whereStatus(1)->get();
-        return view('backend.service.edit',compact('service','categories'));
+        return view('backend.service.edit', compact('service', 'categories'));
     }
 
     /**
@@ -113,6 +113,7 @@ class ServiceController extends Controller
             'min_people'        => 'nullable|integer|min:0',
             'extra_price_per_person' => 'nullable|numeric|min:0',
             'dp_amount'         => 'required|integer|min:0',
+            'reward_points'      => 'nullable|integer|min:0',
             'featured'          => 'nullable',
             'status'            => 'nullable',
             'other'             => 'nullable',
@@ -122,16 +123,14 @@ class ServiceController extends Controller
         $data['status'] = $request->status ?? 0;
         $data['excerpt'] = $request->excerpt ?? '';
 
-        if($request->file('image'))
-        {
-            $destination = public_path('uploads/images/service/').$service->image;
-            if(File::exists($destination))
-            {
+        if ($request->file('image')) {
+            $destination = public_path('uploads/images/service/') . $service->image;
+            if (File::exists($destination)) {
                 File::delete($destination);
             }
 
             //create unique name of image
-            $imageName = time().'.'.$request->image->getClientOriginalExtension();
+            $imageName = time() . '.' . $request->image->getClientOriginalExtension();
 
             //move image to path you wish -- it auto generate folder
             $request->image->move(public_path('uploads/images/service/'), $imageName);
@@ -139,8 +138,7 @@ class ServiceController extends Controller
         }
 
         $service->update($data);
-        return redirect()->route('service.index')->withSuccess('Service has been updated successfully.');
-
+        return redirect()->route('service.index')->withSuccess('Layanan telah berhasil diperbarui');
     }
 
 
@@ -149,32 +147,32 @@ class ServiceController extends Controller
     {
 
         $service->delete();
-        return back()->withSuccess('Service Succesfully moved to trash!');
+        return back()->withSuccess('Layanan berhasil dipindahkan ke tempat sampah!');
     }
 
     public function trashView(Request $request)
     {
         $services = Service::onlyTrashed()->latest()->get();
-        return view('backend.service.trash',compact('services'));
+        return view('backend.service.trash', compact('services'));
     }
 
     // restore data
     public function restore($id)
     {
         $data = Service::withTrashed()->find($id);
-        if(!is_null($data)){
+        if (!is_null($data)) {
             $data->restore();
         }
-        return redirect()->back()->with("success", "Data Restored Succesfully");
+        return redirect()->back()->with("success", "Data berhasil dipulihkan");
     }
 
     public function force_delete(Request $request, $id)
     {
         $service = Service::withTrashed()->find($id);
 
-         // Check if the category has any services
-         if ($service->appointments->count() > 0) {
-            return redirect()->back()->withErrors('Cannot deleted permanently, service with existing bookings.');
+        // Check if the category has any services
+        if ($service->appointments->count() > 0) {
+            return redirect()->back()->withErrors('Layanan tidak bisa dihapus karena masih terhubung dengan pemesanan yang ada');
         }
 
         if (!is_null($service)) {
@@ -188,9 +186,6 @@ class ServiceController extends Controller
             $service->forceDelete();
         }
 
-        return redirect()->back()->with("success", "Data Deleted Permanently!!");
+        return redirect()->back()->with("success", "Data Dihapus Secara Permanen!");
     }
-
-
-
 }

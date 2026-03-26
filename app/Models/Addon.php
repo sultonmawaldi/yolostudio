@@ -6,25 +6,40 @@ use Illuminate\Database\Eloquent\Model;
 
 class Addon extends Model
 {
+    /*
+    |--------------------------------------------------------------------------
+    | Mass Assignment
+    |--------------------------------------------------------------------------
+    */
     protected $fillable = [
+        'code',
         'name',
         'price',
-        'description',
+        'unit',        // person, minute, item
+        'max_qty',
         'is_active',
+        'sort_order',
     ];
 
+    /*
+    |--------------------------------------------------------------------------
+    | Casts
+    |--------------------------------------------------------------------------
+    */
     protected $casts = [
-        'price' => 'integer',
+        'price'     => 'integer',
+        'max_qty'   => 'integer',
         'is_active' => 'boolean',
+        'sort_order' => 'integer',
     ];
 
-    // ======================
-    // RELATIONS
-    // ======================
+    /*
+    |--------------------------------------------------------------------------
+    | Relationships
+    |--------------------------------------------------------------------------
+    */
 
-    /**
-     * Addon digunakan pada banyak appointment
-     */
+    // Addon digunakan pada banyak appointment
     public function appointments()
     {
         return $this->belongsToMany(Appointment::class, 'appointment_addons')
@@ -32,29 +47,34 @@ class Addon extends Model
             ->withTimestamps();
     }
 
-    /**
-     * Addon tersedia untuk banyak service
-     */
+    // Addon tersedia untuk banyak service
     public function services()
     {
         return $this->belongsToMany(Service::class, 'addon_service');
     }
 
-    // ======================
-    // SCOPES
-    // ======================
-
+    /*
+    |--------------------------------------------------------------------------
+    | Scopes
+    |--------------------------------------------------------------------------
+    */
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
     }
 
-    // ======================
-    // ACCESSORS
-    // ======================
-
-    public function getPriceFormattedAttribute()
+    /*
+    |--------------------------------------------------------------------------
+    | Helper Methods
+    |--------------------------------------------------------------------------
+    */
+    public function calculateSubtotal(int $qty): int
     {
-        return number_format($this->price, 0, ',', '.');
+        return $this->price * $qty;
+    }
+
+    public function isUnlimited(): bool
+    {
+        return is_null($this->max_qty);
     }
 }
