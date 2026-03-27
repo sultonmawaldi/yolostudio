@@ -28,7 +28,7 @@
                         <th>#</th>
                         <th>Gambar</th>
                         <th>Judul</th>
-                        <th>Kategori</th>
+                        <th>Service</th> {{-- ✅ GANTI --}}
                         <th>Dibuat</th>
                         <th>Diperbarui</th>
                         <th class="text-center">Aksi</th>
@@ -53,9 +53,10 @@
                                 {{ $gallery->title }}
                             </td>
 
+                            {{-- ✅ SERVICE --}}
                             <td>
                                 <span class="badge bg-gradient-info text-white px-3 py-2 rounded-pill shadow-sm">
-                                    {{ $gallery->category ?? '-' }}
+                                    {{ $gallery->service->title ?? '-' }}
                                 </span>
                             </td>
 
@@ -337,6 +338,51 @@
                     if (result.isConfirmed) form.submit();
                 });
             });
+
+            // Toast Success / Error
+            @if (session('success') || session('error'))
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+
+                @if (session('success'))
+                    Toast.fire({
+                        icon: 'success',
+                        title: "{{ session('success') }}"
+                    });
+                @endif
+
+                @if (session('error'))
+                    Toast.fire({
+                        icon: 'error',
+                        title: "{{ session('error') }}"
+                    });
+                @endif
+            @endif
+
+            // Error validation
+            @if ($errors->any())
+                document.addEventListener('DOMContentLoaded', function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Terjadi Kesalahan',
+                        html: `<ul style="text-align:left;">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>`,
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#d33'
+                    });
+                });
+            @endif
+
+            // Auto hide alert
+            $(".alert").delay(6000).slideUp(300);
 
         });
     </script>

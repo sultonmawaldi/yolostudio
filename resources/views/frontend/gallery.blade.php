@@ -67,16 +67,9 @@
         backdrop-blur border border-gray-200 dark:border-gray-700
         shadow-sm">
 
+                        {{-- 🔥 DINAMIS DARI SERVICE --}}
                         @php
-                            $categories = [
-                                'Self Photo Studio',
-                                'Personal Selfphoto Studio',
-                                'Pas Photo',
-                                'Wide Box Maroon',
-                                'Wide Box Grey',
-                                'Corner Box',
-                                'Gorden Box',
-                            ];
+                            $categories = $services->pluck('title')->toArray();
                         @endphp
 
                         <!-- All -->
@@ -121,7 +114,7 @@
                 @if ($galleries->count())
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                         @foreach ($galleries as $index => $gallery)
-                            <div x-show="selectedCategory === 'All' || selectedCategory === '{{ $gallery->category }}'"
+                            <div x-show="selectedCategory === 'All' || selectedCategory === '{{ $gallery->service->title ?? '' }}'"
                                 x-transition:enter="transition ease-out duration-700"
                                 x-transition:enter-start="opacity-0 translate-y-6"
                                 x-transition:enter-end="opacity-100 translate-y-0"
@@ -159,6 +152,11 @@
                                         {{ $gallery->title }}
                                     </h3>
 
+                                    {{-- 🔥 TAMBAHAN (SERVICE NAME) --}}
+                                    <p class="text-xs text-blue-500 mt-1">
+                                        {{ $gallery->service->title ?? '-' }}
+                                    </p>
+
                                     @if ($gallery->description)
                                         <p
                                             class="mt-2 text-gray-600 dark:text-gray-300 text-sm leading-relaxed line-clamp-2 max-w-xs">
@@ -183,10 +181,6 @@
 
     <!-- Style tambahan -->
     <style>
-        /* Scrollbar horizontal terlihat biru */
-
-
-        /* Tombol hover smooth */
         .transition {
             transition: all 0.3s ease;
         }

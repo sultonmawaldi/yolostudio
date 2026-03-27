@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Service;
 
 class Gallery extends Model
 {
@@ -13,8 +14,17 @@ class Gallery extends Model
 
     protected $fillable = [
         'title',
+        'service_id', // ✅ ganti dari category
         'description',
         'image',
-        'category', // tambahkan ini
+        'status',
     ];
+
+    /**
+     * Relasi ke Service
+     */
+    public function service()
+    {
+        return $this->belongsTo(Service::class);
+    }
 }

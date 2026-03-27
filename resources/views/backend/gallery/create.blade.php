@@ -67,11 +67,36 @@
                                 @enderror
                             </div>
 
-                            {{-- KATEGORI --}}
+                            {{-- SERVICE (PENGGANTI CATEGORY) --}}
                             <div class="form-group">
-                                <label>Kategori</label>
-                                <input type="text" name="category" class="form-control" value="{{ old('category') }}"
-                                    placeholder="Contoh: Wedding, Studio">
+                                <label>Service</label>
+                                <select name="service_id" class="form-control @error('service_id') is-invalid @enderror">
+
+                                    <option value="">-- Pilih Service --</option>
+
+                                    @foreach ($services as $service)
+                                        <option value="{{ $service->id }}"
+                                            {{ old('service_id') == $service->id ? 'selected' : '' }}>
+                                            {{ $service->title }}
+                                        </option>
+                                    @endforeach
+
+                                </select>
+
+                                @error('service_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            {{-- DESKRIPSI --}}
+                            <div class="form-group">
+                                <label>Deskripsi</label>
+                                <textarea name="description" class="form-control @error('description') is-invalid @enderror" rows="3"
+                                    placeholder="Tambahkan deskripsi (optional)">{{ old('description') }}</textarea>
+
+                                @error('description')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             {{-- GAMBAR --}}
@@ -85,11 +110,11 @@
                                 @enderror
                             </div>
 
-                            {{-- PREVIEW GAMBAR --}}
+                            {{-- PREVIEW --}}
                             <div class="form-group">
                                 <label>Preview</label>
                                 <div>
-                                    <img id="previewImage" src="#" alt="Preview"
+                                    <img id="previewImage" src="#"
                                         style="display:none; max-height:120px; border-radius:10px; border:1px solid #ddd;">
                                 </div>
                             </div>
@@ -148,7 +173,6 @@
 
 @section('js')
     <script>
-        // Preview gambar sebelum upload
         const inputImage = document.querySelector('input[name="image"]');
         const preview = document.getElementById('previewImage');
 

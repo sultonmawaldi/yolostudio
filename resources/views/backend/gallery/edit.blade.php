@@ -73,12 +73,38 @@
                                 @enderror
                             </div>
 
-                            {{-- KATEGORI --}}
+                            {{-- SERVICE --}}
                             <div class="form-group">
-                                <label>Kategori</label>
+                                <label>Service</label>
 
-                                <input type="text" name="category" class="form-control"
-                                    value="{{ old('category', $gallery->category) }}" placeholder="Contoh: Wedding, Studio">
+                                <select name="service_id" class="form-control @error('service_id') is-invalid @enderror">
+
+                                    <option value="">-- Pilih Service --</option>
+
+                                    @foreach ($services as $service)
+                                        <option value="{{ $service->id }}"
+                                            {{ old('service_id', $gallery->service_id) == $service->id ? 'selected' : '' }}>
+                                            {{ $service->title }}
+                                        </option>
+                                    @endforeach
+
+                                </select>
+
+                                @error('service_id')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
+                            </div>
+
+                            {{-- DESKRIPSI --}}
+                            <div class="form-group">
+                                <label>Deskripsi</label>
+
+                                <textarea name="description" class="form-control @error('description') is-invalid @enderror" rows="3"
+                                    placeholder="Tambahkan deskripsi (optional)">{{ old('description', $gallery->description) }}</textarea>
+
+                                @error('description')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
 
                             {{-- GAMBAR SAAT INI --}}
@@ -143,10 +169,12 @@
                                     <label>Status</label>
 
                                     <select name="status" class="form-control">
-                                        <option value="1" {{ old('status', $gallery->status) == 1 ? 'selected' : '' }}>
+                                        <option value="1"
+                                            {{ old('status', $gallery->status) == 1 ? 'selected' : '' }}>
                                             Aktif
                                         </option>
-                                        <option value="0" {{ old('status', $gallery->status) == 0 ? 'selected' : '' }}>
+                                        <option value="0"
+                                            {{ old('status', $gallery->status) == 0 ? 'selected' : '' }}>
                                             Nonaktif
                                         </option>
                                     </select>
@@ -195,7 +223,6 @@
             }
         });
 
-
         // Toast
         @if (session('success') || session('error'))
             const Toast = Swal.mixin({
@@ -220,7 +247,6 @@
                 });
             @endif
         @endif
-
 
         // Validation error
         @if ($errors->any())

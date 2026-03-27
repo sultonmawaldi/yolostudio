@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Gallery;
+use App\Models\Service;
 use Illuminate\Http\Request;
 
 class GalleryController extends Controller
@@ -12,8 +13,18 @@ class GalleryController extends Controller
     // ===========================
     public function index()
     {
-        $galleries = Gallery::latest()->get();
-        return view('frontend.gallery', compact('galleries'));
+        // ✅ Ambil hanya gallery yang aktif + eager loading service
+        $galleries = Gallery::with('service')
+            ->where('status', 1)
+            ->latest()
+            ->get();
+
+        // ✅ Ambil hanya service yang aktif
+        $services = Service::where('status', 1)
+            ->orderBy('title', 'asc')
+            ->get();
+
+        return view('frontend.gallery', compact('galleries', 'services'));
     }
 
     // ===========================
@@ -21,33 +32,38 @@ class GalleryController extends Controller
     // ===========================
     public function adminIndex()
     {
-        $galleries = Gallery::latest()->paginate(10);
+        $galleries = Gallery::with('service')->latest()->get();
+
         return view('backend.gallery.index', compact('galleries'));
     }
 
     public function create()
     {
-        $categories = $this->getCategories();
-        return view('backend.gallery.create', compact('categories'));
+        // ambil service aktif
+        $services = Service::where('status', 1)->get();
+
+        return view('backend.gallery.create', compact('services'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'title'    => 'required|string|max:255',
-            'category' => 'nullable|string|max:255',
-            'image'    => 'required|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'title'      => 'required|string|max:255',
+            'service_id' => 'required|exists:services,id',
+            'image'      => 'required|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'description' => 'nullable|string',
         ]);
 
+        // upload image
         $imageName = time() . '.' . $request->image->extension();
         $request->image->move(public_path('uploads/gallery'), $imageName);
 
         Gallery::create([
             'title'       => $request->title,
+            'service_id'  => $request->service_id,
             'description' => $request->description,
-            'category'    => $request->category,
             'image'       => $imageName,
-            'status'      => 1,
+            'status'      => $request->status ?? 1,
         ]);
 
         return redirect()
@@ -57,31 +73,38 @@ class GalleryController extends Controller
 
     public function edit(Gallery $gallery)
     {
-        $categories = $this->getCategories();
-        return view('backend.gallery.edit', compact('gallery', 'categories'));
+        $services = Service::where('status', 1)->get();
+
+        return view('backend.gallery.edit', compact('gallery', 'services'));
     }
 
     public function update(Request $request, Gallery $gallery)
     {
         $request->validate([
-            'title'    => 'required|string|max:255',
-            'category' => 'nullable|string|max:255',
-            'image'    => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'title'      => 'required|string|max:255',
+            'service_id' => 'required|exists:services,id',
+            'image'      => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'description' => 'nullable|string',
         ]);
 
         $data = [
             'title'       => $request->title,
+            'service_id'  => $request->service_id,
             'description' => $request->description,
-            'category'    => $request->category,
+            'status'      => $request->status,
         ];
 
+        // jika upload gambar baru
         if ($request->hasFile('image')) {
+
+            // hapus gambar lama
             if ($gallery->image && file_exists(public_path('uploads/gallery/' . $gallery->image))) {
                 unlink(public_path('uploads/gallery/' . $gallery->image));
             }
 
             $imageName = time() . '.' . $request->image->extension();
             $request->image->move(public_path('uploads/gallery'), $imageName);
+
             $data['image'] = $imageName;
         }
 
@@ -94,6 +117,7 @@ class GalleryController extends Controller
 
     public function destroy(Gallery $gallery)
     {
+        // hapus file gambar
         if ($gallery->image && file_exists(public_path('uploads/gallery/' . $gallery->image))) {
             unlink(public_path('uploads/gallery/' . $gallery->image));
         }
@@ -103,21 +127,5 @@ class GalleryController extends Controller
         return redirect()
             ->route('gallery.index')
             ->with('success', 'Gallery berhasil dihapus.');
-    }
-
-    // ===========================
-    // PRIVATE
-    // ===========================
-    private function getCategories()
-    {
-        return [
-            'Self Photo Studio',
-            'Personal Selfphoto Studio',
-            'Pas Photo',
-            'Wide Box Maroon',
-            'Wide Box Grey',
-            'Corner Box',
-            'Gorden Box',
-        ];
     }
 }
