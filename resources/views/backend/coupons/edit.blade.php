@@ -498,10 +498,10 @@
                     icon: 'error',
                     title: 'Terjadi Kesalahan',
                     html: `<ul style="text-align:left;">
-@foreach ($errors->all() as $error)
-<li>{{ $error }}</li>
-@endforeach
-</ul>`,
+                    @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                    </ul>`,
                     confirmButtonText: 'OK',
                     confirmButtonColor: '#d33'
                 });

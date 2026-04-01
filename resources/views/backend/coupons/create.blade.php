@@ -388,5 +388,22 @@
             });
 
         });
+
+        // VALIDATION ERROR 
+        @if ($errors->any())
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops!',
+                    html: `<ul style="text-align:left;">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>`,
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#d33'
+                });
+            });
+        @endif
     </script>
 @stop

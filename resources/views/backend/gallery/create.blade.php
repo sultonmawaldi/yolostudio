@@ -60,7 +60,7 @@
                                 <label>Judul</label>
                                 <input type="text" name="title"
                                     class="form-control @error('title') is-invalid @enderror" value="{{ old('title') }}"
-                                    placeholder="Masukkan judul gallery" required>
+                                    placeholder="Masukkan judul gallery">
 
                                 @error('title')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -184,5 +184,22 @@
                 preview.style.display = 'block';
             }
         });
+
+        // SweetAlert Error (samakan addon)
+        @if ($errors->any())
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops!',
+                    html: `<ul style="text-align:left;">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>`,
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#d33'
+                });
+            });
+        @endif
     </script>
 @stop

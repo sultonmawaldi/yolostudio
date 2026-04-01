@@ -1,377 +1,232 @@
 @extends('adminlte::page')
 
-@section('title', 'Create User')
+@section('title', 'Tambah User')
 
 @section('content_header')
+
     <div class="container-fluid">
-        <div class="row mb-1">
+        <div class="row mb-3 align-items-center">
+
             <div class="col-sm-6">
-                <h1 class="m-0">Add User</h1>
+                <h1 class="m-0 font-weight-bold">
+                    <i class="fas fa-user-plus text-primary mr-2"></i>
+                    Tambah User
+                </h1>
             </div>
+
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-                    <li class="breadcrumb-item active">Add user</li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ route('dashboard') }}">
+                            <i class="fas fa-home"></i> Beranda
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active">Tambah User</li>
                 </ol>
             </div>
+
         </div>
     </div>
+
 @stop
 
 @section('content')
-    <div class="">
-        <!-- Content Header (Page header) -->
-        <!-- /.content-header -->
 
-        <!-- Main content -->
-        <div class="content  py-2">
-            <div class="">
-                @if (session()->has('success'))
-                    <div class="alert alert-dismissable alert-success">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                        <strong>
-                            {!! session()->get('success') !!}
-                        </strong>
-                    </div>
-                @endif
-                @if (count($errors) > 0)
-                    <div class="alert alert-dismissable alert-danger mt-3">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                        <strong>Whoops!</strong> There were some problems with your input.<br>
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
+    <div class="container-fluid">
+        <div class="justify-content-between pb-5">
 
+            <form action="{{ route('user.store') }}" method="post">
+                @csrf
 
-                <form action="{{ route('user.store') }}" method="post">
-                    @csrf
-                    <div class="row pl-md-2">
-                        <div class="col-md-8">
-                            <div class="row">
-                                <div class="col-xs-12 col-sm-12 col-md-12">
-                                    <div class="form-group">
-                                        <label class="my-0">Name</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend ">
-                                                <span class="input-group-text ">
-                                                    <i class="fas fa-user">
-                                                    </i>
-                                                </span>
-                                            </div>
-                                            <input type="text" class="form-control @error('name') is-invalid @enderror"
-                                                name="name" value="{{ old('name') }}" placeholder="Full Name">
-                                        </div>
-                                        @error('name')
-                                            <small class="text-danger"><strong>{{ $message }}</strong></small>
-                                        @enderror
-                                    </div>
+                <div class="row">
+
+                    {{-- KIRI --}}
+                    <div class="col-md-8">
+
+                        {{-- INFORMASI USER --}}
+                        <div class="card card-light">
+                            <div class="card-header">
+                                <h3 class="card-title">Informasi User</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
                                 </div>
-                                <div class="col-xs-12 col-sm-12 col-md-12">
-                                    <div class="form-group">
-                                        <label class="my-0">Email</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="fas fa-envelope">
-                                                    </i>
-                                                </span>
-                                            </div>
-                                            <input type="email" class="form-control @error('email') is-invalid @enderror"
-                                                name="email" value="{{ old('email') }}" placeholder="Email">
-                                        </div>
-                                        @error('email')
-                                            <small class="text-danger"><strong>{{ $message }}</strong></small>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-xs-12 col-sm-12 col-md-12">
-                                    <div class="form-group">
-                                        <label class="my-0">Phone</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="fas fa-phone">
-                                                    </i>
-                                                </span>
-                                            </div>
-                                            <input type="tel" class="form-control @error('phone') is-invalid @enderror"
-                                                name="phone" value="{{ old('phone') }}" placeholder="Phone No.">
-                                        </div>
-                                        @error('phone')
-                                            <small class="text-danger"><strong>{{ $message }}</strong></small>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-xs-12 col-sm-12 col-md-12">
-                                    <div class="form-group">
-                                        <label class="my-0">Password</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="fas fa-lock"></i>
-                                                </span>
-                                            </div>
-                                            <input type="password"
-                                                class="form-control @error('password') is-invalid @enderror"
-                                                name="password"
-                                                placeholder="Enter Password">
-                                        </div>
-                                        @error('password')
-                                            <small class="text-danger"><strong>{{ $message }}</strong></small>
-                                        @enderror
-                                    </div>
+                            </div>
+
+                            <div class="card-body">
+
+                                <div class="form-group">
+                                    <label>Nama</label>
+                                    <input type="text" name="name" value="{{ old('name') }}"
+                                        class="form-control @error('name') is-invalid @enderror"
+                                        placeholder="Masukkan nama lengkap">
+                                    @error('name')
+                                        <small class="text-danger">{{ $message }}</small>
+                                    @enderror
                                 </div>
 
-                                <div class="col-xs-12 col-sm-12 col-md-12">
-                                    <div class="form-group">
-                                        <label class="my-0">Confirm Password</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="fas fa-lock"></i>
-                                                </span>
-                                            </div>
-                                            <input type="password"
-                                                class="form-control @error('password_confirmation') is-invalid @enderror"
-                                                name="password_confirmation"
-                                                placeholder="Confirm Password">
-                                        </div>
-                                        @error('password_confirmation')
-                                            <small class="text-danger"><strong>{{ $message }}</strong></small>
-                                        @enderror
-                                    </div>
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="email" name="email" value="{{ old('email') }}"
+                                        class="form-control @error('email') is-invalid @enderror"
+                                        placeholder="Masukkan email">
+                                    @error('email')
+                                        <small class="text-danger">{{ $message }}</small>
+                                    @enderror
                                 </div>
 
-                                <div class="col-xs-12 col-sm-12 col-md-12 mb-3 select2-primary">
-                                    <label class="my-0"><i class="fas fa-user-lock"></i> User Role</label>
-                                    <select name="roles[]" class="form-control select2 @error('roles[]') is-invalid @enderror" data-placeholder="Select Role" multiple>
+                                <div class="form-group">
+                                    <label>No. HP</label>
+                                    <input type="tel" name="phone" value="{{ old('phone') }}"
+                                        class="form-control @error('phone') is-invalid @enderror"
+                                        placeholder="Masukkan nomor HP">
+                                    @error('phone')
+                                        <small class="text-danger">{{ $message }}</small>
+                                    @enderror
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Password</label>
+                                    <input type="password" name="password"
+                                        class="form-control @error('password') is-invalid @enderror"
+                                        placeholder="Masukkan password">
+                                    @error('password')
+                                        <small class="text-danger">{{ $message }}</small>
+                                    @enderror
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Konfirmasi Password</label>
+                                    <input type="password" name="password_confirmation"
+                                        class="form-control @error('password_confirmation') is-invalid @enderror"
+                                        placeholder="Ulangi password">
+                                    @error('password_confirmation')
+                                        <small class="text-danger">{{ $message }}</small>
+                                    @enderror
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Role User</label>
+                                    <select name="roles" class="form-control select2">
+                                        <option value="">-- Pilih Role --</option>
                                         @foreach ($roles as $role)
                                             <option value="{{ $role->name }}"
-                                                {{ in_array($role->name, old('roles', [])) ? 'selected' : '' }}>
+                                                {{ old('roles') == $role->name ? 'selected' : '' }}>
                                                 {{ ucfirst($role->name) }}
                                             </option>
                                         @endforeach
                                     </select>
-                                    @error('roles')
-                                        <small class="text-danger"><strong>{{ $message }}</strong></small>
-                                    @enderror
                                 </div>
 
-
+                                <div class="form-group">
+                                    <div class="custom-control custom-switch">
+                                        <input type="hidden" name="is_employee" value="0">
+                                        <input type="checkbox" class="custom-control-input" id="is_employee"
+                                            name="is_employee" value="1" {{ old('is_employee') ? 'checked' : '' }}>
+                                        <label class="custom-control-label" for="is_employee">
+                                            Jadikan sebagai Employee
+                                        </label>
+                                    </div>
+                                </div>
 
                             </div>
                         </div>
-                    </div>
 
-                    <div class="row pt-3 pl-md-2">
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <div class="custom-control custom-switch">
-                                <!-- ✅ Hidden input memastikan nilai selalu terkirim -->
-                                <input type="hidden" name="is_employee" value="0">
-                                <input type="checkbox" class="custom-control-input" id="is_employee"
-                                    name="is_employee" value="1"
-                                    {{ old('is_employee') ? 'checked' : '' }}>
-                                <label class="custom-control-label" for="is_employee">Is Employee</label>
-                            </div>
-
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="employee" class="row pl-md-2 pb-5">
-                        <div class="col-md-8">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <hr>
-                                    <div class="mb-3">
-                                        <h4 class="mb-0">Only For Employees </h4>
-                                        <small class="text-muted">Fill these details if adding an employee only</small>
+                        {{-- EMPLOYEE SETTINGS --}}
+                        <div id="employee">
+                            <div class="card card-light">
+                                <div class="card-header">
+                                    <h3 class="card-title">Pengaturan Employee</h3>
+                                    <div class="card-tools">
+                                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
                                     </div>
+                                </div>
 
-                                    <div class="row">
-                                        <div class="col-xs-12 col-sm-12 col-md-12 mb-3 select2-dark">
-                                            <label for="service_id" class="my-0"><i class="fas fa-id-card"></i>
-                                                Select
-                                                Service</label> <small class="text-muted"> Link employees to services they
-                                                are assigned to</small>
-                                            <select class="form-control select2 @error('service[]') is-invalid @enderror"
-                                                name="service[]" data-placeholder="Select Service" id="service"
-                                                multiple>
-                                                @foreach ($services as $service)
-                                                    <option
-                                                        {{ in_array($service->id, old('service', [])) ? 'selected' : '' }}
-                                                        value="{{ $service->id }}">{{ $service->title }}</option>
-                                                @endforeach
-                                            </select>
-                                            @error('service')
-                                                <small class="text-danger"><strong>{{ $message }}</strong></small>
-                                            @enderror
-                                            <div id="service-details-container" class="mt-4">
-                                            {{-- Akan diisi dinamis oleh JS --}}
-                                        </div>
-                                        </div>
-                                        
+                                <div class="card-body">
 
-                                        <div class="col-xs-12 col-sm-12 col-md-12 mb-3">
-                                            <label for="slot_duration" class="my-0"><i class="fas fa-stopwatch"></i>
-                                                Service
-                                                Duration</label> <small class="text-muted"> Create booking slots based on
-                                                your preferred time duration.</small>
-                                            @php
-                                                $steps = ['5','10', '15', '20', '30', '45', '60'];
-                                                $selectedStep = old('slot_duration'); // Get the selected step value from old input
-                                            @endphp
-                                            <select class="form-control @error('step') is-invalid @enderror"
-                                                name="slot_duration" id="slot_duration">
-                                                <option value="" {{ !$selectedStep ? 'selected' : '' }}>Select
-                                                    Duration
+                                    <div class="form-group">
+                                        <label>Pilih Service</label>
+                                        <select name="service[]" id="service" class="form-control select2" multiple>
+                                            @foreach ($services as $service)
+                                                <option value="{{ $service->id }}"
+                                                    {{ in_array($service->id, old('service', [])) ? 'selected' : '' }}>
+                                                    {{ $service->title }}
                                                 </option>
-                                                @foreach ($steps as $stepValue)
-                                                    <option {{ $selectedStep == $stepValue ? 'selected' : '' }}
-                                                        value="{{ $stepValue }}">{{ $stepValue }}</option>
-                                                @endforeach
-                                            </select>
-                                            @error('slot_duration')
-                                                <small class="text-danger"><strong>{{ $message }}</strong></small>
-                                            @enderror
-                                        </div>
-
-                                        <div class="col-xs-12 col-sm-12 col-md-12 mb-3">
-                                            <label for="break_duration" class="my-0"><i class="fas fa-coffee"></i>
-                                                Preparation or Break time</label> <small class="text-muted"> Break between
-                                                one to another appointment</small>
-                                            @php
-                                                $breaks = ['5', '10', '15', '20', '25', '30'];
-                                                $selectedBreak = old('break_duration'); // Get the selected step value from old input
-                                            @endphp
-                                            <select class="form-control @error('step') is-invalid @enderror"
-                                                name="break_duration" id="break_duration">
-                                                <option value="" {{ !$selectedBreak ? 'selected' : '' }}>No Break
-                                                </option>
-                                                @foreach ($breaks as $breakValue)
-                                                    <option {{ $selectedBreak == $breakValue ? 'selected' : '' }}
-                                                        value="{{ $breakValue }}">{{ $breakValue }}</option>
-                                                @endforeach
-                                            </select>
-                                            @error('break_duration')
-                                                <small class="text-danger"><strong>{{ $message }}</strong></small>
-                                            @enderror
-                                        </div>
-
-
-                                    </div>
-
-                                    <hr>
-                                    <div class="row">
-                                        <div class="mb-3">
-                                            <h4 class="mb-0">Set Availibity - For Employee</h4>
-                                            <small class="text-muted">Select days and timings, with the option to add
-                                                multiple time slots in a day, e.g., 9 AM–12 PM and 4 PM–8 PM</small>
-                                        </div>
-                                        <div class="col-md-12">
-                                            @foreach ($days as $day)
-                                                <!-- Main row (first time pair for each day) -->
-                                                <div class="row">
-                                                    <div class="col-md-2">
-                                                        <div class="form-group">
-                                                            <div class="custom-control custom-switch">
-                                                                <input type="checkbox" class="custom-control-input"
-                                                                    id="{{ $day }}"
-                                                                    @if (old('days.' . $day)) checked @endif>
-                                                                <label class="custom-control-label"
-                                                                    for="{{ $day }}">{{ ucfirst($day) }}</label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- First time input row (main row) -->
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <strong>From:</strong>
-                                                            <input type="time" class="form-control from"
-                                                                name="days[{{ $day }}][]"
-                                                                value="{{ old('days.' . $day . '.0') }}"
-                                                                id="{{ $day }}From">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <strong>To:</strong>
-                                                            <input type="time" class="form-control to"
-                                                                name="days[{{ $day }}][]"
-                                                                value="{{ old('days.' . $day . '.1') }}"
-                                                                id="{{ $day }}To">
-                                                        </div>
-                                                        <div style="margin-top:-15px;" id="{{ $day }}AddMore"
-                                                            class="text-right d-none text-primary">Add More</div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Render additional rows -->
-                                                @if (old('days.' . $day))
-                                                    <!-- Check if there are any times for the day -->
-                                                    @foreach (old('days.' . $day) as $index => $time)
-                                                        <!-- Skip the first time pair, as it's already rendered above -->
-                                                        @if ($index > 1 && $index % 2 == 0)
-                                                            <!-- Skip last pair by checking if index is even -->
-                                                            <div class="row additional-{{ $day }}">
-                                                                <div class="col-md-2"></div>
-                                                                <div class="col-md-4">
-                                                                    <div class="form-group">
-                                                                        <strong>From:</strong>
-                                                                        <input type="time" class="form-control from"
-                                                                            name="days[{{ $day }}][]"
-                                                                            value="{{ $time }}"
-                                                                            id="{{ $day }}From">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-4">
-                                                                    <div class="form-group">
-                                                                        <strong>To:</strong>
-                                                                        <input type="time" class="form-control to"
-                                                                            name="days[{{ $day }}][]"
-                                                                            value="{{ old('days.' . $day . '.' . ($index + 1)) }}"
-                                                                            id="{{ $day }}To">
-                                                                    </div>
-                                                                    <div style="margin-top:-15px;"
-                                                                        class="text-right remove-field text-danger">
-                                                                        Remove</div>
-                                                                </div>
-                                                            </div>
-                                                        @endif
-                                                    @endforeach
-                                                @endif
                                             @endforeach
-                                        </div>
+                                        </select>
                                     </div>
+
+                                    <div id="service-details-container"></div>
+
                                 </div>
                             </div>
                         </div>
+
                     </div>
-                    <div class="col-xs-12 col-sm-12 col-md-12 pt-3 pl-md-3">
-                        <button type="submit" class="btn btn-primary">Add User</button>
+
+                    {{-- KANAN --}}
+                    <div class="col-md-4">
+                        <div class="sticky-top">
+
+                            <div class="card card-primary">
+                                <div class="card-header">
+                                    <h3 class="card-title">Detail</h3>
+
+                                    <div class="card-tools">
+                                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="card-body pb-0">
+
+                                    {{-- STATUS USER --}}
+                                    <div class="form-group">
+                                        <label>Status Pengguna</label>
+                                        <select name="status" class="form-control @error('status') is-invalid @enderror">
+                                            <option value="1" {{ old('status', '1') == '1' ? 'selected' : '' }}>
+                                                Aktif
+                                            </option>
+                                            <option value="0" {{ old('status') === '0' ? 'selected' : '' }}>
+                                                Nonaktif
+                                            </option>
+                                        </select>
+
+                                        @error('status')
+                                            <small class="text-danger">{{ $message }}</small>
+                                        @enderror
+
+                                        <small class="text-muted">
+                                            Tentukan apakah pengguna dapat mengakses sistem
+                                        </small>
+                                    </div>
+
+                                    {{-- ACTION BUTTON --}}
+                                    <div class="form-group mt-4 d-flex justify-content-end">
+                                        <a href="{{ route('user.index') }}" class="btn btn-secondary mr-2">
+                                            Batal
+                                        </a>
+
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save mr-1"></i> Simpan
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
-            </div>
+
+                </div>
+
+            </form>
+
         </div>
-    </div>
-    </div>
-    </div>
-
-
-
-    </form>
-    </div>
-    </div>
-    </div>
     </div>
 
 @stop
@@ -433,12 +288,13 @@
 
             // Bind change and add-more events to all days
             ['monday',
-            'tuesday',
-            'wednesday',
-            'thursday',
-            'friday',
-            'saturday',
-            'sunday',].forEach(function(day) {
+                'tuesday',
+                'wednesday',
+                'thursday',
+                'friday',
+                'saturday',
+                'sunday',
+            ].forEach(function(day) {
                 $('#' + day).on('change', function() {
                     toggleDayFields(day);
                 }).trigger('change');
@@ -463,77 +319,107 @@
     </script>
 
 
-<script>
-    $(document).ready(function () {
-        // Initially hide the row with id 'employee' when the page loads
-        // Check if the checkbox is checked on page load and toggle visibility accordingly
-        if ($('#is_employee').prop('checked')) {
-            $('#employee').show();  // Show the row if checkbox is checked
-        } else {
-            $('#employee').hide();  // Hide the row if checkbox is unchecked
-        }
-
-        // When the 'Is Employee' checkbox is changed, toggle the row visibility
-        $('#is_employee').change(function () {
-            if ($(this).prop('checked')) {
-                $('#employee').show();  // Show the row if checkbox is checked
+    <script>
+        $(document).ready(function() {
+            // Initially hide the row with id 'employee' when the page loads
+            // Check if the checkbox is checked on page load and toggle visibility accordingly
+            if ($('#is_employee').prop('checked')) {
+                $('#employee').show(); // Show the row if checkbox is checked
             } else {
-                $('#employee').hide();  // Hide the row if checkbox is unchecked
+                $('#employee').hide(); // Hide the row if checkbox is unchecked
             }
+
+            // When the 'Is Employee' checkbox is changed, toggle the row visibility
+            $('#is_employee').change(function() {
+                if ($(this).prop('checked')) {
+                    $('#employee').show(); // Show the row if checkbox is checked
+                } else {
+                    $('#employee').hide(); // Hide the row if checkbox is unchecked
+                }
+            });
         });
-    });
-</script>
+    </script>
 
-@push('js')
-<script>
-$(document).ready(function () {
-    const serviceDetailsContainer = $('#service-details-container');
-    const services = @json($services);
+    @push('js')
+        <script>
+            $(document).ready(function() {
+                const serviceDetailsContainer = $('#service-details-container');
+                const services = @json($services);
+                const slotGroups = @json($slotGroups);
 
-    // Ketika user memilih service
-    $('#service').on('change', function () {
-        const selectedServices = $(this).val() || [];
-        serviceDetailsContainer.empty();
+                // Ketika user memilih service
+                $('#service').on('change', function() {
+                    const selectedServices = $(this).val() || [];
+                    serviceDetailsContainer.empty();
 
-        selectedServices.forEach(serviceId => {
-            const service = services.find(s => s.id == serviceId);
-            if (!service) return;
+                    selectedServices.forEach(serviceId => {
+                        const service = services.find(s => s.id == serviceId);
+                        if (!service) return;
 
-            // Template HTML untuk setiap service
-            const serviceBlock = `
-                <div class="card shadow-sm mb-3 border border-secondary">
-                    <div class="card-body">
-                        <h5 class="card-title mb-3 text-primary">
-                            <i class="fas fa-concierge-bell"></i> ${service.title}
-                        </h5>
+                        // Template HTML untuk setiap service
+                        const serviceBlock = `
+<div class="card card-outline card-primary mb-3">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-concierge-bell mr-1"></i> ${service.title}
+        </h3>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label>Duration (minutes)</label>
-                                <select name="service_duration[${service.id}]" class="form-control">
-                                    <option value="">Select Duration</option>
-                                    ${[5,10,15,20,30,45,60].map(v => `<option value="${v}">${v}</option>`).join('')}
-                                </select>
-                            </div>
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+            </button>
+        </div>
+    </div>
 
-                            <div class="col-md-6 mb-3">
-                                <label>Break Duration (minutes)</label>
-                                <select name="service_break_duration[${service.id}]" class="form-control">
-                                    <option value="">No Break</option>
-                                    ${[5,10,15,20,25,30].map(v => `<option value="${v}">${v}</option>`).join('')}
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
+    <div class="card-body">
 
-            serviceDetailsContainer.append(serviceBlock);
-        });
-    });
-});
-</script>
-@endpush
+        <div class="row">
+
+    <div class="col-md-4 mb-3">
+        <label>Durasi Layanan</label>
+        <select name="service_duration[${service.id}]" class="form-control">
+            <option value="">Pilih Durasi</option>
+            ${[5,10,15,20,30,45,60].map(v => `<option value="${v}">${v} menit</option>`).join('')}
+        </select>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <label>Waktu Istirahat</label>
+        <select name="service_break_duration[${service.id}]" class="form-control">
+            <option value="">Tanpa Istirahat</option>
+            ${[5,10,15,20,25,30].map(v => `<option value="${v}">${v} menit</option>`).join('')}
+        </select>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <label>
+    Grup Waktu <small class="text-muted">(Opsional)</small>
+</label>
+        <select name="slot_group_id[${service.id}]" class="form-control">
+            <option value="">Pilih Slot Group</option>
+            ${slotGroups.map(sg => `
+                                                        <option value="${sg.id}">
+                                                            ${sg.name ?? 'Slot Group #' + sg.id}
+                                                        </option>
+                                                    `).join('')}
+        </select>
+        <small class="text-muted">
+            Grup slot waktu untuk layanan ini
+        </small>
+    </div>
+
+</div>
+
+    </div>
+</div>
+`;
+
+                        serviceDetailsContainer.append(serviceBlock);
+                    });
+                });
+            });
+        </script>
+    @endpush
 
 
 

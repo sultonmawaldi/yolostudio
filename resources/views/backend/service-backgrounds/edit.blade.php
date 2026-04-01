@@ -16,8 +16,13 @@
             {{-- Breadcrumb --}}
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"><i class="fas fa-home"></i> Beranda</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('service-backgrounds.index') }}">Service Background</a>
+                    <li class="breadcrumb-item">
+                        <a href="{{ route('dashboard') }}">
+                            <i class="fas fa-home"></i> Beranda
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ route('service-backgrounds.index') }}">Service Background</a>
                     </li>
                     <li class="breadcrumb-item active">Edit</li>
                 </ol>
@@ -32,12 +37,12 @@
         <form action="{{ route('service-backgrounds.update', $background) }}" method="POST">
             @csrf
             @method('PUT')
+
             <div class="row">
 
-                {{-- KONTEN KIRI --}}
+                {{-- KIRI --}}
                 <div class="col-md-8">
 
-                    {{-- INFORMASI BACKGROUND --}}
                     <div class="card card-light">
                         <div class="card-header">
                             <h3 class="card-title">Informasi Background</h3>
@@ -53,39 +58,53 @@
                             {{-- SERVICE --}}
                             <div class="form-group">
                                 <label>Pilih Service</label>
-                                <select name="service_id" class="form-control" required>
+                                <select name="service_id" class="form-control @error('service_id') is-invalid @enderror">
+
                                     <option value="">-- Pilih Service --</option>
 
                                     @foreach ($services as $service)
                                         <option value="{{ $service->id }}"
                                             {{ old('service_id', $background->service_id) == $service->id ? 'selected' : '' }}>
-
-                                            {{ $service->title }} {{-- atau name, sesuaikan kolom --}}
+                                            {{ $service->title }}
                                         </option>
                                     @endforeach
-
                                 </select>
+
+                                @error('service_id')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
 
-                            {{-- NAMA --}}
+                            {{-- NAME --}}
                             <div class="form-group">
                                 <label>Nama Background</label>
-                                <input type="text" name="name" class="form-control"
-                                    value="{{ old('name', $background->name) }}" required>
+                                <input type="text" name="name"
+                                    class="form-control @error('name') is-invalid @enderror"
+                                    value="{{ old('name', $background->name) }}">
+
+                                @error('name')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
 
                             {{-- VALUE --}}
                             <div class="form-group">
                                 <label>Background Value (Color)</label>
-                                <input type="color" name="value" id="bgValue" class="form-control form-control-color"
+                                <input type="color" name="value" id="bgValue"
+                                    class="form-control form-control-color @error('value') is-invalid @enderror"
                                     value="{{ old('value', $background->value) }}">
+
+                                @error('value')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
 
                             {{-- PREVIEW --}}
                             <div class="form-group">
                                 <label>Preview</label>
                                 <div id="previewBox"
-                                    style="width:100%;height:60px;border-radius:12px;border:1px solid #ddd; background: {{ old('value', $background->value) }};">
+                                    style="width:100%;height:60px;border-radius:12px;border:1px solid #ddd;
+                                    background: {{ old('value', $background->value) }};">
                                 </div>
                             </div>
 
@@ -94,11 +113,10 @@
 
                 </div>
 
-                {{-- SIDEBAR --}}
+                {{-- KANAN --}}
                 <div class="col-md-4">
                     <div class="sticky-top">
 
-                        {{-- DETAIL --}}
                         <div class="card card-primary">
                             <div class="card-header">
                                 <h3 class="card-title">Detail</h3>
@@ -115,16 +133,20 @@
                                     <label>Status Aktif</label>
                                     <select name="is_active" class="form-control">
                                         <option value="1"
-                                            {{ old('is_active', $background->is_active) ? 'selected' : '' }}>Aktif</option>
+                                            {{ old('is_active', $background->is_active) ? 'selected' : '' }}>
+                                            Aktif
+                                        </option>
                                         <option value="0"
-                                            {{ old('is_active', $background->is_active) == 0 ? 'selected' : '' }}>Nonaktif
+                                            {{ old('is_active', $background->is_active) == 0 ? 'selected' : '' }}>
+                                            Nonaktif
                                         </option>
                                     </select>
                                 </div>
 
                                 <div class="form-group mt-4 d-flex justify-content-end">
-                                    <a href="{{ route('service-backgrounds.index') }}"
-                                        class="btn btn-secondary mr-2">Batal</a>
+                                    <a href="{{ route('service-backgrounds.index') }}" class="btn btn-secondary mr-2">
+                                        Batal
+                                    </a>
 
                                     <button type="submit" class="btn btn-danger">
                                         <i class="fas fa-save me-1"></i> Perbarui
@@ -144,12 +166,54 @@
 
 @section('js')
     <script>
-        // Preview color background
+        // Preview color
         const bgInput = document.getElementById('bgValue');
         const preview = document.getElementById('previewBox');
 
         bgInput.addEventListener('input', () => {
             preview.style.background = bgInput.value;
         });
+
+        // Toast success/error
+        @if (session('success') || session('error'))
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            });
+
+            @if (session('success'))
+                Toast.fire({
+                    icon: 'success',
+                    title: "{{ session('success') }}"
+                });
+            @endif
+
+            @if (session('error'))
+                Toast.fire({
+                    icon: 'error',
+                    title: "{{ session('error') }}"
+                });
+            @endif
+        @endif
+
+        // Validation error
+        @if ($errors->any())
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Terjadi Kesalahan',
+                    html: `<ul style="text-align:left;">
+                    @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                    </ul>`,
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#d33'
+                });
+            });
+        @endif
     </script>
 @stop

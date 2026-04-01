@@ -12,6 +12,7 @@ use App\Models\Service;
 use App\Models\Holiday;
 use App\Models\Employee;
 use App\Models\Coupon;
+use App\Models\SlotGroup;
 use Hash;
 use Session;
 
@@ -45,7 +46,15 @@ class UserController extends Controller
         $roles = Role::where('name', '!=', 'admin')->get();
         $services = Service::whereStatus(1)->get();
 
-        return view('backend.user.create', compact('roles', 'services', 'days'));
+        // ✅ TAMBAHAN
+        $slotGroups = SlotGroup::all();
+
+        return view('backend.user.create', compact(
+            'roles',
+            'services',
+            'days',
+            'slotGroups' // 🔥 WAJIB
+        ));
     }
 
     /**
@@ -58,16 +67,20 @@ class UserController extends Controller
             'email' => 'required|string|email|unique:users',
             'phone' => 'required|string|unique:users,phone',
             'password' => 'required|string|min:8|confirmed',
-            'roles' => 'required|exists:roles,name',
+            'status' => 'nullable|in:0,1',
+            'roles' => 'required|string|exists:roles,name',
             'service' => 'nullable|array',
-            'slot_duration' => 'nullable|numeric',
-            'break_duration' => 'nullable|numeric',
             'days' => 'nullable|array',
             'is_employee' => 'nullable|boolean',
+            'slot_group_id' => 'nullable|array',
+            'slot_group_id.*' => 'nullable|exists:slot_groups,id',
         ]);
 
-        // ✅ Generate unique role_uid sesuai role
-        $roleName = strtoupper(substr($data['roles'], 0, 3)); // ambil 3 huruf pertama role
+        // ✅ aman dari array / null
+        $role = $data['roles'] ?? 'USR';
+        $role = is_array($role) ? $role[0] : $role;
+
+        $roleName = strtoupper(substr($role, 0, 3));
         $roleUid = $roleName . '-' . now()->format('Ymd') . '-' . strtoupper(Str::random(6));
 
 
@@ -78,6 +91,7 @@ class UserController extends Controller
             'phone' => $data['phone'] ?? '',
             'email_verified_at' => now(),
             'password' => \Hash::make($data['password']),
+            'status' => $request->status ?? 1,
             'role_uid' => $roleUid, // ✅ tambahkan di sini
         ]);
 
@@ -94,20 +108,21 @@ class UserController extends Controller
             $employee = Employee::create([
                 'user_id'        => $user->id,
                 'days'           => $data['days'],
-                'slot_duration'  => $data['slot_duration'] ?: null,
-                'break_duration' => $data['break_duration'] ?: null,
             ]);
 
             // ✅ Attach pivot data (service + durasi per layanan)
             $services = $request->input('service', []);
             $durations = $request->input('service_duration', []);
             $breaks = $request->input('service_break_duration', []);
+            $slotGroups = $request->input('slot_group_id', []);
 
             $pivotData = [];
+
             foreach ($services as $serviceId) {
                 $pivotData[$serviceId] = [
-                    'duration' => $durations[$serviceId] ?? $data['slot_duration'] ?? 0,
-                    'break_duration' => $breaks[$serviceId] ?? $data['break_duration'] ?? 0,
+                    'duration'        => $durations[$serviceId] ?? 0,
+                    'break_duration'  => $breaks[$serviceId] ?? 0,
+                    'slot_group_id'   => $slotGroups[$serviceId] ?? null, // 🔥 INI WAJIB
                 ];
             }
 
@@ -116,7 +131,7 @@ class UserController extends Controller
             }
         }
 
-        return redirect()->route('user.index')->with('success', 'User has been created successfully!');
+        return redirect()->route('user.index')->with('success', 'Pengguna telah berhasil ditambahkan');
     }
 
     /**
@@ -143,7 +158,18 @@ class UserController extends Controller
         $roles = Role::all();
         $services = Service::whereStatus(1)->get();
 
-        return view('backend.user.edit', compact('user', 'roles', 'services', 'days', 'steps', 'breaks', 'employeeDays'));
+        $slotGroups = SlotGroup::all();
+
+        return view('backend.user.edit', compact(
+            'user',
+            'roles',
+            'services',
+            'days',
+            'steps',
+            'breaks',
+            'employeeDays',
+            'slotGroups' // 🔥 WAJIB
+        ));
     }
 
     public function update(Request $request, User $user)
@@ -155,12 +181,12 @@ class UserController extends Controller
             'password' => 'nullable|string|min:8|confirmed',
             'roles' => 'nullable|array|exists:roles,name',
             'service' => 'nullable|array',
-            'slot_duration' => 'nullable|numeric',
-            'break_duration' => 'nullable|numeric',
             'days' => 'nullable',
             'status' => 'nullable|numeric',
             'is_employee' => 'nullable',
             'holidays.date.*' => 'sometimes|required',
+            'slot_group_id' => 'nullable|array',
+            'slot_group_id.*' => 'nullable|exists:slot_groups,id',
         ]);
 
         // ✅ Generate role_uid otomatis jika belum ada
@@ -174,19 +200,19 @@ class UserController extends Controller
         // Validation for self-role/status changes
         if (\Auth::id() === $user->id) {
             if ($request->filled('roles') && !$user->hasAnyRole($request->roles)) {
-                return redirect()->back()->withErrors(['roles' => 'You cannot change your own role.']);
+                return redirect()->back()->withErrors(['roles' => 'Anda tidak dapat mengubah peran Anda sendiri.']);
             }
             if ($request->has('status') && $request->status != $user->status) {
-                return redirect()->back()->withErrors(['status' => 'You cannot change your own status.']);
+                return redirect()->back()->withErrors(['status' => 'Anda tidak dapat mengubah status Anda sendiri.']);
             }
         }
 
         if ($user->id === 1 && (!in_array('admin', $request->roles ?? []))) {
-            return redirect()->back()->withErrors(['roles' => 'The first user must always have the admin role.']);
+            return redirect()->back()->withErrors(['roles' => 'Pengguna pertama harus selalu memiliki peran admin.']);
         }
 
         if ($user->hasRole('admin') && !in_array('admin', $request->roles ?? [])) {
-            return redirect()->back()->withErrors(['roles' => 'The admin role cannot be removed.']);
+            return redirect()->back()->withErrors(['roles' => 'Peran admin tidak dapat dihapus.']);
         }
 
         $status = $user->id === 1 ? 1 : ($request->status ?? 0);
@@ -231,12 +257,14 @@ class UserController extends Controller
             $services = $request->input('service', []);
             $durations = $request->input('service_duration', []);
             $breaks = $request->input('service_break_duration', []);
+            $slotGroups = $request->input('slot_group_id', []);
 
             $pivotData = [];
             foreach ($services as $serviceId) {
                 $pivotData[$serviceId] = [
-                    'duration' => $durations[$serviceId] ?? $data['slot_duration'] ?? 0,
-                    'break_duration' => $breaks[$serviceId] ?? $data['break_duration'] ?? 0,
+                    'duration' => $durations[$serviceId] ?? 0,
+                    'break_duration' => $breaks[$serviceId] ?? 0,
+                    'slot_group_id' => $slotGroups[$serviceId] ?? null, // 🔥 WAJIB
                 ];
             }
 
@@ -289,7 +317,7 @@ class UserController extends Controller
             }
         }
 
-        return redirect()->route('user.index')->with('success', 'Profile has been updated successfully!');
+        return redirect()->route('user.index')->with('success', 'Profil telah berhasil diperbarui');
     }
 
 
@@ -312,15 +340,15 @@ class UserController extends Controller
     public function destroy(User $user, Request $request)
     {
         if ($user->id == 1) {
-            return back()->withErrors('First admin user cannot be deleted.');
+            return back()->withErrors('Pengguna admin pertama tidak dapat dihapus.');
         }
 
         if ($user->id === $request->user()->id) {
-            return back()->withErrors('You cannot delete yourself.');
+            return back()->withErrors('Anda tidak dapat menghapus akun Anda sendiri.');
         }
 
         $user->delete();
-        return redirect()->back()->with('success', 'User has been successfully trashed!');
+        return redirect()->back()->with('success', 'Pengguna telah berhasil dipindahkan ke tempat sampah');
     }
 
 
@@ -337,7 +365,7 @@ class UserController extends Controller
         if (!is_null($user)) {
             $user->restore();
         }
-        return redirect()->back()->with("success", "User Restored Succesfully");
+        return redirect()->back()->with("success", "Pengguna telah berhasil dipulihkan");
     }
 
 
@@ -348,12 +376,12 @@ class UserController extends Controller
 
         //for employee
         if ($user->employee->appointments->count()) {
-            return back()->withErrors('User cannot be deleted permanently, already engaged in existing bookings!');
+            return back()->withErrors('Pengguna tidak dapat dihapus permanen karena masih memiliki booking aktif');
         }
 
         //for user
         if ($user->appointments->count()) {
-            return back()->withErrors('User cannot be deleted permanently, already engaged in existing bookings!');
+            return back()->withErrors('Pengguna tidak dapat dihapus permanen karena masih memiliki booking aktif');
         }
 
         // Check if the user has an associated employee
@@ -389,7 +417,7 @@ class UserController extends Controller
         // Permanently delete the user from the database
         $user->forceDelete();
 
-        return back()->withSuccess('User and all related data (employee, holidays, appointments, bookings) have been deleted permanently!');
+        return back()->withSuccess('Pengguna beserta seluruh data terkait (karyawan, hari libur, janji temu, dan pemesanan) telah berhasil dihapus secara permanen');
     }
 
 
@@ -403,13 +431,13 @@ class UserController extends Controller
         ]);
 
         if (!Hash::check($request->current_password, $user->password)) {
-            return back()->withErrors(['current_password' => 'Current password does not match!']);
+            return back()->withErrors(['current_password' => 'Kata sandi saat ini tidak sesuai.']);
         }
 
         $user->password = Hash::make($request->password);
         $user->save();
 
-        return redirect()->back()->with('success', 'Password has been successfully Updated!');
+        return redirect()->back()->with('success', 'Kata sandi telah berhasil diperbarui');
     }
 
     public function updateProfileImage(Request $request, User $user)
@@ -431,7 +459,7 @@ class UserController extends Controller
             'image' => $imageName
         ]);
 
-        return back()->withSuccess('Profile image has been updated successfully!');
+        return back()->withSuccess('Gambar profil telah berhasil diperbarui');
     }
 
 
@@ -449,7 +477,7 @@ class UserController extends Controller
             $user->update(['image' => null]);
         }
 
-        return back()->withSuccess('Profile image deleted!');
+        return back()->withSuccess('Gambar profil telah berhasil dihapus');
     }
 
 

@@ -103,11 +103,8 @@
                         <div class="card card-light">
                             <div class="card-header">
                                 <h3 class="card-title">Deskripsi</h3>
-                                <small class="text-muted d-block">
-                                    Deskripsi biasanya tidak selalu ditampilkan, tetapi beberapa tema mungkin
-                                    menampilkannya.
-                                </small>
-
+                                <small>&nbsp;&nbsp; Deskripsi tidak selalu ditampilkan, tergantung tema yang
+                                    digunakan.</small>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Tutup">
                                         <i class="fas fa-minus" aria-hidden="true"></i>

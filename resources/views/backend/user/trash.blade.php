@@ -1,168 +1,444 @@
 @extends('adminlte::page')
 
-@section('title', 'All Services')
+@section('title', 'Trash Pengguna')
 
 @section('content_header')
-    <div class="row mb-2">
-        <div class="col-sm-6">
-            <h1>All Users</h1>
-        </div>
-        <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="{{ route('user.create') }}">+ Add New</a> |</li>
-                <li class=""> &nbsp; <a href="{{ route('user.trash') }}">View Trash</a></li>
-            </ol>
-        </div>
+
+    <div class="page-title-wrapper text-center mb-4">
+        <h1 class="page-title">
+            <i class="fas fa-trash-alt me-2"></i>
+            Trash Pengguna
+        </h1>
+        <div class="title-divider"></div>
     </div>
+
 @stop
+
 
 @section('content')
-    <section class="content">
-        <div class="container-fluid">
-            @if (count($errors) > 0)
-                <div class="alert alert-dismissable alert-danger mt-3">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <strong>Whoops!</strong> There were some problems with your input.<br>
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-            @if (session('success'))
-                <div class="alert alert-success alert-dismissable">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <strong>{{ session('success') }}</strong>
-                </div>
-            @endif
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card py-2 px-2">
 
-                        <div class="card-body p-0">
-                            <table id="myTable" class="table table-striped projects ">
-                                <thead>
-                                    <tr>
-                                        <th style="width: 1%">
-                                            #
-                                        </th>
-                                        <th style="width: 20%">
-                                            Name
-                                        </th>
-                                        <th style="width: 10%">
-                                            Image
-                                        </th>
-                                        <th style="width: 10%">
-                                            Status
-                                        </th>
-                                        <th style="width: 10%">
-                                            Role
-                                        </th>
-                                        <th style="width: 12%">
-                                            Action
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($users as $user)
-                                        <tr>
-                                            <td>
-                                                {{ $loop->iteration }}
-                                            </td>
-                                            <td>
-                                                <a>
-                                                    {{ $user->name }}
-                                                </a>
-                                                <br>
-                                                <small>
-                                                    {{ $user->created_at->diffForHumans() }}
-                                                </small>
-                                            </td>
-                                            <td>
-                                                <img style="width:50px;" class="rounded-pill"
-                                                    src="{{ $user->profileImage() }}" alt="">
-                                            </td>
-                                            <td>
-                                                @foreach ($user->getRoleNames() as $role)
-                                                    {{ ucfirst($role) }}@if (!$loop->last)
-                                                        ,
-                                                    @endif
-                                                @endforeach
-                                            </td>
+    <div class="card border-0 shadow-lg rounded-4">
 
-                                            <td class="project-state">
-                                                @if ($user->status)
-                                                    <span class="badge badge-success">Active</span>
-                                                @else
-                                                    <span class="badge badge-danger">Pending</span>
-                                                @endif
-                                            </td>
-                                            <td class="project-actions text-right d-flex ">
-                                                <div>
-                                                    <a onclick="return confirm('Are you sure you want to restore this user?')"  class="btn btn-primary btn-sm mr-2"
-                                                        href="{{ route('user.restore', $user->id) }}">
-                                                        <i class="fas fa-folder">
-                                                        </i>
-                                                        Restore
-                                                    </a>
-                                                </div>
-                                                <div>
-                                                    <form action="{{ route('user.force.delete', $user->id) }}"
-                                                        method="post">
-                                                        @csrf
-                                                        @method('delete')
-                                                        <button
-                                                            onclick="return confirm('Are you sure you want to delete this item?');"
-                                                            type="submit" class="btn btn-danger btn-sm">
-                                                            <i class="fas fa-trash">
-                                                            </i>
-                                                            Trash
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+        <div class="card-body">
 
-                        </div>
-                        <!-- /.card-body -->
-                    </div>
-                </div>
-                <!-- /.col -->
+            <div class="mb-3 text-end">
+
+                <a href="{{ route('user.index') }}" class="btn btn-outline-secondary shadow-sm me-2">
+                    <i class="fas fa-arrow-left me-1"></i> Kembali
+                </a>
+
+                <a href="{{ route('user.create') }}" class="btn btn-gradient-primary shadow-sm">
+                    <i class="fas fa-plus me-1"></i> Tambah Pengguna
+                </a>
 
             </div>
-            <!-- /.row -->
-        </div><!-- /.container-fluid -->
-    </section>
+
+            <div class="table-responsive">
+                <table id="trashTable" class="table align-middle table-hover table-borderless">
+
+                    <thead class="bg-gradient text-white" style="background: linear-gradient(90deg,#007bff,#00b4d8);">
+                        <tr>
+                            <th>#</th>
+                            <th>Nama</th>
+                            <th>Email</th>
+                            <th>Foto</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Dihapus</th>
+                            <th class="text-center">Aksi</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach ($users as $user)
+                            <tr class="bg-white shadow-sm-hover">
+
+                                <td class="fw-semibold text-muted">
+                                    {{ $loop->iteration }}
+                                </td>
+
+                                <td class="fw-bold text-dark">
+                                    {{ $user->name }} <br>
+                                    <small class="text-muted">{{ $user->created_at->diffForHumans() }}</small>
+                                </td>
+
+                                <td>{{ $user->email }}</td>
+
+                                <td>
+                                    <img src="{{ $user->profileImage() }}" style="width:50px;height:50px;object-fit:cover"
+                                        class="rounded-circle shadow-sm">
+                                </td>
+
+                                <td>
+                                    @forelse ($user->getRoleNames() as $role)
+                                        <span class="badge bg-gradient-info text-white px-3 py-1">
+                                            {{ ucfirst($role) }}
+                                        </span>
+                                    @empty
+                                        <span class="badge bg-gradient-secondary">-</span>
+                                    @endforelse
+                                </td>
+
+                                <td>
+                                    @php
+                                        $badgeClass = $user->status ? 'bg-gradient-success' : 'bg-gradient-danger';
+                                        $statusText = $user->status ? 'Aktif' : 'Tidak Aktif';
+                                    @endphp
+
+                                    <span class="badge text-white px-3 py-2 rounded-pill shadow-sm {{ $badgeClass }}">
+                                        {{ $statusText }}
+                                    </span>
+                                </td>
+
+                                <td class="text-muted">
+                                    {{ $user->deleted_at->diffForHumans() }}
+                                </td>
+
+                                <td class="text-center">
+
+                                    <div class="d-flex justify-content-center flex-wrap gap-2">
+
+                                        <a href="{{ route('user.restore', $user->id) }}"
+                                            class="btn btn-sm btn-outline-success action-btn" title="Restore">
+                                            <i class="fas fa-undo"></i>
+                                        </a>
+
+                                        <form action="{{ route('user.force.delete', $user->id) }}" method="POST"
+                                            class="force-delete-form">
+                                            @csrf
+                                            @method('DELETE')
+
+                                            <button type="submit" class="btn btn-sm btn-outline-danger action-btn"
+                                                title="Hapus Permanen">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        @endforeach
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+
 @stop
+
 
 @section('css')
+    <style>
+        .card {
+            background: #ffffff;
+            border: none;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 6px 22px rgba(0, 0, 0, 0.05);
+        }
 
+        .table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+            background-color: #fff;
+            font-size: 0.95rem;
+        }
+
+        .table thead th {
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid rgba(0, 123, 255, 0.25);
+            text-align: center;
+            vertical-align: middle;
+            color: #fff;
+            padding: 14px 12px;
+            white-space: nowrap;
+        }
+
+        .table td {
+            vertical-align: middle !important;
+            text-align: center;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            border-right: 1px solid rgba(0, 0, 0, 0.03);
+            padding: 10px 12px;
+            color: #333;
+        }
+
+        .table td:last-child,
+        .table th:last-child {
+            border-right: none;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f7faff;
+            transition: 0.25s ease;
+        }
+
+        .bg-gradient-success {
+            background: linear-gradient(45deg, #28a745, #60d394);
+        }
+
+        .bg-gradient-danger {
+            background: linear-gradient(45deg, #e74c3c, #ff7675);
+        }
+
+        .btn-gradient-primary {
+            background: linear-gradient(90deg, #007bff, #00b4d8);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 0.5rem 1.25rem;
+            transition: 0.3s;
+        }
+
+        .btn-gradient-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .btn-outline-info,
+        .btn-outline-danger {
+            border-radius: 30px;
+            padding: 6px 10px;
+        }
+
+        .dataTables_filter {
+            text-align: right;
+        }
+
+        .dataTables_filter input {
+            border-radius: 50px !important;
+            padding: 0.5rem 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border: 1px solid #dee2e6;
+            transition: 0.3s;
+        }
+
+        .dataTables_filter input:focus {
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+            border-color: #80bdff;
+        }
+
+        .table thead th:first-child {
+            border-top-left-radius: 10px;
+        }
+
+        .table thead th:last-child {
+            border-top-right-radius: 10px;
+        }
+
+        .table tbody tr:last-child td:first-child {
+            border-bottom-left-radius: 10px;
+        }
+
+        .table tbody tr:last-child td:last-child {
+            border-bottom-right-radius: 10px;
+        }
+
+        .table {
+            overflow: hidden;
+            border-radius: 10px;
+        }
+
+        .page-title-wrapper {
+            margin-top: 10px;
+        }
+
+        .page-title {
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: #2c3e50;
+            letter-spacing: 0.4px;
+        }
+
+        .page-title i {
+            color: #007bff;
+        }
+
+        .title-divider {
+            width: 70px;
+            height: 4px;
+            margin: 12px auto 0;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #007bff, #00c4ff);
+        }
+
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 1.4rem;
+            }
+
+            .title-divider {
+                width: 50px;
+                height: 3px;
+            }
+        }
+
+        .table {
+            font-size: 0.82rem;
+        }
+
+        .table thead th {
+            font-weight: 600;
+            font-size: 0.75rem;
+            padding: 10px 10px;
+        }
+
+        .table td {
+            padding: 8px 10px;
+            font-size: 0.82rem;
+        }
+
+        .action-btn {
+            min-width: 36px;
+            height: 36px;
+            border-radius: 50px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .2s;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #trashTable tbody tr {
+            animation: fadeInUp .3s ease forwards;
+        }
+    </style>
 @stop
 
+
 @section('js')
-
-    {{-- hide notifcation --}}
     <script>
         $(document).ready(function() {
-            $(".alert").delay(6000).slideUp(300);
-        });
-    </script>
 
-    <script>
-        $(document).ready(function() {
-            $('#myTable').DataTable({
-                responsive: true
+            // ==============================
+            // DATATABLE
+            // ==============================
+            let table = $('#trashTable').DataTable({
+                responsive: true,
+                paging: true,
+                info: true,
+                pageLength: 10,
+
+                dom: "<'row mb-3'<'col-12 d-flex justify-content-end pe-3'f>>rtip",
+
+                language: {
+                    search: "",
+                    searchPlaceholder: "Cari pengguna di trash...",
+                    paginate: {
+                        first: "Pertama",
+                        last: "Terakhir",
+                        next: "Berikutnya",
+                        previous: "Sebelumnya"
+                    },
+                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ pengguna",
+                    infoEmpty: "Menampilkan 0 sampai 0 dari 0 pengguna",
+                    infoFiltered: "(difilter dari _MAX_ total pengguna)",
+                    zeroRecords: "Tidak ada pengguna ditemukan",
+                    lengthMenu: "Tampilkan _MENU_ baris"
+                }
             });
 
+            // ==============================
+            // CUSTOM SEARCH STYLE (ICON)
+            // ==============================
+            $('#trashTable_filter input')
+                .addClass('form-control rounded-pill shadow-sm')
+                .css({
+                    padding: '0.45rem 2.5rem 0.45rem 1rem',
+                    border: 'none',
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg fill='%23666' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='16' height='16'%3E%3Cpath d='M10 2a8 8 0 105.293 14.293l5.707 5.707 1.414-1.414-5.707-5.707A8 8 0 0010 2zm0 2a6 6 0 110 12 6 6 0 010-12z'/%3E%3C/svg%3E")`,
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'right 10px center',
+                    backgroundSize: '16px'
+                });
+
+            // ==============================
+            // ANIMASI FADE (tetap dipakai)
+            // ==============================
+            table.on('draw', function() {
+                $('#trashTable tbody tr').each(function(i) {
+                    $(this)
+                        .css('opacity', '0')
+                        .delay(i * 50)
+                        .animate({
+                            opacity: 1
+                        }, 200);
+                });
+            });
+
+            // ==============================
+            // SWEET ALERT DELETE
+            // ==============================
+            $(document).on('submit', '.force-delete-form', function(e) {
+                e.preventDefault();
+                let form = this;
+
+                Swal.fire({
+                    title: 'Hapus Permanen?',
+                    text: 'Data akan dihapus selamanya!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, Hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+
+            // ==============================
+            // TOAST NOTIFICATION
+            // ==============================
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3500,
+                timerProgressBar: true
+            });
+
+            @if (session('success'))
+                Toast.fire({
+                    icon: 'success',
+                    title: "{{ session('success') }}"
+                });
+            @endif
+
+            @if (session('error'))
+                Toast.fire({
+                    icon: 'error',
+                    title: "{{ session('error') }}"
+                });
+            @endif
+
         });
     </script>
-
-@endsection
+@stop

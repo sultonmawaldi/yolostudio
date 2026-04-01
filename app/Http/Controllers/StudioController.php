@@ -114,7 +114,7 @@ class StudioController extends Controller
 
         return redirect()
             ->route('studio.index')
-            ->with('success', 'Studio berhasil diupdate');
+            ->with('success', 'Studio berhasil diperbarui');
     }
 
     public function destroy(Studio $studio)

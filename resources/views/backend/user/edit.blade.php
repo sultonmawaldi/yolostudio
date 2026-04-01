@@ -197,13 +197,12 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <div class="custom-control custom-switch">
-                                <!-- ✅ Hidden input memastikan nilai selalu terkirim -->
-                                <input type="hidden" name="is_employee" value="0">
-                                <input type="checkbox" class="custom-control-input" id="is_employee"
-                                    name="is_employee" value="1"
-                                    {{ old('is_employee') ? 'checked' : '' }}>
-                                <label class="custom-control-label" for="is_employee">Is Employee</label>
-                            </div>
+                                    <!-- ✅ Hidden input memastikan nilai selalu terkirim -->
+                                    <input type="hidden" name="is_employee" value="0">
+                                    <input type="checkbox" class="custom-control-input" id="is_employee"
+                                        name="is_employee" value="1" {{ old('is_employee') ? 'checked' : '' }}>
+                                    <label class="custom-control-label" for="is_employee">Is Employee</label>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -225,7 +224,8 @@
                                             <small class="text-muted"> Link employees to services they are assigned
                                                 to</small>
 
-                                            <select class="form-control servicesSelect2 @error('service[]') is-invalid @enderror"
+                                            <select
+                                                class="form-control servicesSelect2 @error('service[]') is-invalid @enderror"
                                                 name="service[]" data-placeholder="Select Service" id="service"
                                                 multiple>
                                                 @foreach ($services as $service)
@@ -240,8 +240,8 @@
                                                 <small class="text-danger"><strong>{{ $message }}</strong></small>
                                             @enderror
                                             <div id="service-details-container" class="mt-4">
-                                            {{-- Akan diisi dinamis oleh JS --}}
-                                        </div>
+                                                {{-- Akan diisi dinamis oleh JS --}}
+                                            </div>
                                         </div>
 
                                         <div class="col-xs-12 col-sm-12 col-md-12 mb-3">
@@ -605,12 +605,13 @@ if ($usingOldInput) {
 
             // Bind change and add-more events to all days
             ['monday',
-            'tuesday',
-            'wednesday',
-            'thursday',
-            'friday',
-            'saturday',
-            'sunday',].forEach(function(day) {
+                'tuesday',
+                'wednesday',
+                'thursday',
+                'friday',
+                'saturday',
+                'sunday',
+            ].forEach(function(day) {
                 $('#' + day).on('change', function() {
                     toggleDayFields(day);
                 }).trigger('change');
@@ -680,23 +681,23 @@ if ($usingOldInput) {
         });
     </script>
 
-@push('js')
-<script>
-$(document).ready(function () {
-    const serviceDetailsContainer = $('#service-details-container');
-    const services = @json($services);
+    @push('js')
+        <script>
+            $(document).ready(function() {
+                const serviceDetailsContainer = $('#service-details-container');
+                const services = @json($services);
 
-    // Ketika user memilih service
-    $('#service').on('change', function () {
-        const selectedServices = $(this).val() || [];
-        serviceDetailsContainer.empty();
+                // Ketika user memilih service
+                $('#service').on('change', function() {
+                    const selectedServices = $(this).val() || [];
+                    serviceDetailsContainer.empty();
 
-        selectedServices.forEach(serviceId => {
-            const service = services.find(s => s.id == serviceId);
-            if (!service) return;
+                    selectedServices.forEach(serviceId => {
+                        const service = services.find(s => s.id == serviceId);
+                        if (!service) return;
 
-            // Template HTML untuk setiap service
-            const serviceBlock = `
+                        // Template HTML untuk setiap service
+                        const serviceBlock = `
                 <div class="card shadow-sm mb-3 border border-secondary">
                     <div class="card-body">
                         <h5 class="card-title mb-3 text-primary">
@@ -724,12 +725,12 @@ $(document).ready(function () {
                 </div>
             `;
 
-            serviceDetailsContainer.append(serviceBlock);
-        });
-    });
-});
-</script>
-@endpush
+                        serviceDetailsContainer.append(serviceBlock);
+                    });
+                });
+            });
+        </script>
+    @endpush
 
 
 @stop

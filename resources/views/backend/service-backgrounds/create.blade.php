@@ -16,8 +16,13 @@
             {{-- Breadcrumb --}}
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"><i class="fas fa-home"></i> Beranda</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('service-backgrounds.index') }}">Service Background</a>
+                    <li class="breadcrumb-item">
+                        <a href="{{ route('dashboard') }}">
+                            <i class="fas fa-home"></i> Beranda
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ route('service-backgrounds.index') }}">Service Background</a>
                     </li>
                     <li class="breadcrumb-item active">Tambah</li>
                 </ol>
@@ -33,10 +38,9 @@
             @csrf
             <div class="row">
 
-                {{-- KONTEN KIRI --}}
+                {{-- KIRI --}}
                 <div class="col-md-8">
 
-                    {{-- INFORMASI BACKGROUND --}}
                     <div class="card card-light">
                         <div class="card-header">
                             <h3 class="card-title">Informasi Background</h3>
@@ -52,32 +56,44 @@
                             {{-- SERVICE --}}
                             <div class="form-group">
                                 <label>Pilih Service</label>
-                                <select name="service_id" class="form-control" required>
+                                <select name="service_id" class="form-control @error('service_id') is-invalid @enderror">
+
                                     <option value="">-- Pilih Service --</option>
 
                                     @foreach ($services as $service)
                                         <option value="{{ $service->id }}"
                                             {{ old('service_id') == $service->id ? 'selected' : '' }}>
-
-                                            {{ $service->title }} {{-- atau name --}}
+                                            {{ $service->title }}
                                         </option>
                                     @endforeach
-
                                 </select>
+
+                                @error('service_id')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
 
-                            {{-- NAMA --}}
+                            {{-- NAME --}}
                             <div class="form-group">
                                 <label>Nama Background</label>
-                                <input type="text" name="name" class="form-control" value="{{ old('name') }}"
-                                    required>
+                                <input type="text" name="name"
+                                    class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}">
+
+                                @error('name')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
 
                             {{-- VALUE --}}
                             <div class="form-group">
                                 <label>Background Value (Color)</label>
-                                <input type="color" name="value" id="bgValue" class="form-control form-control-color"
+                                <input type="color" name="value" id="bgValue"
+                                    class="form-control form-control-color @error('value') is-invalid @enderror"
                                     value="{{ old('value', '#ffffff') }}">
+
+                                @error('value')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
 
                             {{-- PREVIEW --}}
@@ -93,11 +109,10 @@
 
                 </div>
 
-                {{-- SIDEBAR --}}
+                {{-- KANAN --}}
                 <div class="col-md-4">
                     <div class="sticky-top">
 
-                        {{-- DETAIL --}}
                         <div class="card card-primary">
                             <div class="card-header">
                                 <h3 class="card-title">Detail</h3>
@@ -142,12 +157,54 @@
 
 @section('js')
     <script>
-        // Preview color background
+        // Preview color
         const bgInput = document.getElementById('bgValue');
         const preview = document.getElementById('previewBox');
 
         bgInput.addEventListener('input', () => {
             preview.style.background = bgInput.value;
         });
+
+        // Toast success/error (SAMA seperti addons)
+        @if (session('success') || session('error'))
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            });
+
+            @if (session('success'))
+                Toast.fire({
+                    icon: 'success',
+                    title: "{{ session('success') }}"
+                });
+            @endif
+
+            @if (session('error'))
+                Toast.fire({
+                    icon: 'error',
+                    title: "{{ session('error') }}"
+                });
+            @endif
+        @endif
+
+        // VALIDATION ERROR 
+        @if ($errors->any())
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops!',
+                    html: `<ul style="text-align:left;">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>`,
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#d33'
+                });
+            });
+        @endif
     </script>
 @stop

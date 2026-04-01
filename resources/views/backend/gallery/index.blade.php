@@ -29,6 +29,7 @@
                         <th>Gambar</th>
                         <th>Judul</th>
                         <th>Service</th> {{-- ✅ GANTI --}}
+                        <th>Status</th>
                         <th>Dibuat</th>
                         <th>Diperbarui</th>
                         <th class="text-center">Aksi</th>
@@ -60,6 +61,14 @@
                                 </span>
                             </td>
 
+                            <td>
+                                <span
+                                    class="badge px-3 py-2 rounded-pill shadow-sm 
+                                    {{ $gallery->status ? 'bg-gradient-success' : 'bg-gradient-secondary' }}">
+                                    {{ $gallery->status ? 'Aktif' : 'Nonaktif' }}
+                                </span>
+                            </td>
+
                             <td>{{ optional($gallery->created_at)->format('d M Y') }}</td>
                             <td>{{ optional($gallery->updated_at)->format('d M Y') }}</td>
 
@@ -86,7 +95,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center text-muted py-5">
+                            <td colspan="8" class="text-center text-muted py-5">
                                 Belum ada data gallery.
                             </td>
                         </tr>

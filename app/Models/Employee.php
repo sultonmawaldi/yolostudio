@@ -57,11 +57,6 @@ class Employee extends Model
         return $this->hasMany(Appointment::class);
     }
 
-    public function slotGroups()
-    {
-        return $this->hasMany(SlotGroup::class);
-    }
-
     // App\Models\Employee.php
     public function studio()
     {

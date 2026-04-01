@@ -13,18 +13,25 @@ class GalleryController extends Controller
     // ===========================
     public function index()
     {
-        // ✅ Ambil hanya gallery yang aktif + eager loading service
-        $galleries = Gallery::with('service')
+        // ✅ Ambil service aktif (untuk button filter)
+        $services = Service::query()
             ->where('status', 1)
-            ->latest()
+            ->orderBy('id', 'asc') // konsisten dengan gallery
             ->get();
 
-        // ✅ Ambil hanya service yang aktif
-        $services = Service::where('status', 1)
-            ->orderBy('title', 'asc')
+        // ✅ Ambil gallery aktif + hanya yang punya service
+        $galleries = Gallery::query()
+            ->with(['service:id,title']) // ambil yg dibutuhkan saja (lebih ringan)
+            ->where('status', 1)
+            ->whereNotNull('service_id') // hindari error relasi null
+            ->orderBy('service_id', 'asc') // 🔥 grouping per service
+            ->orderBy('created_at', 'desc') // urutan dalam service
             ->get();
 
-        return view('frontend.gallery', compact('galleries', 'services'));
+        return view('frontend.gallery', [
+            'galleries' => $galleries,
+            'services'  => $services,
+        ]);
     }
 
     // ===========================

@@ -104,7 +104,7 @@
                         <div class="card card-light">
                             <div class="card-header">
                                 <h3 class="card-title">Deskripsi</h3>
-                                <small>&nbsp;&nbsp;Deskripsi tidak selalu ditampilkan, tergantung tema yang
+                                <small>&nbsp;&nbsp; Deskripsi tidak selalu ditampilkan, tergantung tema yang
                                     digunakan.</small>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Tutup">
