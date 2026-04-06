@@ -488,7 +488,6 @@
             display: flex;
             align-items: center;
             padding: 0 35px 0 10px;
-            /* beri ruang untuk X dan arrow */
             position: relative;
         }
 
@@ -499,21 +498,49 @@
             line-height: normal;
         }
 
-        /* posisi panah dropdown */
+        /* posisi panah (JANGAN DIUBAH DARI SINI) */
         .select2-container--default .select2-selection--single .select2-selection__arrow {
             height: 100%;
-            right: 8px;
+            right: 4px;
+            top: 0;
+            position: absolute;
+            display: flex;
+            align-items: center;
+            /* biar center vertikal */
         }
 
-        /* tombol clear (X) agar di samping dropdown */
+        /* tombol clear (X) */
         .select2-container--default .select2-selection--single .select2-selection__clear {
             position: absolute;
             right: 28px;
-            /* posisi sebelum panah */
             top: 50%;
             transform: translateY(-50%);
             margin: 0;
             font-size: 16px;
+        }
+
+        /* =========================
+                   FIX PANAH TANPA UBAH POSISI
+                ========================== */
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow b {
+            margin: 0 !important;
+            position: static !important;
+            /* ini penting biar ga geser */
+
+            border-style: solid;
+            border-width: 5px 4px 0 4px !important;
+            border-color: #6c757d transparent transparent transparent !important;
+
+            transform: none !important;
+            transition: none !important;
+        }
+
+        /* saat open tetap sama */
+        .select2-container--default.select2-container--open .select2-selection--single .select2-selection__arrow b {
+            border-width: 5px 4px 0 4px !important;
+            border-color: #6c757d transparent transparent transparent !important;
+            transform: none !important;
         }
     </style>
 

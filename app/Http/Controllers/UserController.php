@@ -13,6 +13,7 @@ use App\Models\Holiday;
 use App\Models\Employee;
 use App\Models\Coupon;
 use App\Models\SlotGroup;
+use App\Models\Studio;
 use Hash;
 use Session;
 
@@ -33,27 +34,20 @@ class UserController extends Controller
      */
     public function create()
     {
-        $days = [
-            'monday',
-            'tuesday',
-            'wednesday',
-            'thursday',
-            'friday',
-            'saturday',
-            'sunday',
-        ];
-
+        $days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
         $roles = Role::where('name', '!=', 'admin')->get();
         $services = Service::whereStatus(1)->get();
-
-        // ✅ TAMBAHAN
         $slotGroups = SlotGroup::all();
+
+        // ✅ Tambahkan ini
+        $studios = Studio::whereStatus(1)->get(); // ambil semua studio yang aktif
 
         return view('backend.user.create', compact(
             'roles',
             'services',
             'days',
-            'slotGroups' // 🔥 WAJIB
+            'slotGroups',
+            'studios'
         ));
     }
 
@@ -71,9 +65,15 @@ class UserController extends Controller
             'roles' => 'required|string|exists:roles,name',
             'service' => 'nullable|array',
             'days' => 'nullable|array',
-            'is_employee' => 'nullable|boolean',
             'slot_group_id' => 'nullable|array',
             'slot_group_id.*' => 'nullable|exists:slot_groups,id',
+            'studio_id' => 'nullable|exists:studios,id',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+
+            // 🔥 TAMBAHAN (biar aman)
+            'holidays.date.*' => 'nullable|date',
+            'holidays.from_time.*' => 'nullable',
+            'holidays.to_time.*' => 'nullable',
         ]);
 
         // ✅ aman dari array / null
@@ -82,58 +82,112 @@ class UserController extends Controller
 
         $roleName = strtoupper(substr($role, 0, 3));
         $roleUid = $roleName . '-' . now()->format('Ymd') . '-' . strtoupper(Str::random(6));
+        $imageName = null;
 
+        if ($request->hasFile('image')) {
+            $imageName = time() . '.' . $request->image->getClientOriginalExtension();
+            $request->image->move(public_path('uploads/images/profile/'), $imageName);
+        }
 
         // ✅ Create new user
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
-            'phone' => $data['phone'] ?? '',
+            'phone' => $this->normalizePhone($data['phone'] ?? ''),
             'email_verified_at' => now(),
             'password' => \Hash::make($data['password']),
             'status' => $request->status ?? 1,
-            'role_uid' => $roleUid, // ✅ tambahkan di sini
+            'role_uid' => $roleUid,
+            'image' => $imageName,
         ]);
 
         // ✅ Assign role
         $user->assignRole($data['roles']);
 
-        // ✅ Jika user adalah employee
-        if (!empty($data['is_employee'])) {
-            // Transformasi jam kerja (opening hours)
+        // ✅ Jika role adalah employee, buat data employee otomatis
+        if ($role === 'employee') {
+
             $data['days'] = !empty($data['days'])
                 ? $this->transformOpeningHours($data['days'])
                 : null;
 
             $employee = Employee::create([
-                'user_id'        => $user->id,
-                'days'           => $data['days'],
+                'user_id'   => $user->id,
+                'studio_id' => $request->studio_id ?? null,
+                'days'      => $data['days'],
             ]);
 
-            // ✅ Attach pivot data (service + durasi per layanan)
+            // ✅ Attach pivot data (service + durasi + break + slot_group)
             $services = $request->input('service', []);
             $durations = $request->input('service_duration', []);
             $breaks = $request->input('service_break_duration', []);
             $slotGroups = $request->input('slot_group_id', []);
 
             $pivotData = [];
-
             foreach ($services as $serviceId) {
                 $pivotData[$serviceId] = [
-                    'duration'        => $durations[$serviceId] ?? 0,
-                    'break_duration'  => $breaks[$serviceId] ?? 0,
-                    'slot_group_id'   => $slotGroups[$serviceId] ?? null, // 🔥 INI WAJIB
+                    'duration'       => $durations[$serviceId] ?? 0,
+                    'break_duration' => $breaks[$serviceId] ?? 0,
+                    'slot_group_id'  => $slotGroups[$serviceId] ?? null,
                 ];
             }
 
             if (!empty($pivotData)) {
                 $employee->services()->attach($pivotData);
             }
+
+            // =====================================================
+            // 🔥 TAMBAHAN: SIMPAN HOLIDAYS (INI YANG KAMU BUTUH)
+            // =====================================================
+            if ($request->has('holidays.date') && is_array($request->input('holidays.date'))) {
+
+                $dates = $request->input('holidays.date');
+                $fromTimes = $request->input('holidays.from_time');
+                $toTimes = $request->input('holidays.to_time');
+
+                foreach ($dates as $index => $date) {
+
+                    // skip kalau kosong
+                    if (empty($date)) continue;
+
+                    $hours = [];
+
+                    // kalau isi jam → partial off
+                    if (!empty($fromTimes[$index]) && !empty($toTimes[$index])) {
+                        $hours[] = $fromTimes[$index] . '-' . $toTimes[$index];
+                    }
+
+                    Holiday::create([
+                        'employee_id' => $employee->id,
+                        'date'        => $date,
+                        'hours'       => $hours, // array → json
+                        'recurring'   => false,
+                        'description' => null,
+                    ]);
+                }
+            }
         }
 
         return redirect()->route('user.index')->with('success', 'Pengguna telah berhasil ditambahkan');
     }
 
+    private function normalizePhone($phone)
+    {
+        // Hapus semua karakter selain angka
+        $phone = preg_replace('/\D/', '', $phone);
+
+        // Jika diawali 0 → ubah ke format Indonesia
+        if (Str::startsWith($phone, '0')) {
+            $phone = substr($phone, 1);
+        }
+
+        // Jika diawali 62 → hapus 62
+        if (Str::startsWith($phone, '62')) {
+            $phone = substr($phone, 2);
+        }
+
+        return '+62' . $phone;
+    }
     /**
      * Display the specified resource.
      */
@@ -152,23 +206,61 @@ class UserController extends Controller
         $breaks = ['5', '10', '15', '20', '25', '30'];
 
         $user = User::with('employee.holidays', 'employee.services')->findOrFail($id);
+
+        // Role utama user
+        $userRole = $user->roles->first()->name ?? null;
+
+        // Employee days untuk edit
         $employeeDays = $user->employee->days ?? [];
         $employeeDays = $this->transformAvailabilitySlotsForEdit($employeeDays);
 
+        // Semua roles, services, slotGroups, dan studios
         $roles = Role::all();
         $services = Service::whereStatus(1)->get();
-
         $slotGroups = SlotGroup::all();
+        $studios = Studio::whereStatus(1)->get();
+
+        // Services user untuk multi-select
+        $userServices = $user->employee
+            ? $user->employee->services->pluck('id')->toArray()
+            : [];
+
+        // Holidays user – aman dari error jika kosong
+        $userHolidays = $user->employee
+            ? $user->employee->holidays->map(function ($h) {
+                $hours = $h->hours ?? [];
+
+                $fromTime = null;
+                $toTime = null;
+
+                if (!empty($hours)) {
+                    $parts = explode('-', $hours[0]);
+                    $fromTime = $parts[0] ?? null;
+                    $toTime   = $parts[1] ?? null;
+                }
+
+                return (object)[
+                    'id' => $h->id,
+                    'date' => $h->date,
+                    'from_time' => $fromTime,
+                    'to_time' => $toTime,
+                ];
+            })
+            : collect();
 
         return view('backend.user.edit', compact(
             'user',
+            'userRole',
             'roles',
             'services',
             'days',
             'steps',
             'breaks',
             'employeeDays',
-            'slotGroups' // 🔥 WAJIB
+            'slotGroups',
+            'studios',
+            'userServices',
+            'userHolidays'
         ));
     }
 
@@ -217,14 +309,18 @@ class UserController extends Controller
 
         $status = $user->id === 1 ? 1 : ($request->status ?? 0);
 
-        // ✅ Update user data (termasuk role_uid)
+        $phone = $request->phone ?? $user->phone;
+        if (!empty($phone)) {
+            $phone = $this->normalizePhone($phone);
+        }
+
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
-            'phone' => $request->phone ?? $user->phone,
+            'phone' => $phone,
             'password' => $request->password ? \Hash::make($request->password) : $user->password,
             'status' => $status,
-            'role_uid' => $user->role_uid, // pastikan tersimpan
+            'role_uid' => $user->role_uid,
         ]);
 
         // ✅ Sync roles
@@ -371,50 +467,39 @@ class UserController extends Controller
 
     public function force_delete($id)
     {
-        // Retrieve the trashed user with its associated employee, holidays, appointments, and bookings
+        // Ambil user termasuk yang sudah soft deleted
         $user = User::withTrashed()->findOrFail($id);
 
-        //for employee
-        if ($user->employee->appointments->count()) {
+        // ✅ Cek apakah user memiliki employee dan employee memiliki appointment aktif
+        if ($user->employee && $user->employee->appointments()->count() > 0) {
             return back()->withErrors('Pengguna tidak dapat dihapus permanen karena masih memiliki booking aktif');
         }
 
-        //for user
-        if ($user->appointments->count()) {
+        // ✅ Cek apakah user (member) memiliki appointment aktif
+        if ($user->appointments()->count() > 0) {
             return back()->withErrors('Pengguna tidak dapat dihapus permanen karena masih memiliki booking aktif');
         }
 
-        // Check if the user has an associated employee
+        // ✅ Hapus holidays employee jika ada
         if ($user->employee) {
-            // Delete all holidays related to the employee
-            foreach ($user->employee->holidays as $holiday) {
-                $holiday->forceDelete(); // Force delete each holiday
-            }
+            $user->employee->holidays()->forceDelete();
 
+            // ✅ Lepas semua service pivot employee
+            $user->employee->services()->detach();
 
-            // Delete all appointments related to the employee
-            // foreach ($user->employee->appointments as $appointment) {
-            //     $appointment->forceDelete(); // Force delete each appointment
-            // }
-
-            // Detach all services related to the employee (many-to-many relationship)
-            if ($user->employee->services()->exists()) {
-                $user->employee->services()->detach(); // Detach the services from the employee
-            }
-
-            // Finally, delete the employee data
+            // ✅ Hapus employee
             $user->employee->forceDelete();
         }
 
-        // Delete the user's profile image if exists
+        // ✅ Hapus profile image jika ada
         if ($user->image) {
-            $destination = public_path('uploads/images/profile/' . $user->image);
-            if (\File::exists($destination)) {
-                \File::delete($destination);
+            $path = public_path('uploads/images/profile/' . $user->image);
+            if (\File::exists($path)) {
+                \File::delete($path);
             }
         }
 
-        // Permanently delete the user from the database
+        // ✅ Hapus user permanen
         $user->forceDelete();
 
         return back()->withSuccess('Pengguna beserta seluruh data terkait (karyawan, hari libur, janji temu, dan pemesanan) telah berhasil dihapus secara permanen');

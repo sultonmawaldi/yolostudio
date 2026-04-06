@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Trash Layanan')
+@section('title', 'Tempat Sampah Layanan')
 
 @section('content_header')
 
@@ -8,7 +8,7 @@
 
         <h1 class="page-title">
             <i class="fas fa-trash-alt me-2"></i>
-            Trash Layanan
+            Tempat Sampah Layanan
         </h1>
 
         <div class="title-divider"></div>

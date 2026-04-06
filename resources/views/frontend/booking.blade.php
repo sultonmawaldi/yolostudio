@@ -1494,37 +1494,37 @@
             function updateTimeSlots(selectedDate) {
                 if (!selectedDate) {
                     $("#time-slots-container").html(`
-            <div class="text-center w-100 py-4">
-                <div class="alert alert-warning">
-                    <i class="bi bi-exclamation-triangle me-2"></i>
-                    Tidak ada tanggal yang dipilih
-                </div>
+        <div class="text-center w-100 py-4">
+            <div class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                Tidak ada tanggal yang dipilih
             </div>
-        `);
+        </div>
+    `);
                     return;
                 }
 
                 if (!bookingState.selectedEmployee) {
                     $("#time-slots-container").html(`
-            <div class="text-center w-100 py-4">
-                <div class="alert alert-warning">
-                    <i class="bi bi-exclamation-triangle me-2"></i>
-                    Silakan pilih studio terlebih dahulu
-                </div>
+        <div class="text-center w-100 py-4">
+            <div class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                Silakan pilih studio terlebih dahulu
             </div>
-        `);
+        </div>
+    `);
                     return;
                 }
 
                 if (!bookingState.selectedService) {
                     $("#time-slots-container").html(`
-            <div class="text-center w-100 py-4">
-                <div class="alert alert-warning">
-                    <i class="bi bi-exclamation-triangle me-2"></i>
-                    Silakan pilih layanan terlebih dahulu
-                </div>
+        <div class="text-center w-100 py-4">
+            <div class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                Silakan pilih layanan terlebih dahulu
             </div>
-        `);
+        </div>
+    `);
                     return;
                 }
 
@@ -1532,15 +1532,12 @@
                 const serviceId = bookingState.selectedService.id;
                 const apiDate = new Date(selectedDate).toISOString().split('T')[0];
 
-                // Spinner loading
                 $("#time-slots-container").html(`
-        <div class="text-center w-100 py-4">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Memuat...</span>
-            </div>
-            <div class="mt-2">Memeriksa ketersediaan...</div>
-        </div>
-    `);
+    <div class="text-center w-100 py-4">
+        <div class="spinner-border text-primary" role="status"></div>
+        <div class="mt-2">Memeriksa ketersediaan...</div>
+    </div>
+`);
 
                 $.ajax({
                     url: `/employees/${employeeId}/availability/${apiDate}`,
@@ -1553,20 +1550,16 @@
                         const slots = response.available_slots || [];
                         if (!slots.length) {
                             $("#time-slots-container").html(`
-                    <div class="text-center w-100 py-4">
-                        <div class="alert alert-warning">
-                            <i class="bi bi-clock-history me-2"></i>
-                            Tidak ada slot yang tersedia untuk tanggal ini
-                        </div>
-                        <button class="btn btn-sm btn-outline-primary mt-2" onclick="updateCalendar()">
-                            <i class="bi bi-arrow-left me-1"></i> Kembali ke kalender
-                        </button>
+                <div class="text-center w-100 py-4">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-clock-history me-2"></i>
+                        Tidak ada slot yang tersedia untuk tanggal ini
                     </div>
-                `);
+                </div>
+            `);
                             return;
                         }
 
-                        // ✅ AMBIL DARI PIVOT (UI)
                         const sessionDuration = parseInt(slots[0]?.session_duration) || 0;
                         const breakDuration = parseInt(slots[0]?.break_duration) || 0;
 
@@ -1574,36 +1567,46 @@
                         bookingState.selectedEmployee.breakDuration = breakDuration;
                         bookingState.selectedEmployee.slot_group_id = response.slot_group_id;
 
-
-
                         $("#time-slots-container").append(`
-                <div class="slot-info mb-3">
-                    <small class="text-muted">
-                        <i class="bi bi-info-circle me-1"></i>
-                        Sesi Foto: ${sessionDuration} menit
-                        ${breakDuration ? ` | Jeda: ${breakDuration} menit` : ''}
-                    </small>
-                </div>
-            `);
+            <div class="slot-info mb-3">
+                <small class="text-muted">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Sesi Foto: ${sessionDuration} menit
+                    ${breakDuration ? ` | Jeda: ${breakDuration} menit` : ''}
+                </small>
+            </div>
+        `);
 
                         const $slotsContainer = $(
                             "<div class='slots-grid d-flex flex-wrap justify-content-center gap-2'></div>"
-                        );
+                            );
 
                         slots.forEach(slot => {
                             const displayText = `${slot.start} - ${slot.end}`;
 
-                            const slotElement = $(`
-                    <div class="time-slot btn btn-outline-primary mb-2 ${slot.is_booked ? 'disabled' : ''}"
-                        data-start="${slot.start}"
-                        data-end="${slot.end}"
-                        data-time="${displayText}"
-                        title="${displayText}">
-                        <i class="bi bi-clock me-1"></i> ${slot.start}
-                    </div>
-                `);
+                            // 🔥 SAFE DEFAULT (ANTI ERROR)
+                            const isHoliday = slot.is_holiday ?? false;
+                            const isBooked = slot.is_booked ?? false;
 
-                            if (!slot.is_booked) {
+                            const slotElement = $(`
+                <div class="time-slot btn btn-outline-primary mb-2 ${isBooked || isHoliday ? 'disabled' : ''}"
+                    data-start="${slot.start}"
+                    data-end="${slot.end}"
+                    data-time="${displayText}"
+                    title="${displayText}">
+                    <i class="bi bi-clock me-1"></i> ${slot.start}
+                </div>
+            `);
+
+                            // 🔥 TAMBAH CLASS VISUAL
+                            if (isHoliday) {
+                                slotElement.addClass('slot-holiday');
+                            } else if (isBooked) {
+                                slotElement.addClass('slot-booked');
+                            }
+
+                            // ✅ hanya bisa klik jika available
+                            if (!isBooked && !isHoliday) {
                                 slotElement.on("click", function() {
                                     $(".time-slot").removeClass("selected active");
                                     $(this).addClass("selected active");
@@ -1624,12 +1627,8 @@
                                     updateSummary();
                                 });
 
-                                // Highlight slot yang sudah dipilih sebelumnya
                                 if (bookingState.selectedTime?.start === slot.start) {
                                     slotElement.addClass("selected active");
-                                    window.selectedStartTime = slot.start;
-                                    window.selectedEndTime = slot.end;
-                                    window.selectedTimeDisplay = displayText;
                                 }
                             }
 
@@ -1641,15 +1640,12 @@
                     error: function(xhr) {
                         const msg = xhr.responseJSON?.error || 'Kesalahan saat memuat ketersediaan';
                         $("#time-slots-container").html(`
-                <div class="text-center w-100 py-4">
-                    <div class="alert alert-danger">
-                        <i class="bi bi-exclamation-octagon me-2"></i> ${msg}
-                    </div>
-                    <button class="btn btn-sm btn-outline-primary mt-2" onclick="updateTimeSlots('${selectedDate}')">
-                        <i class="bi bi-arrow-repeat me-1"></i> Coba lagi
-                    </button>
+            <div class="text-center w-100 py-4">
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-octagon me-2"></i> ${msg}
                 </div>
-            `);
+            </div>
+        `);
                     }
                 });
             }

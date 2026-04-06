@@ -1,736 +1,782 @@
 @extends('adminlte::page')
 
-@section('title', 'Edit User')
+@section('title', 'Edit Pengguna')
 
 @section('content_header')
     <div class="container-fluid">
-        <div class="row mb-1">
+        <div class="row mb-3 align-items-center">
+
             <div class="col-sm-6">
-                <h1 class="m-0">Edit {{ $user->name }}</h1>
+                <h1 class="m-0 font-weight-bold">
+                    <i class="fas fa-user-edit text-primary mr-2"></i>
+                    Edit Pengguna
+                </h1>
             </div>
+
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-                    <li class="breadcrumb-item active">Edit user</li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ route('dashboard') }}">
+                            <i class="fas fa-home"></i> Beranda
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active">Edit Pengguna</li>
                 </ol>
             </div>
+
         </div>
     </div>
 @stop
 
 @section('content')
-    <div class="">
-        <!-- Content Header (Page header) -->
-        <!-- /.content-header -->
+    <div class="container-fluid">
+        <div class="justify-content-between pb-5">
 
-        <!-- Main content -->
-        <div class="content  py-2">
-            <div class="">
-                @if (session()->has('success'))
-                    <div class="alert alert-dismissable alert-success">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                        <strong>
-                            {!! session()->get('success') !!}
-                        </strong>
-                    </div>
-                @endif
-                @if (count($errors) > 0)
-                    <div class="alert alert-dismissable alert-danger mt-3">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                        <strong>Whoops!</strong> There were some problems with your input.<br>
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
+            <form action="{{ route('user.update', $user->id) }}" method="post" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
 
+                <div class="row">
 
-                <form action="{{ route('user.update', $user->id) }}" method="post">
-                    @csrf
-                    @method('PATCH')
-                    <div class="row pl-md-2">
-                        <div class="col-md-8">
-                            <div class="row">
-                                <div class="col-xs-12 col-sm-12 col-md-12">
-                                    <div class="form-group">
-                                        <label class="my-0">Name</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend ">
-                                                <span class="input-group-text ">
-                                                    <i class="fas fa-user">
-                                                    </i>
-                                                </span>
-                                            </div>
-                                            <input type="text" class="form-control @error('name') is-invalid @enderror"
-                                                name="name" value="{{ old('name', $user->name) }}"
-                                                placeholder="Full Name">
-                                        </div>
-                                        @error('name')
-                                            <small class="text-danger"><strong>{{ $message }}</strong></small>
-                                        @enderror
-                                    </div>
+                    {{-- KIRI --}}
+                    <div class="col-md-8">
+
+                        {{-- INFORMASI USER --}}
+                        <div class="card card-light">
+                            <div class="card-header">
+                                <h3 class="card-title">Informasi Pengguna</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
                                 </div>
-                                <div class="col-xs-12 col-sm-12 col-md-12">
-                                    <div class="form-group">
-                                        <label class="my-0">Email</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="fas fa-envelope">
-                                                    </i>
-                                                </span>
-                                            </div>
-                                            <input type="email" class="form-control @error('email') is-invalid @enderror"
-                                                name="email" value="{{ old('email', $user->email) }}" placeholder="Email">
-                                        </div>
-                                        @error('email')
-                                            <small class="text-danger"><strong>{{ $message }}</strong></small>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-xs-12 col-sm-12 col-md-12">
-                                    <div class="form-group">
-                                        <label class="my-0">Phone</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="fas fa-phone">
-                                                    </i>
-                                                </span>
-                                            </div>
-                                            <input type="tel" class="form-control @error('phone') is-invalid @enderror"
-                                                name="phone" value="{{ old('phone', $user->phone) }}"
-                                                placeholder="Phone No.">
-                                        </div>
-                                        @error('phone')
-                                            <small class="text-danger"><strong>{{ $message }}</strong></small>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-xs-12 col-sm-12 col-md-12">
-                                    <div class="form-group">
-                                        <label class="my-0">Password</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="fas fa-lock"></i>
-                                                </span>
-                                            </div>
-                                            <input type="password"
-                                                class="form-control @error('password') is-invalid @enderror" name="password"
-                                                placeholder="Enter Password">
-                                        </div>
-                                        @error('password')
-                                            <small class="text-danger"><strong>{{ $message }}</strong></small>
-                                        @enderror
-                                    </div>
+                            </div>
+
+                            <div class="card-body">
+
+                                <div class="form-group">
+                                    <label>Nama</label>
+                                    <input type="text" name="name" value="{{ old('name', $user->name) }}"
+                                        class="form-control @error('name') is-invalid @enderror"
+                                        placeholder="Masukkan nama lengkap">
+                                    @error('name')
+                                        <small class="text-danger">{{ $message }}</small>
+                                    @enderror
                                 </div>
 
-                                <div class="col-xs-12 col-sm-12 col-md-12">
-                                    <div class="form-group">
-                                        <label class="my-0">Confirm Password</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="fas fa-lock"></i>
-                                                </span>
-                                            </div>
-                                            <input type="password"
-                                                class="form-control @error('password_confirmation') is-invalid @enderror"
-                                                name="password_confirmation" placeholder="Confirm Password">
-                                        </div>
-                                        @error('password_confirmation')
-                                            <small class="text-danger"><strong>{{ $message }}</strong></small>
-                                        @enderror
-                                    </div>
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="email" name="email" value="{{ old('email', $user->email) }}"
+                                        class="form-control @error('email') is-invalid @enderror"
+                                        placeholder="Masukkan email">
+                                    @error('email')
+                                        <small class="text-danger">{{ $message }}</small>
+                                    @enderror
                                 </div>
 
-                                <div class="col-xs-12 col-sm-12 col-md-12 mb-3 select2-primary">
-                                    <label class="my-0"><i class="fas fa-user-lock"></i> User Role</label>
-                                    <select name="roles[]"
-                                        class="form-control select2 @error('roles[]') is-invalid @enderror"
-                                        data-placeholder="Select Role" multiple>
+                                {{-- PHONE --}}
+                                <div class="form-group">
+                                    <label>Nomor HP / WhatsApp</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text d-flex align-items-center"
+                                            style="border-right: 0; border-radius: .25rem 0 0 .25rem;">
+                                            <img src="https://flagcdn.com/w20/id.png" style="width:20px; margin-right:6px;">
+                                            +62
+                                        </span>
+                                        <input type="tel" name="phone" id="phone"
+                                            class="form-control @error('phone') is-invalid @enderror"
+                                            placeholder="81234567890" value="{{ old('phone', $user->phone) }}"
+                                            inputmode="numeric" maxlength="13"
+                                            style="border-left: 0; border-radius: 0 .25rem .25rem 0;">
+                                    </div>
+                                    @error('phone')
+                                        <small class="text-danger">{{ $message }}</small>
+                                    @enderror
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Kata Sandi</label>
+                                    <input type="password" name="password"
+                                        class="form-control @error('password') is-invalid @enderror"
+                                        placeholder="Kosongkan jika tidak ingin diubah">
+                                    @error('password')
+                                        <small class="text-danger">{{ $message }}</small>
+                                    @enderror
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Konfirmasi Kata Sandi</label>
+                                    <input type="password" name="password_confirmation"
+                                        class="form-control @error('password_confirmation') is-invalid @enderror"
+                                        placeholder="Ulangi kata sandi baru">
+                                    @error('password_confirmation')
+                                        <small class="text-danger">{{ $message }}</small>
+                                    @enderror
+                                </div>
+
+                                {{-- ROLE --}}
+                                <div class="form-group">
+                                    <label>Peran Pengguna</label>
+                                    <select name="roles" id="roles"
+                                        class="select2 form-control @error('roles') is-invalid @enderror"
+                                        data-placeholder="Pilih Peran" style="width:100%;">
+                                        <option></option>
                                         @foreach ($roles as $role)
                                             <option value="{{ $role->name }}"
-                                                @if ($user->roles->contains('name', $role->name) || in_array($role->name, old('roles', []))) selected @endif>
+                                                {{ old('roles', $userRole) == $role->name ? 'selected' : '' }}>
                                                 {{ ucfirst($role->name) }}
                                             </option>
                                         @endforeach
                                     </select>
-                                    @error('roles')
-                                        <small class="text-danger"><strong>{{ $message }}</strong></small>
-                                    @enderror
                                 </div>
-
-                                <div class="row pt-3 pl-md-2">
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <div class="custom-control custom-switch">
-                                                {{-- Hidden field to ensure "0" is submitted if checkbox is unchecked --}}
-                                                <input type="hidden" name="status" value="0">
-
-                                                {{-- Actual checkbox --}}
-                                                <input type="checkbox" class="custom-control-input" id="status"
-                                                    name="status" value="1"
-                                                    {{ old('status', $user->status) ? 'checked' : '' }}>
-
-                                                <label class="custom-control-label" for="status">Status</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-
-
 
                             </div>
                         </div>
-                    </div>
 
-                    <div class="row pt-3 pl-md-2">
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <div class="custom-control custom-switch">
-                                    <!-- ✅ Hidden input memastikan nilai selalu terkirim -->
-                                    <input type="hidden" name="is_employee" value="0">
-                                    <input type="checkbox" class="custom-control-input" id="is_employee"
-                                        name="is_employee" value="1" {{ old('is_employee') ? 'checked' : '' }}>
-                                    <label class="custom-control-label" for="is_employee">Is Employee</label>
+                        {{-- EMPLOYEE SETTINGS --}}
+                        <div id="employee" style="display: {{ $userRole == 'employee' ? 'block' : 'none' }};">
+                            <div class="card card-light">
+                                <div class="card-header">
+                                    <h3 class="card-title">Pengaturan Karyawan</h3>
+                                    <div class="card-tools">
+                                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="employee" class="row pl-md-2 pb-5">
-                        <div class="col-md-8">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <hr>
-                                    <div class="mb-3">
-                                        <h4 class="mb-0">Only For Employees </h4>
-                                        <small class="text-muted">Fill these details if adding an employee only</small>
-                                    </div>
 
-                                    <div class="row">
-                                        <div class="col-xs-12 col-sm-12 col-md-12 mb-3 select2-dark">
-                                            <label for="service_id" class="my-0">
-                                                <i class="fas fa-id-card"></i> Select Service
-                                            </label>
-                                            <small class="text-muted"> Link employees to services they are assigned
-                                                to</small>
+                                <div class="card-body">
 
-                                            <select
-                                                class="form-control servicesSelect2 @error('service[]') is-invalid @enderror"
-                                                name="service[]" data-placeholder="Select Service" id="service"
-                                                multiple>
-                                                @foreach ($services as $service)
-                                                    <option value="{{ $service->id }}"
-                                                        {{ $user->employee && $user->employee->services->contains('id', $service->id) ? 'selected' : '' }}>
-                                                        {{ $service->title }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-
-                                            @error('service')
-                                                <small class="text-danger"><strong>{{ $message }}</strong></small>
-                                            @enderror
-                                            <div id="service-details-container" class="mt-4">
-                                                {{-- Akan diisi dinamis oleh JS --}}
-                                            </div>
-                                        </div>
-
-                                        <div class="col-xs-12 col-sm-12 col-md-12 mb-3">
-                                            <label for="slot_duration" class="my-0">
-                                                <i class="fas fa-stopwatch"></i> Service Duration
-                                            </label>
-                                            <small class="text-muted"> Create booking slots based on your preferred time
-                                                duration.</small>
-
-                                            <select class="form-control @error('slot_duration') is-invalid @enderror"
-                                                name="slot_duration" id="slot_duration">
-                                                <option value=""
-                                                    {{ old('slot_duration', optional($user->employee)->slot_duration) == '' ? 'selected' : '' }}>
-                                                    Select Duration
+                                    {{-- SERVICES --}}
+                                    <div class="form-group">
+                                        <label>Pilih Layanan</label>
+                                        <select name="service[]" id="services" class="form-control select2" multiple
+                                            style="width:100%">
+                                            @foreach ($services as $service)
+                                                <option value="{{ $service->id }}"
+                                                    {{ in_array($service->id, old('service', $userServices)) ? 'selected' : '' }}>
+                                                    {{ $service->title }}
                                                 </option>
-
-                                                @foreach ($steps as $stepValue)
-                                                    <option value="{{ $stepValue }}"
-                                                        {{ old('slot_duration', optional($user->employee)->slot_duration) == $stepValue ? 'selected' : '' }}>
-                                                        {{ $stepValue }} minutes
-                                                    </option>
-                                                @endforeach
-                                            </select>
-
-
-                                            @error('slot_duration')
-                                                <small class="text-danger"><strong>{{ $message }}</strong></small>
-                                            @enderror
-                                        </div>
-
-
-                                        <div class="col-xs-12 col-sm-12 col-md-12 mb-3">
-                                            <label for="break_duration" class="my-0">
-                                                <i class="fas fa-coffee"></i> Preparation or Break time
-                                            </label>
-                                            <small class="text-muted"> Break between one to another appointment</small>
-
-                                            <select class="form-control @error('break_duration') is-invalid @enderror"
-                                                name="break_duration" id="break_duration">
-                                                <option value=""
-                                                    {{ old('break_duration', optional($user->employee)->break_duration) == '' ? 'selected' : '' }}>
-                                                    No Break
-                                                </option>
-
-                                                @foreach ($breaks as $breakValue)
-                                                    <option value="{{ $breakValue }}"
-                                                        {{ old('break_duration', optional($user->employee)->break_duration) == $breakValue ? 'selected' : '' }}>
-                                                        {{ $breakValue }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-
-                                            @error('break_duration')
-                                                <small class="text-danger"><strong>{{ $message }}</strong></small>
-                                            @enderror
-                                        </div>
-
-
-
-                                    </div>
-
-                                    <hr>
-                                    <div class="row">
-                                        <div class="mb-3">
-                                            <h4 class="mb-0">Set Availability - For Employee</h4>
-                                            <small class="text-muted">
-                                                Select days and timings, with the option to add multiple time slots in a
-                                                day, e.g., 9 AM–12 PM and 4 PM–8 PM.
-                                            </small>
-                                        </div>
-
-                                        <div class="col-md-12">
-                                            @foreach ($days as $day)
-                                                <div class="row">
-                                                    <div class="col-md-2">
-                                                        <div class="form-group">
-                                                            <div class="custom-control custom-switch">
-                                                                <input type="checkbox" class="custom-control-input"
-                                                                    id="{{ $day }}"
-                                                                    @if (old('days.' . $day) || isset($employeeDays[$day])) checked @endif>
-                                                                <label class="custom-control-label"
-                                                                    for="{{ $day }}">
-                                                                    {{ ucfirst($day) }}
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- First Time Input Row -->
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <strong>From:</strong>
-                                                            <input type="time" class="form-control from"
-                                                                name="days[{{ $day }}][]"
-                                                                id="{{ $day }}From"
-                                                                value="{{ old('days.' . $day . '.0') ?? ($employeeDays[$day][0] ?? '') }}" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <strong>To:</strong>
-                                                            <input type="time" class="form-control to"
-                                                                name="days[{{ $day }}][]"
-                                                                id="{{ $day }}To"
-                                                                value="{{ old('days.' . $day . '.1') ?? ($employeeDays[$day][1] ?? '') }}" />
-                                                            <div style="" id="{{ $day }}AddMore"
-                                                                class="text-right d-none text-primary">
-                                                                Add More
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Render Additional Rows -->
-                                                @if (old('days.' . $day) || isset($employeeDays[$day]))
-                                                    @foreach (old('days.' . $day) ?: $employeeDays[$day] as $index => $time)
-                                                        @if ($index > 1 && $index % 2 == 0)
-                                                            <div class="row additional-{{ $day }}">
-                                                                <div class="col-md-2"></div>
-
-                                                                <div class="col-md-4">
-                                                                    <div class="form-group">
-                                                                        <strong>From:</strong>
-                                                                        <input type="time" class="form-control from"
-                                                                            name="days[{{ $day }}][]"
-                                                                            value="{{ $time }}"
-                                                                            id="{{ $day }}MoreFrom" />
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="col-md-4">
-                                                                    <div class="form-group">
-                                                                        <strong>To</strong>
-                                                                        <input type="time" class="form-control to"
-                                                                            name="days[{{ $day }}][]"
-                                                                            value="{{ old('days.' . $day . '.' . ($index + 1)) ?? ($employeeDays[$day][$index + 1] ?? '') }}"
-                                                                            id="{{ $day }}" />
-                                                                        <div class="remove-field text-danger text-right">
-                                                                            Remove</div>
-                                                                    </div>
-                                                                </div>
-
-
-                                                            </div>
-                                                        @endif
-                                                    @endforeach
-                                                @endif
                                             @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div id="service-details-container">
+
+                                    </div>
+
+                                    {{-- STUDIO --}}
+                                    <div class="form-group">
+                                        <label>Pilih Studio</label>
+                                        <select name="studio_id" id="studio_id" class="form-control select2"
+                                            style="width:100%" data-placeholder="Pilih Studio">
+                                            <option></option>
+                                            @foreach ($studios as $studio)
+                                                <option value="{{ $studio->id }}"
+                                                    {{ old('studio_id', $user->studio_id) == $studio->id ? 'selected' : '' }}>
+                                                    {{ $studio->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    {{-- HOLIDAYS --}}
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Hari Libur Karyawan</label>
+                                        <div id="holiday-container">
+                                            @if ($userHolidays->count() > 0)
+                                                @foreach ($userHolidays as $holiday)
+                                                    <div class="row mb-2 holiday-row align-items-center">
+                                                        <div class="col-md-4">
+                                                            <input type="date" name="holidays[date][]"
+                                                                class="form-control" value="{{ $holiday->date }}">
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <input type="time" name="holidays[from_time][]"
+                                                                class="form-control" value="{{ $holiday->from_time }}">
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <input type="time" name="holidays[to_time][]"
+                                                                class="form-control" value="{{ $holiday->to_time }}">
+                                                        </div>
+                                                        <div class="col-md-2 text-right action-col"></div>
+                                                    </div>
+                                                @endforeach
+                                            @else
+                                                <div class="row mb-2 holiday-row align-items-center">
+                                                    <div class="col-md-4">
+                                                        <input type="date" name="holidays[date][]"
+                                                            class="form-control">
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <input type="time" name="holidays[from_time][]"
+                                                            class="form-control">
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <input type="time" name="holidays[to_time][]"
+                                                            class="form-control">
+                                                    </div>
+                                                    <div class="col-md-2 text-right action-col"></div>
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
 
+                                </div>
+                            </div>
+                        </div>
 
-                                    <hr>
+                    </div>
 
-                                    <div class="row d-flex">
-                                        <div class="col-md-10">
-                                            <h2 class="mb-0">Add Holidays</h2>
-                                            <p class="text-muted">
-                                                No need to add time for a full day; for part-time work, specify the day and
-                                                time.
-                                            </p>
-                                            <span id="addHoliday" class="btn btn-primary mb-2 btn-sm">
-                                                <i class="fa fa-plus"></i> Add Holiday
-                                            </span>
-                                            <div class="holidayContainer">
-                                                @php
-                                                    // Get holidays from old input or database
-                                                    $holidaysInput = old('holidays.date', []);
-                                                    $dbHolidays = $user->employee->holidays ?? [];
-                                                    $holidaysToDisplay = !empty($holidaysInput)
-                                                        ? $holidaysInput
-                                                        : $dbHolidays;
-                                                @endphp
+                    {{-- KANAN --}}
+                    <div class="col-md-4">
+                        <div class="sticky-top">
+                            {{-- STATUS USER --}}
+                            <div class="card card-primary">
+                                <div class="card-header">
+                                    <h3 class="card-title">Detail Pengguna</h3>
+                                    <div class="card-tools">
+                                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body pb-0">
 
-                                                @forelse($holidaysToDisplay as $index => $holidayItem)
-                                                    @php
-                                                        // Determine if we're using old input or database data
-$usingOldInput = !empty($holidaysInput);
+                                    <div class="form-group">
+                                        <label>Status Pengguna</label>
+                                        <select name="status" class="form-control @error('status') is-invalid @enderror">
+                                            <option value="1"
+                                                {{ old('status', $user->status) == '1' ? 'selected' : '' }}>Aktif</option>
+                                            <option value="0"
+                                                {{ old('status', $user->status) == '0' ? 'selected' : '' }}>Nonaktif
+                                            </option>
+                                        </select>
+                                    </div>
 
-if ($usingOldInput) {
-    $date = old("holidays.date.$index");
-    $holiday = null;
-} else {
-    $holiday = $holidayItem;
-    $date = $holiday->date;
-    // Format date for input field if it's not already in YYYY-MM-DD format
-                                                            if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
-                                                                try {
-                                                                    $date = \Carbon\Carbon::parse($date)->format(
-                                                                        'Y-m-d',
-                                                                    );
-                                                                } catch (Exception $e) {
-                                                                    $date = '';
-                                                                }
-                                                            }
-                                                        }
+                                    {{-- ACTION BUTTON --}}
+                                    <div class="form-group mt-4 d-flex justify-content-end">
+                                        <a href="{{ route('user.index') }}" class="btn btn-secondary mr-2">Batal</a>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save mr-1"></i> Simpan
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
 
-                                                        $fromTime = old(
-                                                            "holidays.from_time.$index",
-                                                            $holiday && $holiday->hours
-                                                                ? explode('-', $holiday->hours[0])[0] ?? ''
-                                                                : '',
-                                                        );
-                                                        $toTime = old(
-                                                            "holidays.to_time.$index",
-                                                            $holiday && $holiday->hours
-                                                                ? explode('-', $holiday->hours[0])[1] ?? ''
-                                                                : '',
-                                                        );
-                                                        $recurring = old(
-                                                            "holidays.recurring.$index",
-                                                            $holiday->recurring ?? 0,
-                                                        );
-                                                    @endphp
-                                                    <div class="row holiday-row">
-                                                        <div class="col-md-4">
-                                                            <div class="form-group">
-                                                                <label class="mb-0">Date</label>
-                                                                <input class="form-control" type="date"
-                                                                    name="holidays[date][]" value="{{ $date }}"
-                                                                    required>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <strong>From:</strong>
-                                                                <input type="time" class="form-control from"
-                                                                    name="holidays[from_time][]"
-                                                                    value="{{ $fromTime }}">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <strong>To:</strong>
-                                                                <input type="time" class="form-control to"
-                                                                    name="holidays[to_time][]"
-                                                                    value="{{ $toTime }}">
-                                                                <div class="text-right text-danger removeHoliday"
-                                                                    style="cursor:pointer;">
-                                                                    Remove
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <input type="hidden" name="holidays[recurring][]"
-                                                            value="{{ $recurring }}">
-                                                    </div>
-                                                @empty
-                                                    <p>No holidays found for this user. Click "Add Holiday" to create one.
-                                                    </p>
-                                                @endforelse
-                                            </div>
+                            {{-- FOTO USER --}}
+                            <div class="card card-primary mt-3">
+                                <div class="card-header">
+                                    <h3 class="card-title">Foto Pengguna</h3>
+                                    <div class="card-tools">
+                                        <button type="button" class="btn btn-tool" data-card-widget="collapse"
+                                            title="Tutup">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="card-body pt-0 pb-0 mt-4">
+                                    <div class="form-group">
+                                        <small class="text-red">Disarankan foto persegi (1:1)</small>
+                                        <input class="form-control mt-2 @error('image') is-invalid @enderror"
+                                            name="image" accept="image/*" type="file" id="imgInp">
+                                        @error('image')
+                                            <small class="text-danger d-block mt-1">{{ $message }}</small>
+                                        @enderror
+                                        <div class="text-center mt-3">
+                                            <img class="img-fluid rounded-circle shadow-sm"
+                                                style="width:120px;height:120px;object-fit:cover;border:1px solid #ddd;padding:4px"
+                                                id="blah"
+                                                src="{{ $user->image ? asset('uploads/images/' . $user->image) : asset('uploads/images/no-image.jpg') }}"
+                                                alt="Preview Foto">
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
                         </div>
                     </div>
 
+                </div>
+            </form>
 
-                    {{-- <div class="col-xs-12 col-sm-12 col-md-12 pt-2 pl-md-3">
-                        <button type="submit" class="btn btn-danger"
-                            onclick="return confirm('Are you sure you want to update this user?')">Update user</button>
-                    </div> --}}
-            </div>
-            <div class="col-xs-12 col-sm-12 col-md-12 pt-2 pl-md-3">
-                <button type="submit" class="btn btn-danger"
-                    onclick="return confirm('Are you sure you want to update this user?')">Update user</button>
-            </div>
         </div>
     </div>
-    </div>
-    </div>
-
-
-
-    </form>
-    </div>
-    </div>
-    </div>
-    </div>
-
 @stop
 
 @section('css')
+    <style>
+        /* MULTIPLE SELECT - TAG */
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: #000 !important;
+            border: none !important;
+            color: #fff !important;
+            margin-top: 0 !important;
+        }
 
+        /* REMOVE X */
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+            color: #fff !important;
+            margin-right: 5px;
+        }
+
+        /* FIX FOCUS */
+        .select2-container--default.select2-container--focus .select2-selection--multiple .select2-selection__choice {
+            background-color: #000 !important;
+            color: #fff !important;
+        }
+
+        /* MULTIPLE WRAPPER */
+        .select2-container--default .select2-selection--multiple {
+            position: relative;
+            min-height: 38px;
+            padding: 2px 28px 2px 4px;
+            display: flex;
+            align-items: center;
+        }
+
+        /* CHEVRON */
+        .select2-container--default .select2-selection--multiple::after {
+            content: "";
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid #6c757d;
+        }
+
+        /* SINGLE */
+        .select2-container--default .select2-selection--single {
+            height: 38px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            padding: 0 35px 0 10px;
+            position: relative;
+        }
+
+        /* TEXT */
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            padding: 0 !important;
+        }
+
+        /* CLEAR BUTTON */
+        .select2-container--default .select2-selection--single .select2-selection__clear {
+            position: absolute;
+            right: 28px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* HIDE DEFAULT ARROW */
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            display: none !important;
+        }
+
+        /* CHEVRON SINGLE */
+        .select2-container--default .select2-selection--single::after {
+            content: "";
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid #6c757d;
+        }
+
+        /* MULTIPLE CONTENT */
+        .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 4px;
+            padding: 0;
+            width: 100%;
+            margin: 0;
+        }
+
+        /* ========================= */
+        /* 🔥 FIX PLACEHOLDER CENTER */
+        /* ========================= */
+
+        /* container search inline */
+        .select2-container--default .select2-selection--multiple .select2-search--inline {
+            display: flex;
+            align-items: center;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-search__field {
+            margin: 0 !important;
+            padding: 0 !important;
+            cursor: pointer !important;
+        }
+
+        .holiday-row {
+            border-bottom: 1px dashed #eee;
+            padding-bottom: 8px;
+        }
+    </style>
 @stop
 
 @section('js')
 
     <script>
-        // In your Javascript (external .js resource or <script> tag)
         $(document).ready(function() {
-            $('.select2').select2({
-                allowClear: true,
-                search: true,
-                maximumSelectionLength: 1
-            });
-        });
-    </script>
 
-    <script>
-        // In your Javascript (external .js resource or <script> tag)
-        $(document).ready(function() {
-            $('.servicesSelect2').select2({
-                allowClear: true,
-                search: true,
-                //maximumSelectionLength: 1
-            });
-        });
-    </script>
+            function renderButtons() {
+                $('.holiday-row').each(function(index) {
 
-    <script>
-        $(document).ready(function() {
-            function toggleDayFields(dayId) {
-                var isChecked = $('#' + dayId).prop('checked');
-                $('#' + dayId + 'From, #' + dayId + 'To').prop('disabled', !isChecked);
+                    let isLast = index === $('.holiday-row').length - 1;
 
-                // Show or hide the "Add More" button based on the checkbox state
-                if (isChecked) {
-                    $('#' + dayId + 'AddMore').removeClass('d-none');
-                } else {
-                    $('#' + dayId + 'AddMore').addClass('d-none');
-                    // Remove all additional fields for the day if unchecked
-                    $('.additional-' + dayId).remove();
-                }
-            }
-
-            function addMoreFields(dayId) {
-                // Clone the original row for the specific day
-                var originalRow = $('#' + dayId + 'AddMore').closest('.row');
-                var clonedRow = originalRow.clone();
-
-                // Reset the values in the cloned row (but don't enable the fields yet)
-                clonedRow.find('input').each(function() {
-                    $(this).val(''); // Clear the value
-                });
-
-                // Replace the col-md-2 section with a blank div for the cloned row
-                clonedRow.find('.col-md-2').replaceWith('<div class="col-md-2"></div>');
-
-                // Update "Add More" to "Remove" for the cloned row
-                clonedRow.find(`#${dayId}AddMore`).text('Remove').attr('id', '').addClass(
-                    'remove-field text-danger');
-
-                // Add a unique class to the cloned row for targeting specific day rows
-                clonedRow.addClass('additional-' + dayId);
-
-                // Append the cloned row after the original row or the last cloned row
-                if (originalRow.closest('.row').siblings('.additional-' + dayId).length === 0) {
-                    originalRow.after(clonedRow);
-                } else {
-                    originalRow.closest('.row').siblings('.additional-' + dayId).last().after(clonedRow);
-                }
-            }
-
-            // Remove cloned rows
-            $(document).on('click', '.remove-field', function() {
-                $(this).closest('.row').remove();
-            });
-
-            // Bind change and add-more events to all days
-            ['monday',
-                'tuesday',
-                'wednesday',
-                'thursday',
-                'friday',
-                'saturday',
-                'sunday',
-            ].forEach(function(day) {
-                $('#' + day).on('change', function() {
-                    toggleDayFields(day);
-                }).trigger('change');
-
-                $('#' + day + 'AddMore').on('click', function() {
-                    addMoreFields(day);
-                });
-            });
-        });
-    </script>
-
-    <script>
-        $(document).ready(function() {
-            // Initially hide the row with id 'employee' when the page loads
-            // Check if the checkbox is checked on page load and toggle visibility accordingly
-            if ($('#is_employee').prop('checked')) {
-                $('#employee').show(); // Show the row if checkbox is checked
-            } else {
-                $('#employee').hide(); // Hide the row if checkbox is unchecked
-            }
-
-            // When the 'Is Employee' checkbox is changed, toggle the row visibility
-            $('#is_employee').change(function() {
-                if ($(this).prop('checked')) {
-                    $('#employee').show(); // Show the row if checkbox is checked
-                } else {
-                    $('#employee').hide(); // Hide the row if checkbox is unchecked
-                }
-            });
-        });
-    </script>
-
-    <script>
-        $(document).ready(function() {
-            // Add new holiday row
-            $('#addHoliday').click(function() {
-                const holidayRow = `
-                <div class="row holiday-row">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label class="mb-0">Date</label>
-                            <input class="form-control" type="date" name="holidays[date][]" required>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <strong>From:</strong>
-                            <input type="time" class="form-control from" name="holidays[from_time][]">
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <strong>To:</strong>
-                            <input type="time" class="form-control to" name="holidays[to_time][]">
-                            <div class="text-right text-danger removeHoliday" style="cursor:pointer;">Remove</div>
-                        </div>
-                    </div>
-                    <input type="hidden" name="holidays[recurring][]" value="0">
-                </div>`;
-                $('.holidayContainer').append(holidayRow);
-            });
-
-            // Remove holiday row
-            $(document).on('click', '.removeHoliday', function() {
-                $(this).closest('.holiday-row').remove();
-            });
-        });
-    </script>
-
-    @push('js')
-        <script>
-            $(document).ready(function() {
-                const serviceDetailsContainer = $('#service-details-container');
-                const services = @json($services);
-
-                // Ketika user memilih service
-                $('#service').on('change', function() {
-                    const selectedServices = $(this).val() || [];
-                    serviceDetailsContainer.empty();
-
-                    selectedServices.forEach(serviceId => {
-                        const service = services.find(s => s.id == serviceId);
-                        if (!service) return;
-
-                        // Template HTML untuk setiap service
-                        const serviceBlock = `
-                <div class="card shadow-sm mb-3 border border-secondary">
-                    <div class="card-body">
-                        <h5 class="card-title mb-3 text-primary">
-                            <i class="fas fa-concierge-bell"></i> ${service.title}
-                        </h5>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label>Duration (minutes)</label>
-                                <select name="service_duration[${service.id}]" class="form-control">
-                                    <option value="">Select Duration</option>
-                                    ${[5,10,15,20,30,45,60].map(v => `<option value="${v}">${v}</option>`).join('')}
-                                </select>
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label>Break Duration (minutes)</label>
-                                <select name="service_break_duration[${service.id}]" class="form-control">
-                                    <option value="">No Break</option>
-                                    ${[5,10,15,20,25,30].map(v => `<option value="${v}">${v}</option>`).join('')}
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    let buttons = `
+                <button type="button" class="btn btn-outline-danger btn-sm remove-holiday mr-1" title="Hapus">
+                    <i class="fas fa-times"></i>
+                </button>
             `;
 
-                        serviceDetailsContainer.append(serviceBlock);
-                    });
+                    if (isLast) {
+                        buttons = `
+                    <button type="button" class="btn btn-success btn-sm add-holiday mr-1" title="Tambah">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                ` + buttons;
+                    }
+
+                    $(this).find('.action-col').html(`
+                <div class="btn-group">
+                    ${buttons}
+                </div>
+            `);
+                });
+            }
+
+            // ➕ TAMBAH
+            $(document).on('click', '.add-holiday', function() {
+
+                let html = `
+        <div class="row mb-2 holiday-row align-items-center">
+
+            <div class="col-md-4">
+                <input type="date" name="holidays[date][]" class="form-control">
+            </div>
+
+            <div class="col-md-3">
+                <input type="time" name="holidays[from_time][]" class="form-control">
+            </div>
+
+            <div class="col-md-3">
+                <input type="time" name="holidays[to_time][]" class="form-control">
+            </div>
+
+            <div class="col-md-2 text-right action-col"></div>
+
+        </div>
+        `;
+
+                $('#holiday-container').append(html);
+                renderButtons();
+            });
+
+            // ❌ HAPUS
+            $(document).on('click', '.remove-holiday', function() {
+
+                $(this).closest('.holiday-row').remove();
+
+                // kalau kosong → buat 1 row baru
+                if ($('.holiday-row').length === 0) {
+                    $('#holiday-container').append(`
+                <div class="row mb-2 holiday-row align-items-center">
+
+                    <div class="col-md-4">
+                        <input type="date" name="holidays[date][]" class="form-control">
+                    </div>
+
+                    <div class="col-md-3">
+                        <input type="time" name="holidays[from_time][]" class="form-control">
+                    </div>
+
+                    <div class="col-md-3">
+                        <input type="time" name="holidays[to_time][]" class="form-control">
+                    </div>
+
+                    <div class="col-md-2 text-right action-col"></div>
+
+                </div>
+            `);
+                }
+
+                renderButtons();
+            });
+
+            // INIT
+            renderButtons();
+
+        });
+    </script>
+
+
+    <script>
+        $(document).ready(function() {
+
+            // 🌐 Global bahasa Indonesia (tetap)
+            $.fn.select2.defaults.set("language", {
+                noResults: function() {
+                    return "Data tidak ditemukan";
+                },
+                searching: function() {
+                    return "Mencari...";
+                }
+            });
+
+            function initSelect2(selector, options = {}) {
+                $(selector).select2({
+                    width: '100%',
+                    dropdownParent: $(selector).parent(),
+
+                    // 🔥 WAJIB: paksa bahasa biar tidak balik ke English
+                    language: {
+                        noResults: function() {
+                            return "Data tidak ditemukan";
+                        },
+                        searching: function() {
+                            return "Mencari...";
+                        }
+                    },
+
+                    ...options
+                });
+            }
+
+            // ROLE
+            initSelect2('#roles', {
+                placeholder: "Pilih Peran",
+                allowClear: true,
+            });
+
+            $('#roles').on('select2:open', function() {
+                setTimeout(() => {
+                    $('.select2-container--open .select2-search__field')
+                        .attr('placeholder', 'Cari Peran...');
+                }, 0);
+            });
+
+            // SERVICE
+            initSelect2('#services', {
+                placeholder: "Pilih Layanan"
+            });
+
+            $('#services').on('select2:open', function() {
+                let selected = $(this).val();
+
+                setTimeout(() => {
+                    if (!selected || selected.length === 0) {
+                        $('.select2-container--open .select2-search__field')
+                            .attr('placeholder', 'Cari Layanan...');
+                    } else {
+                        $('.select2-container--open .select2-search__field')
+                            .attr('placeholder', '');
+                    }
+                }, 0); // 🔥 ini kunci biar language ga ke-reset
+            });
+
+            initSelect2('#studio_id', {
+                placeholder: "Pilih Studio",
+                allowClear: true
+            });
+
+            $('#studio_id').on('select2:open', function() {
+                $('.select2-container--open .select2-search__field')
+                    .attr('placeholder', 'Cari Studio...');
+            });
+
+        });
+    </script>
+
+
+    <script>
+        $(document).ready(function() {
+
+            function toggleEmployee() {
+                let role = $('select[name="roles"]').val();
+
+                if (role === 'employee') {
+                    $('#employee').slideDown(200);
+                } else {
+                    $('#employee').slideUp(200);
+                }
+            }
+
+            toggleEmployee();
+
+            $('select[name="roles"]').on('change', function() {
+                toggleEmployee();
+            });
+
+        });
+    </script>
+
+    <script>
+        imgInp.onchange = evt => {
+            const [file] = imgInp.files
+            if (file) {
+                blah.src = URL.createObjectURL(file)
+            }
+        }
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            const serviceDetailsContainer = $('#service-details-container');
+            const services = @json($services);
+            const slotGroups = @json($slotGroups);
+
+            // Data lama dari old() atau data DB
+            const oldServiceDurations = @json(old('service_duration', []));
+            const oldServiceBreaks = @json(old('service_break_duration', []));
+            const oldSlotGroups = @json(old('slot_group_id', []));
+            const userServicesData = @json($userServicesArray ?? []);
+
+            // Ambil services yang sudah dipilih (old() dulu, kalau ga ada pakai DB)
+            let selectedServices = @json(old('services', $userServices ?? []));
+
+            function renderServiceDetails(selectedServices) {
+                serviceDetailsContainer.empty();
+
+                selectedServices.forEach(serviceId => {
+                    const service = services.find(s => s.id == serviceId);
+                    if (!service) return;
+
+                    // Tentukan value: old() dulu, kalau tidak pakai DB
+                    const durationValue = oldServiceDurations[service.id] ??
+                        (userServicesData[service.id]?.duration ?? '');
+                    const breakValue = oldServiceBreaks[service.id] ??
+                        (userServicesData[service.id]?.break_duration ?? '');
+                    const slotGroupValue = oldSlotGroups[service.id] ??
+                        (userServicesData[service.id]?.slot_group_id ?? '');
+
+                    const serviceBlock = `
+<div class="card card-outline card-primary mb-3">
+    <div class="card-header">
+        <h3 class="card-title"><i class="fas fa-concierge-bell mr-1"></i> ${service.title}</h3>
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label>Durasi Layanan</label>
+                <select name="service_duration[${service.id}]" class="form-control">
+                    <option value="">Pilih Durasi</option>
+                    ${[5,10,15,20,30,45,60].map(v => `<option value="${v}" ${v == durationValue ? 'selected' : ''}>${v} menit</option>`).join('')}
+                </select>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label>Waktu Istirahat</label>
+                <select name="service_break_duration[${service.id}]" class="form-control">
+                    <option value="">Tanpa Istirahat</option>
+                    ${[5,10,15,20,25,30].map(v => `<option value="${v}" ${v == breakValue ? 'selected' : ''}>${v} menit</option>`).join('')}
+                </select>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label>Grup Waktu</label>
+                <select name="slot_group_id[${service.id}]" class="form-control">
+                    <option value="">Pilih Grup Waktu</option>
+                    ${slotGroups.map(sg => `<option value="${sg.id}" ${sg.id == slotGroupValue ? 'selected' : ''}>${sg.name ?? 'Slot Group #' + sg.id}</option>`).join('')}
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+            `;
+                    serviceDetailsContainer.append(serviceBlock);
+                });
+            }
+
+            // Render saat load
+            renderServiceDetails(selectedServices);
+
+            // Render saat change
+            $('#services').on('change', function() {
+                selectedServices = $(this).val() || [];
+                renderServiceDetails(selectedServices);
+            });
+        });
+    </script>
+
+    @if (session('success') || session('error'))
+        <script>
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            });
+
+            @if (session('success'))
+                Toast.fire({
+                    icon: 'success',
+                    title: "{{ session('success') }}"
+                });
+            @endif
+
+            @if (session('error'))
+                Toast.fire({
+                    icon: 'error',
+                    title: "{{ session('error') }}"
+                });
+            @endif
+        </script>
+    @endif
+
+    @if ($errors->any())
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops!',
+                    html: `
+            <ul style="text-align:left;">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        `,
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#d33'
                 });
             });
         </script>
-    @endpush
+    @endif
+
+    <script>
+        document.getElementById('phone').addEventListener('input', function() {
+            let val = this.value;
+
+            // hanya angka
+            val = val.replace(/[^0-9]/g, '');
+
+            // ❌ kalau diawali 0 → hapus
+            if (val.startsWith('0')) {
+                val = val.substring(1);
+            }
+
+            this.value = val;
+        });
+    </script>
+    <script>
+        document.getElementById('phone').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+    </script>
 
 
 @stop

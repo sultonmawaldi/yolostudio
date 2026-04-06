@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Rappasoft\LaravelAuthenticationLog\Traits\AuthenticationLoggable;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\ResetPasswordNotification;
+use App\Models\Employee;
 
 class User extends Authenticatable
 {

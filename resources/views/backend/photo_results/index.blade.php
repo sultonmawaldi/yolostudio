@@ -22,24 +22,28 @@
         <div class="col-md-4">
             <label class="filter-label" for="filterCrew"><i class="fas fa-users me-2"></i> Pilih Crew </label>
 
+            @php
+                $user = auth()->user();
+            @endphp
+
             <select id="filterCrew" class="form-select filter-select">
-                @if (auth()->user()->hasRole('admin') || auth()->user()->hasRole('moderator'))
-                    <option value="" {{ request('crew') ? '' : 'selected' }}>
-                        Semua Crew
-                    </option>
+
+                @if ($user && ($user->hasRole('admin') || $user->hasRole('moderator')))
+                    <option value="">Semua Crew</option>
+
                     @foreach ($employees as $employee)
-                        @if ($employee->user->hasRole('employee'))
-                            {{-- Hanya tampilkan yang role employee --}}
-                            <option value="{{ $employee->id }}" {{ request('crew') == $employee->id ? 'selected' : '' }}>
+                        @if ($employee->user && $employee->user->hasRole('employee'))
+                            <option value="{{ $employee->id }}">
                                 {{ $employee->user->name ?? '-' }}
                             </option>
                         @endif
                     @endforeach
-                @elseif(auth()->user()->hasRole('employee'))
-                    <option value="{{ auth()->user()->employee->id }}" selected>
-                        {{ auth()->user()->name }}
+                @elseif($user && $user->hasRole('employee'))
+                    <option value="{{ $user->employee->id }}" selected>
+                        {{ $user->name }}
                     </option>
                 @endif
+
             </select>
         </div>
 
@@ -434,8 +438,8 @@
         }
 
         /* ===============================
-                                                                                                                           ✨ Search Bar Premium Modern ✨
-                                                                                                                        ================================= */
+                                                                                                                               ✨ Search Bar Premium Modern ✨
+                                                                                                                            ================================= */
 
         .search-bar-card {
             border-radius: 18px;
@@ -510,8 +514,8 @@
         }
 
         /* ===============================
-                                                                                                                           ✨ Tombol Super Premium (WhatsApp & Hapus) ✨
-                                                                                                                        ================================= */
+                                                                                                                               ✨ Tombol Super Premium (WhatsApp & Hapus) ✨
+                                                                                                                            ================================= */
 
         .btn-whatsapp-super,
         .btn-danger-super {
@@ -533,8 +537,8 @@
         }
 
         /* ===============================
-                                                                                                                           Tombol WhatsApp
-                                                                                                                        ================================= */
+                                                                                                                               Tombol WhatsApp
+                                                                                                                            ================================= */
         .btn-whatsapp-super {
             background: linear-gradient(135deg, #25D366, #1ebe5d);
             box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35);
@@ -558,8 +562,8 @@
         }
 
         /* ===============================
-                                                                                                                           Tombol Hapus Semua Foto
-                                                                                                                        ================================= */
+                                                                                                                               Tombol Hapus Semua Foto
+                                                                                                                            ================================= */
         .btn-danger-super {
             background: linear-gradient(135deg, #ff5e57, #ff2a2a);
             box-shadow: 0 6px 20px rgba(255, 94, 87, 0.35);
@@ -584,8 +588,8 @@
         }
 
         /* ===============================
-                                                                                                                           Flex container (tengah & responsif)
-                                                                                                                        ================================= */
+                                                                                                                               Flex container (tengah & responsif)
+                                                                                                                            ================================= */
         .d-flex.gap-3 {
             justify-content: center;
             /* selalu di tengah */

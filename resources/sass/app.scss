@@ -965,7 +965,54 @@ body {
     word-break: break-word; /* teks rapi di layar kecil */
 }
 
+/* SLOT BOOKED (tetap seperti sekarang) */
+.slot-booked {
+    background: #e9ecef !important;
+    color: #6c757d !important;
+    cursor: not-allowed;
+    position: relative;
+    opacity: 0.7;
+}
 
+/* SLOT HOLIDAY (lebih mencolok + icon) */
+.slot-holiday {
+    background: #ffe5e5 !important;
+    color: #dc3545 !important;
+    border: 1px solid #dc3545 !important;
+    cursor: not-allowed;
+    position: relative;
+}
+
+/* 🔥 ICON KHUSUS HOLIDAY */
+.slot-holiday::after {
+    content: "\f073"; /* fa-calendar */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 10px;
+    position: absolute;
+    top: 4px;
+    right: 6px;
+    color: #dc3545;
+}
+
+/* 🔥 ICON BOOKED (opsional biar beda) */
+.slot-booked::after {
+    content: "\f00d"; /* fa-times */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 10px;
+    position: absolute;
+    top: 4px;
+    right: 6px;
+    color: #6c757d;
+}
+
+/* HOVER DISABLE (biar ga misleading) */
+.slot-booked:hover,
+.slot-holiday:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
 
 
 /* ===================== DARK MODE TOGGLE SUPPORT ===================== */
@@ -1542,4 +1589,90 @@ html.dark .terms-link {
 html.dark .terms-link:hover {
     color: #facc15;                   /* highlight saat hover */
     text-decoration-color: #facc15;
+}
+
+/* =========================
+   DARK MODE SLOT STYLE
+========================= */
+
+/* BASE SLOT (optional biar konsisten) */
+html.dark .time-slot {
+    border-color: #3a3f45;
+}
+
+/* =========================
+   SLOT BOOKED - DARK
+========================= */
+html.dark .time-slot.slot-booked {
+    background: #2a2e33 !important;
+    color: #9aa0a6 !important;
+    border: 1px solid #3a3f45 !important;
+    cursor: not-allowed;
+    position: relative;
+    opacity: 0.8;
+}
+
+/* =========================
+   SLOT HOLIDAY - DARK
+========================= */
+html.dark .time-slot.slot-holiday {
+    background: #3a1f1f !important;
+    color: #ff6b6b !important;
+    border: 1px solid #ff6b6b !important;
+    cursor: not-allowed;
+    position: relative;
+}
+
+/* =========================
+   FIX OVERRIDE BOOTSTRAP
+========================= */
+html.dark .time-slot.slot-holiday.btn,
+html.dark .time-slot.slot-holiday.btn-outline-primary {
+    background: #3a1f1f !important;
+    color: #ff6b6b !important;
+    border: 1px solid #ff6b6b !important;
+}
+
+html.dark .time-slot.slot-booked.btn,
+html.dark .time-slot.slot-booked.btn-outline-primary {
+    background: #2a2e33 !important;
+    color: #9aa0a6 !important;
+    border: 1px solid #3a3f45 !important;
+}
+
+/* =========================
+   ICON HOLIDAY
+========================= */
+html.dark .time-slot.slot-holiday::after {
+    content: "\f073"; /* calendar */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 10px;
+    position: absolute;
+    top: 4px;
+    right: 6px;
+    color: #ff6b6b;
+}
+
+/* =========================
+   ICON BOOKED
+========================= */
+html.dark .time-slot.slot-booked::after {
+    content: "\f00d"; /* times */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 10px;
+    position: absolute;
+    top: 4px;
+    right: 6px;
+    color: #9aa0a6;
+}
+
+/* =========================
+   DISABLE HOVER
+========================= */
+html.dark .time-slot.slot-booked:hover,
+html.dark .time-slot.slot-holiday:hover {
+    transform: none !important;
+    box-shadow: none !important;
 }

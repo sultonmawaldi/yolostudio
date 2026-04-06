@@ -315,11 +315,6 @@
             transition: transform 0.2s ease;
         }
 
-        /* SAAT OPEN (BIAR NAIK) */
-        .select2-container--default.select2-container--open .select2-selection--multiple::after {
-            transform: translateY(-50%) rotate(180deg);
-        }
-
 
         /* SINGLE SELECT (SAMA PERSIS SERVICE) */
         .select2-container--default .select2-selection--single {
@@ -377,11 +372,6 @@
 
             pointer-events: none;
             transition: transform 0.2s ease;
-        }
-
-        /* SAAT OPEN (BIAR NAIK) */
-        .select2-container--default.select2-container--open .select2-selection--single::after {
-            transform: translateY(-50%) rotate(180deg);
         }
 
         /* container utama */

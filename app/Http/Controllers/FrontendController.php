@@ -203,6 +203,18 @@ class FrontendController extends Controller
                 ]);
             }
 
+            /**
+             * ==================================
+             * 🔥 AMBIL HOLIDAYS
+             * ==================================
+             */
+            $holidays = \App\Models\Holiday::where('employee_id', $employee->id)
+                ->where(function ($q) use ($date) {
+                    $q->where('date', $date->toDateString()) // full date
+                        ->orWhere('date', $date->format('m-d')); // recurring
+                })
+                ->get();
+
             $slots = [];
             $now = now();
             $isToday = $date->isToday();
@@ -216,16 +228,48 @@ class FrontendController extends Controller
                 $endTime = Carbon::parse($date->toDateString() . ' ' . $interval['end']);
 
                 while ($current->copy()->addMinutes($uiSessionDuration)->lte($endTime)) {
-                    // slot end = DURASI SERVICE
-                    $slotEnd = $current->copy()->addMinutes($uiSessionDuration);
 
+                    $slotEnd = $current->copy()->addMinutes($uiSessionDuration);
 
                     if ($isToday && $current->lt($now)) {
                         $current->addMinutes($systemSlotDuration + $systemBreakDuration);
                         continue;
                     }
 
-                    // Cek bentrok appointment
+                    /**
+                     * ==================================
+                     * 🔥 CEK HOLIDAY
+                     * ==================================
+                     */
+                    $isHolidayBlocked = false;
+
+                    foreach ($holidays as $holiday) {
+
+                        // FULL DAY OFF
+                        if (empty($holiday->hours)) {
+                            $isHolidayBlocked = true;
+                            break;
+                        }
+
+                        // PARTIAL HOURS
+                        foreach ($holiday->hours as $range) {
+                            [$hStart, $hEnd] = explode('-', $range);
+
+                            $hStart = Carbon::parse($date->toDateString() . ' ' . $hStart);
+                            $hEnd   = Carbon::parse($date->toDateString() . ' ' . $hEnd);
+
+                            if ($current->lt($hEnd) && $slotEnd->gt($hStart)) {
+                                $isHolidayBlocked = true;
+                                break 2;
+                            }
+                        }
+                    }
+
+                    /**
+                     * ==================================
+                     * CEK APPOINTMENT
+                     * ==================================
+                     */
                     $isBooked = Appointment::where('employee_id', $employee->id)
                         ->where('slot_group_id', $slotGroupId)
                         ->where('booking_date', $date->toDateString())
@@ -237,24 +281,22 @@ class FrontendController extends Controller
                         ->exists();
 
                     $slots[] = [
-                        // Service
                         'service_id'   => $serviceId,
                         'service_name' => $service->name ?? 'Service',
 
-                        // SLOT TIME (SYSTEM)
                         'start'   => $current->format('H:i'),
                         'end'     => $slotEnd->format('H:i'),
                         'display' => $current->format('g:i A') . ' - ' . $slotEnd->format('g:i A'),
 
-                        // SYSTEM (jangan dipakai UI)
                         'system_slot_duration'  => $systemSlotDuration,
                         'system_break_duration' => $systemBreakDuration,
 
-                        // UI (PAKAI INI DI FRONTEND)
                         'session_duration' => $uiSessionDuration,
                         'break_duration'   => $uiBreakDuration,
 
-                        'is_booked' => $isBooked,
+                        // 🔥 FINAL STATUS
+                        'is_booked' => $isBooked || $isHolidayBlocked,
+                        'is_holiday' => $isHolidayBlocked, // optional (buat UI beda warna)
                     ];
 
                     $current->addMinutes($systemSlotDuration + $systemBreakDuration);
