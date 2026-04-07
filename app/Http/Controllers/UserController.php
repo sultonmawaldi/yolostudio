@@ -69,12 +69,27 @@ class UserController extends Controller
             'slot_group_id.*' => 'nullable|exists:slot_groups,id',
             'studio_id' => 'nullable|exists:studios,id',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-
-            // 🔥 TAMBAHAN (biar aman)
+            'holidays' => 'sometimes|array',
+            'holidays.date' => 'sometimes|array',
             'holidays.date.*' => 'nullable|date',
+            'holidays.from_time' => 'sometimes|array',
             'holidays.from_time.*' => 'nullable',
+            'holidays.to_time' => 'sometimes|array',
             'holidays.to_time.*' => 'nullable',
+        ], [
+            // 🔥 CUSTOM MESSAGE
+            'phone.unique' => 'Nomor HP sudah digunakan, silakan pakai nomor lain.',
+            'email.unique' => 'Email sudah terdaftar, silakan gunakan email lain.',
         ]);
+
+        $normalizedPhone = $this->normalizePhone($data['phone']);
+
+        if (User::where('phone', $normalizedPhone)->exists()) {
+            return back()
+                ->withErrors(['phone' => 'Nomor HP sudah digunakan, silakan pakai nomor lain.'])
+                ->withInput();
+        }
+
 
         // ✅ aman dari array / null
         $role = $data['roles'] ?? 'USR';
@@ -93,7 +108,7 @@ class UserController extends Controller
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
-            'phone' => $this->normalizePhone($data['phone'] ?? ''),
+            'phone' => $normalizedPhone,
             'email_verified_at' => now(),
             'password' => \Hash::make($data['password']),
             'status' => $request->status ?? 1,
@@ -168,7 +183,7 @@ class UserController extends Controller
             }
         }
 
-        return redirect()->route('user.index')->with('success', 'Pengguna telah berhasil ditambahkan');
+        return redirect()->route('user.index')->with('success', 'Pengguna berhasil ditambahkan');
     }
 
     private function normalizePhone($phone)
@@ -207,25 +222,40 @@ class UserController extends Controller
 
         $user = User::with('employee.holidays', 'employee.services')->findOrFail($id);
 
-        // Role utama user
         $userRole = $user->roles->first()->name ?? null;
 
-        // Employee days untuk edit
         $employeeDays = $user->employee->days ?? [];
         $employeeDays = $this->transformAvailabilitySlotsForEdit($employeeDays);
 
-        // Semua roles, services, slotGroups, dan studios
-        $roles = Role::all();
+        $roles = Role::where('name', '!=', 'admin')->get();
+
+        if ($user->hasRole('admin')) {
+            $adminRole = Role::where('name', 'admin')->first();
+            $roles->prepend($adminRole);
+        }
         $services = Service::whereStatus(1)->get();
         $slotGroups = SlotGroup::all();
         $studios = Studio::whereStatus(1)->get();
 
-        // Services user untuk multi-select
+        // ✅ SERVICE IDS
         $userServices = $user->employee
             ? $user->employee->services->pluck('id')->toArray()
             : [];
 
-        // Holidays user – aman dari error jika kosong
+        // ✅ 🔥 PENTING: DETAIL PIVOT
+        $userServicesArray = [];
+
+        if ($user->employee) {
+            foreach ($user->employee->services as $service) {
+                $userServicesArray[$service->id] = [
+                    'duration' => $service->pivot->duration,
+                    'break_duration' => $service->pivot->break_duration,
+                    'slot_group_id' => $service->pivot->slot_group_id,
+                ];
+            }
+        }
+
+        // ✅ HOLIDAYS
         $userHolidays = $user->employee
             ? $user->employee->holidays->map(function ($h) {
                 $hours = $h->hours ?? [];
@@ -260,7 +290,8 @@ class UserController extends Controller
             'slotGroups',
             'studios',
             'userServices',
-            'userHolidays'
+            'userHolidays',
+            'userServicesArray' // 🔥 WAJIB
         ));
     }
 
@@ -271,49 +302,121 @@ class UserController extends Controller
             'email' => 'sometimes|email|unique:users,email,' . $user->id,
             'social.*' => 'sometimes',
             'password' => 'nullable|string|min:8|confirmed',
-            'roles' => 'nullable|array|exists:roles,name',
+            'roles' => 'nullable|string|exists:roles,name',
             'service' => 'nullable|array',
             'days' => 'nullable',
             'status' => 'nullable|numeric',
             'is_employee' => 'nullable',
-            'holidays.date.*' => 'sometimes|required',
+
+            // =========================
+            // 🔥 FIX ERROR HOLIDAYS
+            // =========================
+            'holidays' => 'nullable|array',
+            'holidays.date' => 'nullable|array',
+            'holidays.date.*' => 'nullable|date',
+            'holidays.from_time' => 'nullable|array',
+            'holidays.from_time.*' => 'nullable',
+            'holidays.to_time' => 'nullable|array',
+            'holidays.to_time.*' => 'nullable',
+
+            // =========================
+
             'slot_group_id' => 'nullable|array',
             'slot_group_id.*' => 'nullable|exists:slot_groups,id',
         ]);
 
         // ✅ Generate role_uid otomatis jika belum ada
         if (empty($user->role_uid)) {
-            $roleName = $request->roles[0] ?? $user->roles->first()->name ?? 'USR';
+            $roleName = $request->roles ?? $user->roles->first()->name ?? 'USR';
             $prefix = strtoupper(substr($roleName, 0, 3));
             $unique = strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 4));
             $user->role_uid = "{$prefix}-" . now()->format('Ymd') . "-{$unique}";
         }
 
-        // Validation for self-role/status changes
+        // =========================
+        // VALIDASI ROLE & STATUS
+        // =========================
         if (\Auth::id() === $user->id) {
-            if ($request->filled('roles') && !$user->hasAnyRole($request->roles)) {
-                return redirect()->back()->withErrors(['roles' => 'Anda tidak dapat mengubah peran Anda sendiri.']);
+            if ($request->filled('roles') && $request->roles !== $user->roles->first()->name) {
+                return back()->withErrors([
+                    'roles' => 'Anda tidak dapat mengubah peran Anda sendiri.'
+                ]);
             }
+
             if ($request->has('status') && $request->status != $user->status) {
-                return redirect()->back()->withErrors(['status' => 'Anda tidak dapat mengubah status Anda sendiri.']);
+                return back()->withErrors([
+                    'status' => 'Anda tidak dapat mengubah status Anda sendiri.'
+                ]);
             }
         }
 
-        if ($user->id === 1 && (!in_array('admin', $request->roles ?? []))) {
-            return redirect()->back()->withErrors(['roles' => 'Pengguna pertama harus selalu memiliki peran admin.']);
+        if ($user->id === 1 && $request->roles !== 'admin') {
+            return redirect()->back()->withErrors([
+                'roles' => 'Pengguna pertama harus selalu memiliki peran admin.'
+            ]);
         }
 
-        if ($user->hasRole('admin') && !in_array('admin', $request->roles ?? [])) {
+        if ($user->hasRole('admin') && $request->roles !== 'admin') {
             return redirect()->back()->withErrors(['roles' => 'Peran admin tidak dapat dihapus.']);
         }
 
         $status = $user->id === 1 ? 1 : ($request->status ?? 0);
 
+        // =========================
+        // 🔥 FIX PHONE (ANTI DUPLICATE)
+        // =========================
         $phone = $request->phone ?? $user->phone;
+
         if (!empty($phone)) {
             $phone = $this->normalizePhone($phone);
+
+            if (\App\Models\User::where('phone', $phone)
+                ->where('id', '!=', $user->id)
+                ->exists()
+            ) {
+                return back()
+                    ->withErrors(['phone' => 'Nomor HP sudah digunakan.'])
+                    ->withInput();
+            }
         }
 
+        // =========================
+        // HANDLE IMAGE (DELETE + UPLOAD)
+        // =========================
+        $imageName = $user->image;
+
+        // 🔥 DELETE DULU
+        if ($request->has('delete_image')) {
+
+            if ($user->image) {
+                $oldPath = public_path('uploads/images/profile/' . $user->image);
+
+                if (\File::exists($oldPath)) {
+                    \File::delete($oldPath);
+                }
+            }
+
+            $imageName = null;
+        }
+
+        // 🔥 UPLOAD BARU
+        if ($request->hasFile('image')) {
+
+            if ($user->image) {
+                $oldPath = public_path('uploads/images/profile/' . $user->image);
+
+                if (\File::exists($oldPath)) {
+                    \File::delete($oldPath);
+                }
+            }
+
+            $imageName = time() . '.' . $request->image->getClientOriginalExtension();
+            $request->image->move(public_path('uploads/images/profile/'), $imageName);
+        }
+
+        // =========================
+        // UPDATE USER
+        // =========================
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
@@ -321,26 +424,31 @@ class UserController extends Controller
             'password' => $request->password ? \Hash::make($request->password) : $user->password,
             'status' => $status,
             'role_uid' => $user->role_uid,
+            'image' => $imageName, // 🔥 INI WAJIB
         ]);
 
-        // ✅ Sync roles
-        if ($request->roles) {
-            $roles = $request->roles;
-            if ($user->id === 1 || $user->hasRole('admin')) {
-                if (!in_array('admin', $roles)) {
-                    $roles[] = 'admin';
-                }
+        // =========================
+        // ROLE SYNC
+        // =========================
+        if ($request->filled('roles')) {
+
+            // 🔒 LOCK ADMIN
+            if ($user->hasRole('admin')) {
+                $user->syncRoles(['admin']);
+            } else {
+                $user->syncRoles([$request->roles]);
             }
-            $user->syncRoles($roles);
         }
 
-        // ✅ Employee update
+        // =========================
+        // EMPLOYEE UPDATE
+        // =========================
         if (!empty($data['is_employee'])) {
             if (!empty($data['days'])) {
                 $data['days'] = $this->transformOpeningHours($data['days']);
             }
 
-            $employee = Employee::updateOrCreate(
+            $employee = \App\Models\Employee::updateOrCreate(
                 ['user_id' => $user->id],
                 [
                     'days' => $data['days'] ?? null,
@@ -349,7 +457,6 @@ class UserController extends Controller
                 ]
             );
 
-            // ✅ Update pivot table (service_id + duration + break_duration)
             $services = $request->input('service', []);
             $durations = $request->input('service_duration', []);
             $breaks = $request->input('service_break_duration', []);
@@ -360,14 +467,17 @@ class UserController extends Controller
                 $pivotData[$serviceId] = [
                     'duration' => $durations[$serviceId] ?? 0,
                     'break_duration' => $breaks[$serviceId] ?? 0,
-                    'slot_group_id' => $slotGroups[$serviceId] ?? null, // 🔥 WAJIB
+                    'slot_group_id' => $slotGroups[$serviceId] ?? null,
                 ];
             }
 
             $employee->services()->sync($pivotData);
 
-            // ✅ Holidays (tidak diubah dari versi sebelumnya)
+            // =========================
+            // HOLIDAYS (AMAN)
+            // =========================
             if ($request->has('holidays.date') && is_array($request->input('holidays.date'))) {
+
                 $existingHolidayIds = $user->employee->holidays->pluck('id')->toArray();
                 $submittedHolidayIds = [];
 
@@ -378,9 +488,12 @@ class UserController extends Controller
                 $holidayIds = $request->input('holidays.id', []);
 
                 foreach ($dates as $index => $date) {
+
+                    if (empty($date)) continue; // 🔥 penting
+
                     $holidayData = [
                         'employee_id' => $user->employee->id,
-                        'hours' => isset($fromTimes[$index]) && isset($toTimes[$index])
+                        'hours' => (!empty($fromTimes[$index]) && !empty($toTimes[$index]))
                             ? [$fromTimes[$index] . '-' . $toTimes[$index]]
                             : [],
                         'recurring' => isset($recurring[$index]) && $recurring[$index] == 1,
@@ -391,20 +504,21 @@ class UserController extends Controller
                         : $date;
 
                     if (isset($holidayIds[$index])) {
-                        $holiday = Holiday::find($holidayIds[$index]);
+                        $holiday = \App\Models\Holiday::find($holidayIds[$index]);
                         if ($holiday) {
                             $holiday->update($holidayData);
                             $submittedHolidayIds[] = $holiday->id;
                         }
                     } else {
-                        $holiday = Holiday::create($holidayData);
+                        $holiday = \App\Models\Holiday::create($holidayData);
                         $submittedHolidayIds[] = $holiday->id;
                     }
                 }
 
                 $holidaysToDelete = array_diff($existingHolidayIds, $submittedHolidayIds);
+
                 if (!empty($holidaysToDelete)) {
-                    Holiday::whereIn('id', $holidaysToDelete)->delete();
+                    \App\Models\Holiday::whereIn('id', $holidaysToDelete)->delete();
                 }
             } else {
                 if ($user->employee->holidays()->exists()) {
@@ -413,8 +527,9 @@ class UserController extends Controller
             }
         }
 
-        return redirect()->route('user.index')->with('success', 'Profil telah berhasil diperbarui');
+        return redirect()->route('user.index')->with('success', 'Profil berhasil diperbarui');
     }
+
 
 
 
@@ -436,15 +551,15 @@ class UserController extends Controller
     public function destroy(User $user, Request $request)
     {
         if ($user->id == 1) {
-            return back()->withErrors('Pengguna admin pertama tidak dapat dihapus.');
+            return back()->with('error', 'Pengguna admin pertama tidak dapat dihapus.');
         }
 
         if ($user->id === $request->user()->id) {
-            return back()->withErrors('Anda tidak dapat menghapus akun Anda sendiri.');
+            return back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
         }
 
         $user->delete();
-        return redirect()->back()->with('success', 'Pengguna telah berhasil dipindahkan ke tempat sampah');
+        return redirect()->back()->with('success', 'Pengguna berhasil dipindahkan ke tempat sampah');
     }
 
 
@@ -461,7 +576,7 @@ class UserController extends Controller
         if (!is_null($user)) {
             $user->restore();
         }
-        return redirect()->back()->with("success", "Pengguna telah berhasil dipulihkan");
+        return redirect()->back()->with("success", "Pengguna berhasil dipulihkan");
     }
 
 
@@ -502,7 +617,7 @@ class UserController extends Controller
         // ✅ Hapus user permanen
         $user->forceDelete();
 
-        return back()->withSuccess('Pengguna beserta seluruh data terkait (karyawan, hari libur, janji temu, dan pemesanan) telah berhasil dihapus secara permanen');
+        return back()->withSuccess('Pengguna beserta seluruh data terkait (karyawan, hari libur, janji temu, dan pemesanan) berhasil dihapus secara permanen');
     }
 
 
@@ -522,7 +637,7 @@ class UserController extends Controller
         $user->password = Hash::make($request->password);
         $user->save();
 
-        return redirect()->back()->with('success', 'Kata sandi telah berhasil diperbarui');
+        return redirect()->back()->with('success', 'Kata sandi berhasil diperbarui');
     }
 
     public function updateProfileImage(Request $request, User $user)
@@ -544,7 +659,7 @@ class UserController extends Controller
             'image' => $imageName
         ]);
 
-        return back()->withSuccess('Gambar profil telah berhasil diperbarui');
+        return back()->withSuccess('Gambar profil berhasil diperbarui');
     }
 
 
@@ -562,7 +677,7 @@ class UserController extends Controller
             $user->update(['image' => null]);
         }
 
-        return back()->withSuccess('Gambar profil telah berhasil dihapus');
+        return back()->withSuccess('Gambar profil berhasil dihapus');
     }
 
 
@@ -682,7 +797,7 @@ class UserController extends Controller
 
         return redirect()
             ->route('member.profile')
-            ->with('success', 'Profile updated successfully');
+            ->with('success', 'Profil berhasil diperbarui');
     }
 
     /**
@@ -706,7 +821,7 @@ class UserController extends Controller
 
         // Cek apakah password lama sesuai
         if (!Hash::check($request->current_password, $user->password)) {
-            return redirect()->back()->withErrors(['current_password' => 'Password lama tidak sesuai!'], 'password');
+            return redirect()->back()->withErrors(['current_password' => 'Kata sandi lama tidak sesuai'], 'password');
         }
 
         // Update password
@@ -714,6 +829,6 @@ class UserController extends Controller
         $user->save();
 
         // Flash message khusus untuk password
-        return redirect()->back()->with('password_success', 'Password berhasil diperbarui!');
+        return redirect()->back()->with('password_success', 'Kata sandi berhasil diperbarui');
     }
 }

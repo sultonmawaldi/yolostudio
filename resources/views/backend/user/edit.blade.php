@@ -83,11 +83,15 @@
                                             <img src="https://flagcdn.com/w20/id.png" style="width:20px; margin-right:6px;">
                                             +62
                                         </span>
+                                        @php
+                                            $phone = old('phone') ?? $user->phone;
+                                            $phone = \Illuminate\Support\Str::replaceFirst('+62', '', $phone);
+                                        @endphp
+
                                         <input type="tel" name="phone" id="phone"
                                             class="form-control @error('phone') is-invalid @enderror"
-                                            placeholder="81234567890" value="{{ old('phone', $user->phone) }}"
-                                            inputmode="numeric" maxlength="13"
-                                            style="border-left: 0; border-radius: 0 .25rem .25rem 0;">
+                                            placeholder="81234567890" value="{{ $phone }}" inputmode="numeric"
+                                            maxlength="13" style="border-left: 0; border-radius: 0 .25rem .25rem 0;">
                                     </div>
                                     @error('phone')
                                         <small class="text-danger">{{ $message }}</small>
@@ -168,15 +172,19 @@
                                     {{-- STUDIO --}}
                                     <div class="form-group">
                                         <label>Pilih Studio</label>
+
                                         <select name="studio_id" id="studio_id" class="form-control select2"
                                             style="width:100%" data-placeholder="Pilih Studio">
+
                                             <option></option>
+
                                             @foreach ($studios as $studio)
                                                 <option value="{{ $studio->id }}"
-                                                    {{ old('studio_id', $user->studio_id) == $studio->id ? 'selected' : '' }}>
+                                                    {{ old('studio_id', optional($user->employee)->studio_id) == $studio->id ? 'selected' : '' }}>
                                                     {{ $studio->name }}
                                                 </option>
                                             @endforeach
+
                                         </select>
                                     </div>
 
@@ -266,8 +274,10 @@
 
                             {{-- FOTO USER --}}
                             <div class="card card-primary mt-3">
+
                                 <div class="card-header">
                                     <h3 class="card-title">Foto Pengguna</h3>
+
                                     <div class="card-tools">
                                         <button type="button" class="btn btn-tool" data-card-widget="collapse"
                                             title="Tutup">
@@ -278,19 +288,50 @@
 
                                 <div class="card-body pt-0 pb-0 mt-4">
                                     <div class="form-group">
-                                        <small class="text-red">Disarankan foto persegi (1:1)</small>
-                                        <input class="form-control mt-2 @error('image') is-invalid @enderror"
-                                            name="image" accept="image/*" type="file" id="imgInp">
+
+                                        <small class="text-danger d-block">
+                                            Catatan : Disarankan foto persegi (1:1)
+                                        </small>
+
+                                        <label class="mt-2">Upload Foto Baru</label>
+                                        <input class="form-control @error('image') is-invalid @enderror" name="image"
+                                            accept="image/*" type="file" id="imgInp">
+
                                         @error('image')
                                             <small class="text-danger d-block mt-1">{{ $message }}</small>
                                         @enderror
+
+                                        {{-- Preview --}}
                                         <div class="text-center mt-3">
-                                            <img class="img-fluid rounded-circle shadow-sm"
-                                                style="width:120px;height:120px;object-fit:cover;border:1px solid #ddd;padding:4px"
-                                                id="blah"
-                                                src="{{ $user->image ? asset('uploads/images/' . $user->image) : asset('uploads/images/no-image.jpg') }}"
-                                                alt="Preview Foto">
+
+                                            @if ($user->image)
+                                                <img class="img-fluid rounded-circle shadow-sm"
+                                                    style="width:120px;height:120px;object-fit:cover;border:1px solid #ddd;padding:4px"
+                                                    id="blah"
+                                                    src="{{ asset('uploads/images/profile/' . $user->image) }}"
+                                                    alt="Foto pengguna">
+
+                                                {{-- HAPUS FOTO --}}
+                                                <div class="mt-2">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="checkbox" class="custom-control-input"
+                                                            id="delete_image" name="delete_image">
+
+                                                        <label class="custom-control-label text-danger"
+                                                            for="delete_image">
+                                                            Hapus foto ini
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            @else
+                                                <img class="img-fluid rounded-circle shadow-sm"
+                                                    style="width:120px;height:120px;object-fit:cover;border:1px solid #ddd;padding:4px"
+                                                    id="blah" src="{{ asset('uploads/images/no-image.jpg') }}"
+                                                    alt="Foto default">
+                                            @endif
+
                                         </div>
+
                                     </div>
                                 </div>
                             </div>

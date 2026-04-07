@@ -134,6 +134,11 @@
 
 @section('css')
     <style>
+        body.swal2-shown {
+            overflow-y: scroll !important;
+            padding-right: 0 !important;
+        }
+
         .card {
             background: #ffffff;
             border: none;
