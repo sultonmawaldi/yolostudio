@@ -24,7 +24,7 @@
                     <li class="breadcrumb-item">
                         <a href="{{ route('studio.index') }}">Studio</a>
                     </li>
-                    <li class="breadcrumb-item active">Tambah</li>
+                    <li class="breadcrumb-item active">Tambah Studio</li>
                 </ol>
             </div>
 
@@ -69,9 +69,19 @@
                             {{-- TELEPON --}}
                             <div class="form-group">
                                 <label>Telepon</label>
-                                <input type="text" name="phone"
-                                    class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone') }}"
-                                    placeholder="Contoh: 08123456789">
+
+                                <div class="input-group">
+                                    <span class="input-group-text d-flex align-items-center"
+                                        style="border-right: 0; border-radius: .25rem 0 0 .25rem;">
+                                        <img src="https://flagcdn.com/w20/id.png" style="width:20px; margin-right:6px;">
+                                        +62
+                                    </span>
+
+                                    <input type="tel" name="phone" id="phone"
+                                        class="form-control @error('phone') is-invalid @enderror" placeholder="81234567890"
+                                        value="{{ old('phone') }}" inputmode="numeric" maxlength="13"
+                                        style="border-left: 0; border-radius: 0 .25rem .25rem 0;">
+                                </div>
 
                                 @error('phone')
                                     <small class="text-danger">{{ $message }}</small>
@@ -144,7 +154,7 @@
 
                         <div class="card card-primary">
                             <div class="card-header">
-                                <h3 class="card-title">Detail</h3>
+                                <h3 class="card-title">Detail Studio</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                         <i class="fas fa-minus"></i>
@@ -158,8 +168,12 @@
                                 <div class="form-group">
                                     <label>Status</label>
                                     <select name="status" class="form-control">
-                                        <option value="1" {{ old('status', 1) ? 'selected' : '' }}>Aktif</option>
-                                        <option value="0" {{ old('status') == 0 ? 'selected' : '' }}>Nonaktif</option>
+                                        <option value="1" {{ old('status', 1) == 1 ? 'selected' : '' }}>
+                                            Aktif
+                                        </option>
+                                        <option value="0" {{ old('status', 1) == 0 ? 'selected' : '' }}>
+                                            Nonaktif
+                                        </option>
                                     </select>
                                 </div>
 
@@ -215,5 +229,20 @@
                 });
             });
         @endif
+    </script>
+    <script>
+        document.getElementById('phone').addEventListener('input', function() {
+            let val = this.value;
+
+            // hanya angka
+            val = val.replace(/[^0-9]/g, '');
+
+            // ❌ kalau diawali 0 → hapus
+            if (val.startsWith('0')) {
+                val = val.substring(1);
+            }
+
+            this.value = val;
+        });
     </script>
 @stop

@@ -99,6 +99,21 @@
                                 </div>
 
                                 <div class="form-group">
+                                    <label>Points</label>
+                                    <input type="number" name="points" value="{{ old('points', 0) }}"
+                                        class="form-control @error('points') is-invalid @enderror"
+                                        placeholder="Masukkan jumlah points">
+
+                                    @error('points')
+                                        <small class="text-danger">{{ $message }}</small>
+                                    @enderror
+
+                                    <small class="text-muted">
+                                        Total poin yang dimiliki pengguna
+                                    </small>
+                                </div>
+
+                                <div class="form-group">
                                     <label>Kata Sandi</label>
                                     <input type="password" name="password"
                                         class="form-control @error('password') is-invalid @enderror"
@@ -263,7 +278,7 @@
 
                                     {{-- STATUS USER --}}
                                     <div class="form-group">
-                                        <label>Status Pengguna</label>
+                                        <label>Status</label>
                                         <select name="status" class="form-control @error('status') is-invalid @enderror">
                                             <option value="1" {{ old('status', '1') == '1' ? 'selected' : '' }}>
                                                 Aktif
@@ -630,6 +645,13 @@
                 }, 0); // 🔥 ini kunci biar language ga ke-reset
             });
 
+            // 🔄 Reset ke awal saat ditutup
+            $('#services').on('select2:close', function() {
+                if (!$(this).val() || $(this).val().length === 0) {
+                    $(this).val(null).trigger('change');
+                }
+            });
+
             initSelect2('#studio_id', {
                 placeholder: "Pilih Studio",
                 allowClear: true
@@ -732,10 +754,10 @@
         <select name="slot_group_id[${service.id}]" class="form-control">
             <option value="">Pilih Grup Waktu</option>
             ${slotGroups.map(sg => `
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <option value="${sg.id}">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ${sg.name ?? 'Slot Group #' + sg.id}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </option>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    `).join('')}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <option value="${sg.id}">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ${sg.name ?? 'Slot Group #' + sg.id}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </option>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                `).join('')}
         </select>
     </div>
 
@@ -812,11 +834,5 @@
             this.value = val;
         });
     </script>
-    <script>
-        document.getElementById('phone').addEventListener('input', function(e) {
-            this.value = this.value.replace(/[^0-9]/g, '');
-        });
-    </script>
-
 
 @stop

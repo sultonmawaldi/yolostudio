@@ -402,6 +402,27 @@ return [
             ],
         ],
         [
+            'text'    => 'Slot Groups',
+            'url'     => 'slot-group*',
+            'icon'    => 'fas fa-fw fa-clock',
+            'can'     => 'slot-groups.view | slot-groups.create | slot-groups.edit | slot-groups.delete',
+            'active'  => ['slot-group.*'],
+            'submenu' => [
+                [
+                    'text'  => 'Add New',
+                    'icon'  => 'fas fa-fw fa-plus',
+                    'route' => 'slot-group.create',
+                    'can'   => 'slot-groups.create',
+                ],
+                [
+                    'text'  => 'View All',
+                    'icon'  => 'fas fa-fw fa-eye',
+                    'route' => 'slot-group.index',
+                    'can'   => 'slot-groups.view',
+                ],
+            ],
+        ],
+        [
             'text'  => 'Services',
             'icon'  => 'fas fa-fw fa-briefcase',
             'can'   => 'services.view | services.create | services.edit | services.delete',

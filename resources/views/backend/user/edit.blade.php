@@ -99,6 +99,17 @@
                                 </div>
 
                                 <div class="form-group">
+                                    <label>Points</label>
+                                    <input type="number" name="points" value="{{ old('points', $user->points) }}"
+                                        class="form-control @error('points') is-invalid @enderror" min="0"
+                                        placeholder="Masukkan jumlah points">
+
+                                    @error('points')
+                                        <small class="text-danger">{{ $message }}</small>
+                                    @enderror
+                                </div>
+
+                                <div class="form-group">
                                     <label>Kata Sandi</label>
                                     <input type="password" name="password"
                                         class="form-control @error('password') is-invalid @enderror"
@@ -252,7 +263,7 @@
                                 <div class="card-body pb-0">
 
                                     <div class="form-group">
-                                        <label>Status Pengguna</label>
+                                        <label>Status</label>
                                         <select name="status" class="form-control @error('status') is-invalid @enderror">
                                             <option value="1"
                                                 {{ old('status', $user->status) == '1' ? 'selected' : '' }}>Aktif</option>
@@ -625,6 +636,13 @@
                 }, 0); // 🔥 ini kunci biar language ga ke-reset
             });
 
+            // 🔄 Reset ke awal saat ditutup
+            $('#services').on('select2:close', function() {
+                if (!$(this).val() || $(this).val().length === 0) {
+                    $(this).val(null).trigger('change');
+                }
+            });
+
             initSelect2('#studio_id', {
                 placeholder: "Pilih Studio",
                 allowClear: true
@@ -752,8 +770,10 @@
         });
     </script>
 
-    @if (session('success') || session('error'))
-        <script>
+    <script>
+        // Toast
+        @if (session('success') || session('error'))
+
             const Toast = Swal.mixin({
                 toast: true,
                 position: 'top-end',
@@ -775,28 +795,27 @@
                     title: "{{ session('error') }}"
                 });
             @endif
-        </script>
-    @endif
+        @endif
 
-    @if ($errors->any())
-        <script>
+
+        // Validation error
+        @if ($errors->any())
             document.addEventListener('DOMContentLoaded', function() {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Oops!',
-                    html: `
-            <ul style="text-align:left;">
-                @foreach ($errors->all() as $error)
+                    title: 'Terjadi Kesalahan',
+                    html: `<ul style="text-align:left;">
+                    @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        `,
+                    @endforeach
+                    </ul>`,
                     confirmButtonText: 'OK',
                     confirmButtonColor: '#d33'
                 });
             });
-        </script>
-    @endif
+        @endif
+    </script>
+
 
     <script>
         document.getElementById('phone').addEventListener('input', function() {

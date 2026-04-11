@@ -30,7 +30,7 @@
                         <th>Nama Addon</th>
                         <th>Harga</th>
                         <th>Satuan</th>
-                        <th>Max Qty</th>
+                        <th>Jumlah Maksimal</th>
                         <th>Status</th>
                         <th class="text-center">Aksi</th>
                     </tr>

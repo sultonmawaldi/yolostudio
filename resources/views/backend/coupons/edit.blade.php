@@ -99,11 +99,15 @@
                             <div class="form-group">
                                 <label>Nilai</label>
 
-                                <input type="number" step="1" min="0" name="value" class="form-control"
-                                    value="{{ old('value', $coupon->value) }}" placeholder="Masukkan nilai kupon">
+                                <input type="number" step="1" min="0" name="value"
+                                    class="form-control @error('value') is-invalid @enderror"
+                                    value="{{ old('value', $coupon->value) }}"
+                                    placeholder="Contoh: fixed (Rp) 10000 / percentage (%) 10">
 
+                                @error('value')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
-
 
                             {{-- Minimal transaksi --}}
                             <div class="form-group">
@@ -111,7 +115,8 @@
 
                                 <input type="number" step="1" min="0" name="minimum_cart_value"
                                     class="form-control"
-                                    value="{{ old('minimum_cart_value', $coupon->minimum_cart_value) }}">
+                                    value="{{ old('minimum_cart_value', $coupon->minimum_cart_value) }}"
+                                    placeholder="Opsional (contoh: 50000)">
 
                                 <small class="text-muted">
                                     Kosongkan jika tidak ada minimal transaksi
@@ -131,11 +136,11 @@
 
                             {{-- User --}}
                             <div class="form-group">
-                                <label>User</label>
+                                <label>Pengguna</label>
 
                                 <select name="user_id" id="user_id"
                                     class="select2 form-control @error('user_id') is-invalid @enderror"
-                                    data-placeholder="Pilih User" style="width:100%;">
+                                    data-placeholder="Pilih Pengguna" style="width:100%;">
 
                                     <option></option> {{-- WAJIB untuk allowClear --}}
 
@@ -155,7 +160,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label>Service</label>
+                                <label>Layanan</label>
 
                                 <select name="service_id[]" id="services" class="form-control select2" multiple
                                     style="width:100%">
@@ -435,7 +440,7 @@
 
             // ✅ USER (single select - sama create)
             initSelect2('#user_id', {
-                placeholder: "Pilih User",
+                placeholder: "Pilih Pengguna",
                 allowClear: true
             });
 
@@ -443,12 +448,34 @@
             $('#user_id').on('select2:open', function() {
                 // Target input search yang ada di dropdown
                 $('.select2-container--open .select2-search__field')
-                    .attr('placeholder', 'Cari User...');
+                    .attr('placeholder', 'Cari Pengguna...');
             });
 
             // ✅ SERVICE (multiple - sama create)
             initSelect2('#services', {
-                placeholder: "Pilih Service"
+                placeholder: "Pilih Layanan"
+            });
+
+            // Optional: custom placeholder saat search dibuka
+            $('#services').on('select2:open', function() {
+                let selected = $(this).val();
+
+                setTimeout(() => {
+                    if (!selected || selected.length === 0) {
+                        $('.select2-container--open .select2-search__field')
+                            .attr('placeholder', 'Cari Layanan...');
+                    } else {
+                        $('.select2-container--open .select2-search__field')
+                            .attr('placeholder', '');
+                    }
+                }, 0);
+            });
+
+            // 🔄 Reset ke awal saat ditutup
+            $('#services').on('select2:close', function() {
+                if (!$(this).val() || $(this).val().length === 0) {
+                    $(this).val(null).trigger('change');
+                }
             });
 
         });

@@ -59,7 +59,8 @@ class UserController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|unique:users',
-            'phone' => 'required|string|unique:users,phone',
+            'phone' => 'required|string',
+            'points' => 'nullable|integer|min:0',
             'password' => 'required|string|min:8|confirmed',
             'status' => 'nullable|in:0,1',
             'roles' => 'required|string|exists:roles,name',
@@ -111,6 +112,7 @@ class UserController extends Controller
             'phone' => $normalizedPhone,
             'email_verified_at' => now(),
             'password' => \Hash::make($data['password']),
+            'points' => $data['points'] ?? 0,
             'status' => $request->status ?? 1,
             'role_uid' => $roleUid,
             'image' => $imageName,
@@ -300,6 +302,8 @@ class UserController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'sometimes|email|unique:users,email,' . $user->id,
+            'phone' => 'nullable|string',
+            'points' => 'nullable|integer|min:0',
             'social.*' => 'sometimes',
             'password' => 'nullable|string|min:8|confirmed',
             'roles' => 'nullable|string|exists:roles,name',
@@ -422,6 +426,7 @@ class UserController extends Controller
             'email' => $request->email,
             'phone' => $phone,
             'password' => $request->password ? \Hash::make($request->password) : $user->password,
+            'points' => $request->filled('points') ? $request->points : $user->points,
             'status' => $status,
             'role_uid' => $user->role_uid,
             'image' => $imageName, // 🔥 INI WAJIB

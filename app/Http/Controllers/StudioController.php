@@ -48,12 +48,18 @@ class StudioController extends Controller
             'image'       => 'nullable|image|max:2048',
         ]);
 
+        // ✅ FORMAT PHONE
+        $phone = $request->phone;
+        if ($phone) {
+            $phone = '+62' . ltrim($phone, '0');
+        }
+
         $data = [
             'name'        => $request->name,
             'slug'        => Str::slug($request->name),
             'address'     => $request->address,
             'city'        => $request->city,
-            'phone'       => $request->phone,
+            'phone'       => $phone, // ✅ pakai hasil format
             'google_maps' => $request->google_maps,
             'status'      => $request->status,
         ];
@@ -89,12 +95,18 @@ class StudioController extends Controller
             'image'       => 'nullable|image|max:2048',
         ]);
 
+        // ✅ FORMAT PHONE
+        $phone = $request->phone;
+        if ($phone) {
+            $phone = '+62' . ltrim($phone, '0');
+        }
+
         $data = [
             'name'        => $request->name,
             'slug'        => Str::slug($request->name),
             'address'     => $request->address,
             'city'        => $request->city,
-            'phone'       => $request->phone,
+            'phone'       => $phone, // ✅ pakai hasil format
             'google_maps' => $request->google_maps,
             'status'      => $request->status,
         ];

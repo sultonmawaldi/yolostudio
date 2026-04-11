@@ -1,17 +1,16 @@
 @extends('adminlte::page')
 
-@section('title', 'Daftar Layanan')
+@section('title', 'Grup Waktu')
 
 @section('content_header')
     <div class="page-title-wrapper text-center mb-4">
         <h1 class="page-title">
-            <i class="fa fa-concierge-bell me-2"></i>
-            Daftar Layanan
+            <i class="fas fa-clock me-2"></i>
+            Daftar Grup Waktu
         </h1>
         <div class="title-divider"></div>
     </div>
 @stop
-
 
 @section('content')
 
@@ -19,32 +18,27 @@
         <div class="card-body">
 
             <div class="mb-3 text-end">
-
-                <a href="{{ route('service.create') }}" class="btn btn-gradient-primary shadow-sm me-2">
-                    <i class="fas fa-plus me-1"></i> Tambah Layanan
+                <a href="{{ route('slot-group.create') }}" class="btn btn-gradient-primary shadow-sm">
+                    <i class="fas fa-plus me-1"></i> Tambah Grup Waktu
                 </a>
-
-                <a href="{{ route('service.trash') }}" class="btn btn-outline-secondary shadow-sm">
-                    <i class="fas fa-trash-alt me-1"></i> Lihat Sampah
-                </a>
-
             </div>
 
             <div class="table-responsive">
-                <table id="serviceTable" class="table align-middle table-hover table-borderless">
+                <table id="slotGroupTable" class="table align-middle table-hover table-borderless">
                     <thead class="bg-gradient text-white" style="background: linear-gradient(90deg, #007bff, #00b4d8);">
                         <tr>
                             <th>#</th>
-                            <th>Judul</th>
-                            <th>Gambar</th>
-                            <th>Kategori</th>
-                            <th>Status</th>
+                            <th>Nama</th>
+                            <th>Karyawan</th>
+                            <th>Durasi Slot</th>
+                            <th>Istirahat</th>
+                            <th>Jam Kerja</th>
                             <th class="text-center">Aksi</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        @foreach ($services as $service)
+                        @foreach ($slotGroups as $slotGroup)
                             <tr class="bg-white shadow-sm-hover">
 
                                 <td class="fw-semibold text-muted">
@@ -52,47 +46,48 @@
                                 </td>
 
                                 <td class="fw-bold text-dark">
-                                    {{ $service->title }}
+                                    {{ $slotGroup->name }}
                                 </td>
 
                                 <td>
-                                    <img src="{{ $service->image ? asset('uploads/images/service/' . $service->image) : asset('uploads/images/no-image.jpg') }}"
-                                        style="width:70px;height:70px;object-fit:cover" class="rounded shadow-sm">
+                                    {{ $slotGroup->employee->user->name ?? '-' }}
                                 </td>
 
                                 <td>
-                                    {{ $service->category->title ?? '-' }}
-                                </td>
-
-                                <td>
-                                    @php
-                                        $badgeClass = $service->status
-                                            ? 'bg-gradient-success'
-                                            : 'bg-gradient-secondary';
-                                        $statusText = $service->status ? 'Aktif' : 'Nonaktif';
-                                    @endphp
-
-                                    <span class="badge text-white px-3 py-2 rounded-pill shadow-sm {{ $badgeClass }}">
-                                        {{ $statusText }}
+                                    <span class="badge bg-primary px-3 py-2 rounded-pill shadow-sm">
+                                        {{ $slotGroup->slot_duration }} menit
                                     </span>
+                                </td>
+
+                                <td>
+                                    <span class="badge bg-warning text-dark px-3 py-2 rounded-pill shadow-sm">
+                                        {{ $slotGroup->break_duration }} menit
+                                    </span>
+                                </td>
+
+                                <td>
+                                    {{ $slotGroup->start_time ? \Carbon\Carbon::parse($slotGroup->start_time)->format('H:i') : '-' }}
+                                    -
+                                    {{ $slotGroup->end_time ? \Carbon\Carbon::parse($slotGroup->end_time)->format('H:i') : '-' }}
+                                    WIB
                                 </td>
 
                                 <td class="text-center">
 
                                     <div class="d-flex justify-content-center flex-wrap gap-2">
 
-                                        <a href="{{ route('service.edit', $service->id) }}"
-                                            class="btn btn-sm btn-outline-info action-btn" title="Edit Layanan">
+                                        <a href="{{ route('slot-group.edit', $slotGroup->id) }}"
+                                            class="btn btn-sm btn-outline-info action-btn" title="Edit Slot Group">
                                             <i class="fas fa-edit"></i>
                                         </a>
 
-                                        <form action="{{ route('service.destroy', $service->id) }}" method="POST"
+                                        <form action="{{ route('slot-group.destroy', $slotGroup->id) }}" method="POST"
                                             class="delete-form">
                                             @csrf
                                             @method('DELETE')
 
                                             <button type="submit" class="btn btn-sm btn-outline-danger action-btn"
-                                                title="Hapus Layanan">
+                                                title="Hapus Slot Group">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
 
@@ -121,6 +116,7 @@
             padding-right: 0 !important;
         }
 
+        /* === CARD & TABLE PREMIUM STYLE === */
         .card {
             background: #ffffff;
             border: none;
@@ -129,6 +125,7 @@
             box-shadow: 0 6px 22px rgba(0, 0, 0, 0.05);
         }
 
+        /* === TABLE === */
         .table {
             border-collapse: separate;
             border-spacing: 0;
@@ -137,6 +134,7 @@
             font-size: 0.95rem;
         }
 
+        /* === HEADER === */
         .table thead th {
             font-weight: 700;
             text-transform: uppercase;
@@ -149,6 +147,7 @@
             white-space: nowrap;
         }
 
+        /* === BODY === */
         .table td {
             vertical-align: middle !important;
             text-align: center;
@@ -168,6 +167,7 @@
             transition: 0.25s ease;
         }
 
+        /* === BADGES === */
         .bg-gradient-success {
             background: linear-gradient(45deg, #28a745, #60d394);
         }
@@ -176,6 +176,7 @@
             background: linear-gradient(45deg, #e74c3c, #ff7675);
         }
 
+        /* === BUTTONS === */
         .btn-gradient-primary {
             background: linear-gradient(90deg, #007bff, #00b4d8);
             color: white;
@@ -196,6 +197,7 @@
             padding: 6px 10px;
         }
 
+        /* === SEARCH INPUT PREMIUM === */
         .dataTables_filter {
             text-align: right;
         }
@@ -213,6 +215,7 @@
             border-color: #80bdff;
         }
 
+        /* === Rounded Corners for Table === */
         .table thead th:first-child {
             border-top-left-radius: 10px;
         }
@@ -229,6 +232,7 @@
             border-bottom-right-radius: 10px;
         }
 
+        /* Hilangkan overflow agar sudut tidak terpotong */
         .table {
             overflow: hidden;
             border-radius: 10px;
@@ -269,20 +273,54 @@
         }
 
         .table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+            background-color: #fff;
             font-size: 0.82rem;
         }
 
         .table thead th {
             font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
             font-size: 0.75rem;
             padding: 10px 10px;
+            text-align: center;
         }
 
         .table td {
+            vertical-align: middle !important;
+            text-align: center;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            border-right: 1px solid rgba(0, 0, 0, 0.03);
             padding: 8px 10px;
             font-size: 0.82rem;
         }
 
+        .table tbody tr:hover {
+            background-color: #f7faff;
+            transition: 0.25s ease;
+        }
+
+        /* Badge */
+        .bg-gradient-success {
+            background: linear-gradient(45deg, #28a745, #60d394);
+        }
+
+        .bg-gradient-danger {
+            background: linear-gradient(45deg, #e74c3c, #ff7675);
+        }
+
+        /* Button */
+        .btn-gradient-primary {
+            background: linear-gradient(90deg, #007bff, #00b4d8);
+            color: white;
+            border: none;
+            border-radius: 30px;
+        }
+
+        /* Action button */
         .action-btn {
             min-width: 36px;
             height: 36px;
@@ -298,6 +336,7 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
         }
 
+        /* Animation */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -310,19 +349,18 @@
             }
         }
 
-        #serviceTable tbody tr {
+        #slotGroupTable tbody tr {
             animation: fadeInUp .3s ease forwards;
         }
     </style>
 @stop
 
-
 @section('js')
-
     <script>
         $(document).ready(function() {
 
-            var table = $('#serviceTable').DataTable({
+            // ================= DATATABLE =================
+            var table = $('#slotGroupTable').DataTable({
                 responsive: true,
                 paging: true,
                 info: true,
@@ -332,24 +370,23 @@
 
                 language: {
                     search: "",
-                    searchPlaceholder: "Cari layanan...",
+                    searchPlaceholder: "Cari grup waktu...",
                     paginate: {
                         first: "Pertama",
                         last: "Terakhir",
                         next: "Berikutnya",
                         previous: "Sebelumnya"
                     },
-                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ layanan",
-                    infoEmpty: "Menampilkan 0 sampai 0 dari 0 layanan",
-                    infoFiltered: "(difilter dari _MAX_ total layanan)",
-                    zeroRecords: "Tidak ada layanan ditemukan",
+                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ grup waktu",
+                    infoEmpty: "Menampilkan 0 sampai 0 dari 0 grup waktu",
+                    infoFiltered: "(difilter dari _MAX_ total grup waktu)",
+                    zeroRecords: "Tidak ada grup waktu ditemukan",
                     lengthMenu: "Tampilkan _MENU_ baris"
                 }
-
             });
 
-
-            $('#serviceTable_filter input')
+            // ================= STYLE SEARCH INPUT =================
+            $('#slotGroupTable_filter input')
                 .addClass('form-control rounded-pill shadow-sm')
                 .css({
                     padding: '0.45rem 2.5rem 0.45rem 1rem',
@@ -361,14 +398,13 @@
                     backgroundSize: '16px 16px'
                 });
 
-
+            // ================= DELETE CONFIRM =================
             $(document).on('submit', '.delete-form', function(e) {
-
                 e.preventDefault();
                 let form = this;
 
                 Swal.fire({
-                    title: 'Hapus Layanan?',
+                    title: 'Hapus grup waktu?',
                     text: 'Data yang dihapus tidak dapat dikembalikan!',
                     icon: 'warning',
                     showCancelButton: true,
@@ -381,14 +417,11 @@
                         form.submit();
                     }
                 });
-
             });
 
-
+            // ================= ANIMATION TABLE =================
             table.on('draw', function() {
-
-                $('#serviceTable tbody tr').each(function(i) {
-
+                $('#slotGroupTable tbody tr').each(function(i) {
                     $(this)
                         .css('opacity', '0')
                         .delay(i * 50)
@@ -396,18 +429,17 @@
                             opacity: 1,
                             top: 0
                         }, 200);
-
                 });
-
             });
 
-
+            // ================= ALERT AUTO CLOSE =================
             $(".alert").delay(6000).slideUp(300);
 
         });
     </script>
 
 
+    {{-- ================= TOAST NOTIFICATION ================= --}}
     <script>
         const Toast = Swal.mixin({
             toast: true,
@@ -421,22 +453,21 @@
             Toast.fire({
                 icon: 'success',
                 title: '{{ session('success') }}'
-            })
+            });
         @endif
 
         @if (session('error'))
             Toast.fire({
                 icon: 'error',
                 title: '{{ session('error') }}'
-            })
+            });
         @endif
 
         @if (session('info'))
             Toast.fire({
                 icon: 'info',
                 title: '{{ session('info') }}'
-            })
+            });
         @endif
     </script>
-
 @stop

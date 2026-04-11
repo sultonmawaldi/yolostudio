@@ -1,12 +1,12 @@
 @extends('adminlte::page')
 
-@section('title', 'Service Background')
+@section('title', 'Background Layanan')
 
 @section('content_header')
     <div class="page-title-wrapper text-center mb-4">
         <h1 class="page-title">
             <i class="fas fa-palette me-2"></i>
-            Service Background
+            Background Layanan
         </h1>
         <div class="title-divider"></div>
     </div>
@@ -26,7 +26,7 @@
                 <thead class="bg-gradient text-white" style="background: linear-gradient(90deg, #007bff, #00b4d8);">
                     <tr>
                         <th>#</th>
-                        <th>Service ID</th>
+                        <th>ID Layanan</th>
                         <th>Nama</th>
                         <th>Value</th>
                         <th>Preview</th>

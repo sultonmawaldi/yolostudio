@@ -56,7 +56,7 @@ class ServiceBackgroundController extends Controller
             'name'       => $validated['name'],
             'value'      => $validated['value'],
             'sort_order' => $validated['sort_order'] ?? 0,
-            'is_active'  => $request->boolean('is_active'),
+            'is_active' => (int) $request->input('is_active', 1),
         ]);
 
         return redirect()
@@ -95,7 +95,7 @@ class ServiceBackgroundController extends Controller
             'name'       => $validated['name'],
             'value'      => $validated['value'],
             'sort_order' => $validated['sort_order'] ?? 0,
-            'is_active'  => $request->boolean('is_active'),
+            'is_active' => (int) $request->input('is_active', 1),
         ]);
 
         return redirect()

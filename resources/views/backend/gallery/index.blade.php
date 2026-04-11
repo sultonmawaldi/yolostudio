@@ -28,7 +28,7 @@
                         <th>#</th>
                         <th>Gambar</th>
                         <th>Judul</th>
-                        <th>Service</th> {{-- ✅ GANTI --}}
+                        <th>Layanan</th> {{-- ✅ GANTI --}}
                         <th>Status</th>
                         <th>Dibuat</th>
                         <th>Diperbarui</th>

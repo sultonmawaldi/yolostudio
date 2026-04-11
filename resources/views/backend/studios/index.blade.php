@@ -82,19 +82,20 @@
                             <td>{{ optional($studio->created_at)->format('d M Y') }}</td>
 
                             <td class="text-center">
-                                <div class="d-flex justify-content-center flex-wrap gap-2">
+                                <div class="d-flex justify-content-center align-items-center flex-nowrap gap-2">
 
                                     <a href="{{ route('studio.edit', $studio) }}"
-                                        class="btn btn-sm btn-outline-info action-btn">
+                                        class="btn btn-sm btn-outline-info action-btn" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
 
                                     <form action="{{ route('studio.destroy', $studio) }}" method="POST"
-                                        class="delete-form">
+                                        class="delete-form m-0">
                                         @csrf
                                         @method('DELETE')
 
-                                        <button class="btn btn-sm btn-outline-danger action-btn">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger action-btn"
+                                            title="Hapus">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>

@@ -24,7 +24,7 @@
                     <li class="breadcrumb-item">
                         <a href="{{ route('gallery.index') }}">Gallery</a>
                     </li>
-                    <li class="breadcrumb-item active">Tambah</li>
+                    <li class="breadcrumb-item active">Tambah Gallery</li>
                 </ol>
             </div>
 
@@ -69,10 +69,10 @@
 
                             {{-- SERVICE (PENGGANTI CATEGORY) --}}
                             <div class="form-group">
-                                <label>Service</label>
+                                <label>Layanan</label>
                                 <select name="service_id" class="form-control @error('service_id') is-invalid @enderror">
 
-                                    <option value="">-- Pilih Service --</option>
+                                    <option value="">-- Pilih Layanan --</option>
 
                                     @foreach ($services as $service)
                                         <option value="{{ $service->id }}"
@@ -92,7 +92,7 @@
                             <div class="form-group">
                                 <label>Deskripsi</label>
                                 <textarea name="description" class="form-control @error('description') is-invalid @enderror" rows="3"
-                                    placeholder="Tambahkan deskripsi (optional)">{{ old('description') }}</textarea>
+                                    placeholder="Tambahkan deskripsi (opsional)">{{ old('description') }}</textarea>
 
                                 @error('description')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -130,7 +130,7 @@
 
                         <div class="card card-primary">
                             <div class="card-header">
-                                <h3 class="card-title">Detail</h3>
+                                <h3 class="card-title">Detail Gallery</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                         <i class="fas fa-minus"></i>
@@ -144,8 +144,10 @@
                                 <div class="form-group">
                                     <label>Status</label>
                                     <select name="status" class="form-control">
-                                        <option value="1" {{ old('status', 1) ? 'selected' : '' }}>Aktif</option>
-                                        <option value="0" {{ old('status') == 0 ? 'selected' : '' }}>Nonaktif</option>
+                                        <option value="1" {{ old('status', '1') == '1' ? 'selected' : '' }}>Aktif
+                                        </option>
+                                        <option value="0" {{ old('status', '1') == '0' ? 'selected' : '' }}>Nonaktif
+                                        </option>
                                     </select>
                                 </div>
 

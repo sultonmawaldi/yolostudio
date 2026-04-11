@@ -27,6 +27,7 @@ use App\Http\Controllers\ServiceBackgroundController;
 use App\Http\Controllers\AddonController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\StudioController;
+use App\Http\Controllers\SlotGroupController;
 
 
 
@@ -281,6 +282,33 @@ Route::middleware('auth')->group(function () {
                 Route::get('user-trash', [UserController::class, 'trashView'])->name('user.trash');
                 Route::get('user-restore/{id}', [UserController::class, 'restore'])->name('user.restore');
                 Route::delete('user-delete/{id}', [UserController::class, 'force_delete'])->name('user.force.delete');
+            });
+
+            Route::middleware('role:admin')->prefix('slot-group')->name('slot-group.')->group(function () {
+
+                Route::get('/', [SlotGroupController::class, 'index'])
+                    ->name('index')
+                    ->middleware('permission:slot-groups.view');
+
+                Route::get('/create', [SlotGroupController::class, 'create'])
+                    ->name('create')
+                    ->middleware('permission:slot-groups.create');
+
+                Route::post('/', [SlotGroupController::class, 'store'])
+                    ->name('store')
+                    ->middleware('permission:slot-groups.create');
+
+                Route::get('/{slotGroup}/edit', [SlotGroupController::class, 'edit'])
+                    ->name('edit')
+                    ->middleware('permission:slot-groups.edit');
+
+                Route::put('/{slotGroup}', [SlotGroupController::class, 'update'])
+                    ->name('update')
+                    ->middleware('permission:slot-groups.edit');
+
+                Route::delete('/{slotGroup}', [SlotGroupController::class, 'destroy'])
+                    ->name('destroy')
+                    ->middleware('permission:slot-groups.delete');
             });
 
             // ======= Profile =======

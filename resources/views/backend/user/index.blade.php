@@ -46,7 +46,7 @@
                     <tbody>
                         @foreach ($users as $user)
                             @php
-                                $badgeClass = $user->status ? 'bg-gradient-success' : 'bg-gradient-danger';
+                                $badgeClass = $user->status ? 'bg-gradient-success' : 'bg-gradient-secondary';
                                 $statusText = $user->status ? 'Aktif' : 'Nonaktif';
                             @endphp
 

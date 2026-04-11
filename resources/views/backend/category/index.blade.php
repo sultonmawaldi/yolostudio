@@ -59,8 +59,10 @@
 
                                 <td>
                                     @php
-                                        $badgeClass = $category->status ? 'bg-gradient-success' : 'bg-gradient-danger';
-                                        $statusText = $category->status ? 'Aktif' : 'Tidak Aktif';
+                                        $badgeClass = $category->status
+                                            ? 'bg-gradient-success'
+                                            : 'bg-gradient-secondary';
+                                        $statusText = $category->status ? 'Aktif' : 'Nonaktif';
                                     @endphp
 
                                     <span class="badge text-white px-3 py-2 rounded-pill shadow-sm {{ $badgeClass }}">

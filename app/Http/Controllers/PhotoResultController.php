@@ -60,7 +60,7 @@ class PhotoResultController extends Controller
         $employees = \App\Models\Employee::with('user')->get();
         $services = \App\Models\Service::all();
 
-        return view('backend.photo_results.index', compact(
+        return view('backend.photo-results.index', compact(
             'transactions',
             'employees',
             'services'

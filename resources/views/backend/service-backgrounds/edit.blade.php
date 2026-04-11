@@ -24,7 +24,7 @@
                     <li class="breadcrumb-item">
                         <a href="{{ route('service-backgrounds.index') }}">Service Background</a>
                     </li>
-                    <li class="breadcrumb-item active">Edit</li>
+                    <li class="breadcrumb-item active">Edit Service Background</li>
                 </ol>
             </div>
 
@@ -45,7 +45,7 @@
 
                     <div class="card card-light">
                         <div class="card-header">
-                            <h3 class="card-title">Informasi Background</h3>
+                            <h3 class="card-title">Informasi Service Background</h3>
                             <div class="card-tools">
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                     <i class="fas fa-minus"></i>
@@ -57,10 +57,10 @@
 
                             {{-- SERVICE --}}
                             <div class="form-group">
-                                <label>Pilih Service</label>
+                                <label>Layanan</label>
                                 <select name="service_id" class="form-control @error('service_id') is-invalid @enderror">
 
-                                    <option value="">-- Pilih Service --</option>
+                                    <option value="">-- Pilih Layanan --</option>
 
                                     @foreach ($services as $service)
                                         <option value="{{ $service->id }}"
@@ -80,7 +80,7 @@
                                 <label>Nama Background</label>
                                 <input type="text" name="name"
                                     class="form-control @error('name') is-invalid @enderror"
-                                    value="{{ old('name', $background->name) }}">
+                                    value="{{ old('name', $background->name) }}" placeholder="Masukkan nama background">
 
                                 @error('name')
                                     <small class="text-danger">{{ $message }}</small>
@@ -119,7 +119,7 @@
 
                         <div class="card card-primary">
                             <div class="card-header">
-                                <h3 class="card-title">Detail</h3>
+                                <h3 class="card-title">Detail Service Background</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                         <i class="fas fa-minus"></i>
@@ -130,14 +130,14 @@
                             <div class="card-body pb-0">
 
                                 <div class="form-group">
-                                    <label>Status Aktif</label>
+                                    <label>Status</label>
                                     <select name="is_active" class="form-control">
                                         <option value="1"
-                                            {{ old('is_active', $background->is_active) ? 'selected' : '' }}>
+                                            {{ old('is_active', $background->is_active) == true ? 'selected' : '' }}>
                                             Aktif
                                         </option>
                                         <option value="0"
-                                            {{ old('is_active', $background->is_active) == 0 ? 'selected' : '' }}>
+                                            {{ old('is_active', $background->is_active) == false ? 'selected' : '' }}>
                                             Nonaktif
                                         </option>
                                     </select>

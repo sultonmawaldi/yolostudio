@@ -65,7 +65,7 @@
                                 <label for="title">Judul</label>
 
                                 <input class="form-control @error('title') is-invalid @enderror" type="text"
-                                    id="title" name="title" placeholder="Masukkan judul layanan..."
+                                    id="title" name="title" placeholder="Masukkan judul layanan"
                                     value="{{ old('title') }}">
 
                                 <small class="text-muted d-block">
@@ -83,7 +83,7 @@
                                 <label for="slug">Slug</label>
 
                                 <input class="form-control bg-light @error('slug') is-invalid @enderror" type="text"
-                                    id="slug" name="slug" placeholder="slug-layanan..." value="{{ old('slug') }}">
+                                    id="slug" name="slug" placeholder="slug-layanan" value="{{ old('slug') }}">
 
                                 <small class="text-muted d-block">
                                     URL unik untuk layanan.
@@ -514,8 +514,8 @@
         }
 
         /* =========================
-               FIX PANAH TANPA UBAH POSISI
-            ========================== */
+                   FIX PANAH TANPA UBAH POSISI
+                ========================== */
 
         .select2-container--default .select2-selection--single .select2-selection__arrow b {
             margin: 0 !important;

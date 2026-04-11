@@ -51,7 +51,7 @@
                                 <label for="code">Kode Addon</label>
                                 <input type="text" name="code" id="code"
                                     class="form-control @error('code') is-invalid @enderror"
-                                    placeholder="Masukkan kode addon..." value="{{ old('code') }}">
+                                    placeholder="Masukkan kode addon" value="{{ old('code') }}">
                                 @error('code')
                                     <small class="text-danger">{{ $message }}</small>
                                 @enderror
@@ -61,7 +61,7 @@
                                 <label for="name">Nama Addon</label>
                                 <input type="text" name="name" id="name"
                                     class="form-control @error('name') is-invalid @enderror"
-                                    placeholder="Masukkan nama addon..." value="{{ old('name') }}">
+                                    placeholder="Masukkan nama addon" value="{{ old('name') }}">
                                 @error('name')
                                     <small class="text-danger">{{ $message }}</small>
                                 @enderror
@@ -71,7 +71,7 @@
                                 <label for="price">Harga</label>
                                 <input type="number" name="price" id="price"
                                     class="form-control @error('price') is-invalid @enderror"
-                                    placeholder="Masukkan harga addon..." value="{{ old('price') }}">
+                                    placeholder="Masukkan harga addon" value="{{ old('price') }}">
                                 @error('price')
                                     <small class="text-danger">{{ $message }}</small>
                                 @enderror
@@ -116,7 +116,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="services">Pilih Service</label>
+                                <label for="services">Layanan</label>
 
                                 <select name="services[]" id="services" class="form-control select2" multiple
                                     style="width:100%">
@@ -164,7 +164,7 @@
                                     </a>
 
                                     <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-save me-1"></i> Simpan & Terbitkan
+                                        <i class="fas fa-save me-1"></i> Simpan
                                     </button>
                                 </div>
                             </div>
@@ -179,47 +179,72 @@
 
 @section('css')
     <style>
-        /* Samakan ukuran dengan form-control */
-        .select2-container {
-            width: 100% !important;
-        }
-
-        /* Samakan tinggi input */
-        .select2-container--default .select2-selection--multiple {
-            min-height: calc(2.25rem + 2px);
-            border: 1px solid #ced4da;
-            border-radius: .25rem;
-        }
-
-        /* Chevron dropdown */
-        .select2-container--default .select2-selection--multiple::after {
-            content: "\f078";
-            font-family: "Font Awesome 5 Free";
-            font-weight: 900;
-            position: absolute;
-            right: 10px;
-            top: 9px;
-            font-size: 12px;
-            color: #6c757d;
-            pointer-events: none;
-        }
-
-        /* Tag yang dipilih */
-        .select2-container--default .select2-selection__choice {
+        /* MULTIPLE SELECT - TAG */
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
             background-color: #000 !important;
             border: none !important;
             color: #fff !important;
+            margin-top: 0 !important;
         }
 
-        /* Tombol X */
-        .select2-container--default .select2-selection__choice__remove {
+        /* REMOVE X */
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
             color: #fff !important;
+            margin-right: 5px;
         }
 
-        /* Hover dropdown */
-        .select2-container--default .select2-results__option--highlighted {
+        /* FIX FOCUS */
+        .select2-container--default.select2-container--focus .select2-selection--multiple .select2-selection__choice {
             background-color: #000 !important;
             color: #fff !important;
+        }
+
+        /* MULTIPLE WRAPPER */
+        .select2-container--default .select2-selection--multiple {
+            position: relative;
+            min-height: 38px;
+            padding: 2px 28px 2px 4px;
+            display: flex;
+            align-items: center;
+        }
+
+        /* CHEVRON */
+        .select2-container--default .select2-selection--multiple::after {
+            content: "";
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid #6c757d;
+        }
+
+        /* MULTIPLE CONTENT */
+        .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 4px;
+            padding: 0;
+            width: 100%;
+            margin: 0;
+        }
+
+        /* ========================= */
+        /* 🔥 FIX PLACEHOLDER CENTER */
+        /* ========================= */
+
+        /* container search inline */
+        .select2-container--default .select2-selection--multiple .select2-search--inline {
+            display: flex;
+            align-items: center;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-search__field {
+            margin: 0 !important;
+            padding: 0 !important;
+            cursor: pointer !important;
         }
     </style>
 @stop
@@ -228,10 +253,57 @@
     <script>
         $(document).ready(function() {
 
-            $('#services').select2({
-                placeholder: "Pilih Service",
-                width: '100%',
-                dropdownParent: $('#services').parent()
+            // 🌐 Global bahasa Indonesia
+            $.fn.select2.defaults.set("language", {
+                noResults: function() {
+                    return "Data tidak ditemukan";
+                },
+                searching: function() {
+                    return "Mencari...";
+                }
+            });
+
+            function initSelect2(selector, options = {}) {
+                $(selector).select2({
+                    width: '100%',
+                    dropdownParent: $(selector).parent(),
+                    language: {
+                        noResults: function() {
+                            return "Data tidak ditemukan";
+                        },
+                        searching: function() {
+                            return "Mencari...";
+                        }
+                    },
+                    ...options
+                });
+            }
+
+            // ✅ SERVICES
+            initSelect2('#services', {
+                placeholder: "Pilih Layanan"
+            });
+
+            // 🔍 Saat buka → jadi "Cari Layanan..."
+            $('#services').on('select2:open', function() {
+                let selected = $(this).val();
+
+                setTimeout(() => {
+                    if (!selected || selected.length === 0) {
+                        $('.select2-container--open .select2-search__field')
+                            .attr('placeholder', 'Cari Layanan...');
+                    } else {
+                        $('.select2-container--open .select2-search__field')
+                            .attr('placeholder', '');
+                    }
+                }, 0);
+            });
+
+            // 🔄 Reset ke awal saat ditutup
+            $('#services').on('select2:close', function() {
+                if (!$(this).val() || $(this).val().length === 0) {
+                    $(this).val(null).trigger('change');
+                }
             });
 
         });

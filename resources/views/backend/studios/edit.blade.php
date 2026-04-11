@@ -24,7 +24,7 @@
                     <li class="breadcrumb-item">
                         <a href="{{ route('studio.index') }}">Studio</a>
                     </li>
-                    <li class="breadcrumb-item active">Edit</li>
+                    <li class="breadcrumb-item active">Edit Studio</li>
                 </ol>
             </div>
 
@@ -70,9 +70,19 @@
                             {{-- TELEPON --}}
                             <div class="form-group">
                                 <label>Telepon</label>
-                                <input type="text" name="phone"
-                                    class="form-control @error('phone') is-invalid @enderror"
-                                    value="{{ old('phone', $studio->phone) }}">
+
+                                <div class="input-group">
+                                    <span class="input-group-text d-flex align-items-center"
+                                        style="border-right: 0; border-radius: .25rem 0 0 .25rem;">
+                                        <img src="https://flagcdn.com/w20/id.png" style="width:20px; margin-right:6px;">
+                                        +62
+                                    </span>
+
+                                    <input type="tel" name="phone" id="phone"
+                                        class="form-control @error('phone') is-invalid @enderror" placeholder="81234567890"
+                                        value="{{ old('phone', ltrim($studio->phone, '+62')) }}" inputmode="numeric"
+                                        maxlength="13" style="border-left: 0; border-radius: 0 .25rem .25rem 0;">
+                                </div>
 
                                 @error('phone')
                                     <small class="text-danger">{{ $message }}</small>
@@ -152,7 +162,7 @@
 
                         <div class="card card-primary">
                             <div class="card-header">
-                                <h3 class="card-title">Detail</h3>
+                                <h3 class="card-title">Detail Studio</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                         <i class="fas fa-minus"></i>
@@ -225,5 +235,26 @@
                 });
             });
         @endif
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const phoneInput = document.getElementById('phone');
+
+            if (!phoneInput) return;
+
+            phoneInput.addEventListener('input', function() {
+                let val = this.value;
+
+                // hanya angka
+                val = val.replace(/[^0-9]/g, '');
+
+                // hapus 0 di depan
+                if (val.startsWith('0')) {
+                    val = val.substring(1);
+                }
+
+                this.value = val;
+            });
+        });
     </script>
 @stop

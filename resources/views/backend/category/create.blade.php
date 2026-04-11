@@ -63,7 +63,7 @@
                                     <label for="title">Judul</label>
 
                                     <input class="form-control @error('title') is-invalid @enderror" type="text"
-                                        id="title" name="title" placeholder="Masukkan judul kategori..."
+                                        id="title" name="title" placeholder="Masukkan judul kategori"
                                         value="{{ old('title') }}">
 
                                     <small class="text-muted d-block">
@@ -82,7 +82,7 @@
 
                                     <input style="background-color: rgb(220, 220, 220);"
                                         class="form-control @error('slug') is-invalid @enderror" type="text"
-                                        id="slug" name="slug" placeholder="slug-kategori..."
+                                        id="slug" name="slug" placeholder="slug-kategori"
                                         value="{{ old('slug') }}">
 
                                     <small class="text-muted d-block">

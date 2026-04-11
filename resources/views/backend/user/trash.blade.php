@@ -81,8 +81,8 @@
 
                                 <td>
                                     @php
-                                        $badgeClass = $user->status ? 'bg-gradient-success' : 'bg-gradient-danger';
-                                        $statusText = $user->status ? 'Aktif' : 'Tidak Aktif';
+                                        $badgeClass = $user->status ? 'bg-gradient-success' : 'bg-gradient-secondary';
+                                        $statusText = $user->status ? 'Aktif' : 'Nonaktif';
                                     @endphp
 
                                     <span class="badge text-white px-3 py-2 rounded-pill shadow-sm {{ $badgeClass }}">

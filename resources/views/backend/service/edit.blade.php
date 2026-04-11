@@ -64,7 +64,7 @@
                                 <label for="title">Judul</label>
 
                                 <input class="form-control @error('title') is-invalid @enderror" type="text"
-                                    name="title" id="title" placeholder="Masukkan judul layanan..."
+                                    name="title" id="title" placeholder="Masukkan judul layanan"
                                     value="{{ old('title', $service->title) }}">
 
                                 <small class="text-muted d-block">
@@ -82,7 +82,7 @@
                                 <label for="slug">Slug</label>
 
                                 <input class="form-control bg-light @error('slug') is-invalid @enderror" type="text"
-                                    name="slug" id="slug" placeholder="slug-layanan..."
+                                    name="slug" id="slug" placeholder="slug-layanan"
                                     value="{{ old('slug', $service->slug) }}">
 
                                 <small class="text-muted d-block">
@@ -520,8 +520,8 @@
         }
 
         /* =========================
-                   FIX PANAH TANPA UBAH POSISI
-                ========================== */
+                       FIX PANAH TANPA UBAH POSISI
+                    ========================== */
 
         .select2-container--default .select2-selection--single .select2-selection__arrow b {
             margin: 0 !important;
