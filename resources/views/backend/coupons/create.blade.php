@@ -121,7 +121,7 @@
                                     @endforeach
                                 </select>
                                 <small class="text-muted">
-                                    Kosongkan jika berlaku untuk semua user
+                                    Kosongkan jika berlaku untuk semua pengguna
                                 </small>
                             </div>
 
@@ -138,7 +138,7 @@
                                     @endforeach
                                 </select>
                                 <small class="text-muted">
-                                    Kosongkan jika berlaku untuk semua service
+                                    Kosongkan jika berlaku untuk semua layanan
                                 </small>
                             </div>
 

@@ -128,7 +128,7 @@
                                 </select>
 
                                 <small class="text-muted">
-                                    Addon ini tersedia untuk service yang dipilih
+                                    Addon ini tersedia untuk layanan yang dipilih
                                 </small>
 
                             </div>
