@@ -7,7 +7,6 @@
         <h1 class="page-title">
             <i class="fa fa-image me-2"></i> Upload & Kelola Foto Hasil
         </h1>
-        <p class="text-muted">Kelola hasil foto dari setiap transaksi dengan mudah dan cepat.</p>
         <div class="title-divider"></div>
     </div>
 @stop
@@ -15,21 +14,21 @@
 @section('content')
 
 
-    <!-- ================= FILTER CREW & LAYANAN ================= -->
+    <!-- ================= FILTER KARYAWAN & LAYANAN ================= -->
     <div class="row mb-3 g-3 align-items-end date-filter-wrapper">
 
-        <!-- Crew -->
+        <!-- Karyawan -->
         <div class="col-md-4">
-            <label class="filter-label" for="filterCrew"><i class="fas fa-users me-2"></i> Pilih Crew </label>
+            <label class="filter-label" for="filterEmployee"><i class="fas fa-users me-2"></i> Pilih Karyawan </label>
 
             @php
                 $user = auth()->user();
             @endphp
 
-            <select id="filterCrew" class="form-select filter-select">
+            <select id="filterEmployee" class="form-select filter-select">
 
                 @if ($user && ($user->hasRole('admin') || $user->hasRole('moderator')))
-                    <option value="">Semua Crew</option>
+                    <option value="">Semua Karyawan</option>
 
                     @foreach ($employees as $employee)
                         @if ($employee->user && $employee->user->hasRole('employee'))
@@ -80,7 +79,7 @@
                         <i class="fa fa-search"></i>
                     </span>
                     <input type="text" name="search" class="form-control search-input"
-                        placeholder="Cari kode transaksi atau nama klien..." value="{{ request('search') }}">
+                        placeholder="Cari kode transaksi atau nama pengguna..." value="{{ request('search') }}">
                 </div>
 
                 {{-- Button --}}
@@ -438,8 +437,8 @@
         }
 
         /* ===============================
-                                                                                                                               ✨ Search Bar Premium Modern ✨
-                                                                                                                            ================================= */
+                                                                                                                                                                                   ✨ Search Bar Premium Modern ✨
+                                                                                                                                                                                ================================= */
 
         .search-bar-card {
             border-radius: 18px;
@@ -514,8 +513,8 @@
         }
 
         /* ===============================
-                                                                                                                               ✨ Tombol Super Premium (WhatsApp & Hapus) ✨
-                                                                                                                            ================================= */
+                                                                                                                                                                                   ✨ Tombol Super Premium (WhatsApp & Hapus) ✨
+                                                                                                                                                                                ================================= */
 
         .btn-whatsapp-super,
         .btn-danger-super {
@@ -537,8 +536,8 @@
         }
 
         /* ===============================
-                                                                                                                               Tombol WhatsApp
-                                                                                                                            ================================= */
+                                                                                                                                                                                   Tombol WhatsApp
+                                                                                                                                                                                ================================= */
         .btn-whatsapp-super {
             background: linear-gradient(135deg, #25D366, #1ebe5d);
             box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35);
@@ -562,8 +561,8 @@
         }
 
         /* ===============================
-                                                                                                                               Tombol Hapus Semua Foto
-                                                                                                                            ================================= */
+                                                                                                                                                                                   Tombol Hapus Semua Foto
+                                                                                                                                                                                ================================= */
         .btn-danger-super {
             background: linear-gradient(135deg, #ff5e57, #ff2a2a);
             box-shadow: 0 6px 20px rgba(255, 94, 87, 0.35);
@@ -588,8 +587,8 @@
         }
 
         /* ===============================
-                                                                                                                               Flex container (tengah & responsif)
-                                                                                                                            ================================= */
+                                                                                                                                                                                   Flex container (tengah & responsif)
+                                                                                                                                                                                ================================= */
         .d-flex.gap-3 {
             justify-content: center;
             /* selalu di tengah */
@@ -611,7 +610,7 @@
         }
 
         /* ======== Filter Seragam ======== */
-        #filterCrew,
+        #filterEmployee,
         #filterService,
         .filter-select {
             border-radius: 50px;
@@ -630,7 +629,7 @@
         }
 
         /* Focus & Hover */
-        #filterCrew:focus,
+        #filterEmployee:focus,
         #filterService:focus,
         .filter-select:focus {
             box-shadow: 0 0 0 0.25rem rgba(108, 117, 125, 0.3);
@@ -638,7 +637,7 @@
             border-color: #6abfe3;
         }
 
-        #filterCrew:hover,
+        #filterEmployee:hover,
         #filterService:hover,
         .filter-select:hover {
             background-color: #fff;
@@ -670,7 +669,7 @@
         /* Untuk tampilan mobile responsive */
         @media (max-width: 768px) {
 
-            #filterCrew,
+            #filterEmployee,
             #filterService,
             .filter-select {
                 width: 100%;
@@ -859,19 +858,19 @@
                 });
             });
         });
-        document.getElementById('filterCrew').addEventListener('change', applyFilter);
+        document.getElementById('filterEmployee').addEventListener('change', applyFilter);
         document.getElementById('filterService').addEventListener('change', applyFilter);
 
         function applyFilter() {
-            const crew = document.getElementById('filterCrew').value;
+            const employee = document.getElementById('filterEmployee').value;
             const service = document.getElementById('filterService').value;
 
             const params = new URLSearchParams(window.location.search);
 
-            if (crew) {
-                params.set('crew', crew);
+            if (employee) {
+                params.set('employee', employee);
             } else {
-                params.delete('crew');
+                params.delete('employee');
             }
 
             if (service) {

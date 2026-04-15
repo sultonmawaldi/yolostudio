@@ -14,7 +14,7 @@
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item">
-                        <a href="{{ route('dashboard') }}">Dashboard</a>
+                        <a href="{{ route('dashboard') }}">Beranda</a>
                     </li>
                     <li class="breadcrumb-item active">Profil Pengguna</li>
                 </ol>
@@ -91,24 +91,24 @@
                             <h3 class="profile-username">{{ $user->name }}</h3>
                             <p class="text-muted">{{ $user->email }}</p>
 
-                            <ul class="list-group list-group-unbordered mt-3">
+                            <ul class="list-group list-group-unbordered mt-3 small">
 
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span class="font-weight-bold">Login Terakhir</span>
+                                <li class="list-group-item d-flex justify-content-between align-items-center py-2">
+                                    <span class="font-weight-semibold text-dark">Login Terakhir</span>
                                     <span class="text-muted text-right">
                                         {{ $user->lastSuccessfulLoginAt() ? $user->lastSuccessfulLoginAt()->diffForHumans() : '-' }}
                                     </span>
                                 </li>
 
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span class="font-weight-bold">Dibuat</span>
+                                <li class="list-group-item d-flex justify-content-between align-items-center py-2">
+                                    <span class="font-weight-semibold text-dark">Dibuat</span>
                                     <span class="text-muted text-right">
                                         {{ $user->created_at->diffForHumans() }}
                                     </span>
                                 </li>
 
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span class="font-weight-bold">Peran</span>
+                                <li class="list-group-item d-flex justify-content-between align-items-center py-2">
+                                    <span class="font-weight-semibold text-dark">Peran</span>
                                     <span class="text-muted text-right">
                                         {{ ucwords($user->getRoleNames()->first()) }}
                                     </span>
@@ -231,13 +231,11 @@
                                             </div>
                                         </div>
 
-                                        <div class="form-group row">
-                                            <div class="offset-sm-2 col-sm-10">
-                                                <button type="submit" class="btn btn-danger btn-confirm"
-                                                    data-type="update-profile">
-                                                    Simpan Perubahan
-                                                </button>
-                                            </div>
+                                        <div class="card-footer text-right bg-white">
+                                            <button type="submit" class="btn btn-primary px-4 btn-confirm"
+                                                data-type="update-profile">
+                                                <i class="fas fa-save mr-1"></i> Simpan Perubahan
+                                            </button>
                                         </div>
                                     </form>
                                 </div>
@@ -276,11 +274,11 @@
                                             </div>
 
                                             <div class="form-group row">
-                                                <label class="col-sm-2 col-form-label">Twitter</label>
+                                                <label class="col-sm-2 col-form-label">X</label>
                                                 <div class="col-sm-10">
-                                                    <input type="text" class="form-control" name="social[twitter]"
-                                                        value="{{ $user->employee->social['twitter'] ?? '' }}"
-                                                        placeholder="Link Twitter / X">
+                                                    <input type="text" class="form-control" name="social[x]"
+                                                        value="{{ $user->employee->social['x'] ?? '' }}"
+                                                        placeholder="Link X">
                                                 </div>
                                             </div>
 
@@ -293,13 +291,11 @@
                                                 </div>
                                             </div>
 
-                                            <div class="form-group row">
-                                                <div class="offset-sm-2 col-sm-10">
-                                                    <button type="submit" class="btn btn-danger btn-confirm"
-                                                        data-type="update-bio">
-                                                        Simpan
-                                                    </button>
-                                                </div>
+                                            <div class="card-footer text-right bg-white">
+                                                <button type="submit" class="btn btn-primary px-4 btn-confirm"
+                                                    data-type="update-bio">
+                                                    <i class="fas fa-save mr-1"></i> Simpan Perubahan
+                                                </button>
                                             </div>
                                         </form>
                                     </div>
@@ -341,13 +337,11 @@
                                         </div>
 
                                         {{-- tombol tetap posisi awal (kiri, sejajar input) --}}
-                                        <div class="form-group row">
-                                            <div class="offset-sm-3 col-sm-9">
-                                                <button type="submit" class="btn btn-danger btn-confirm"
-                                                    data-type="update-password">
-                                                    <i class="fas fa-save mr-1"></i> Perbarui Kata Sandi
-                                                </button>
-                                            </div>
+                                        <div class="card-footer text-right bg-white">
+                                            <button type="submit" class="btn btn-primary px-4 btn-confirm"
+                                                data-type="update-password">
+                                                <i class="fas fa-save mr-1"></i> Perbarui Kata Sandi
+                                            </button>
                                         </div>
                                     </form>
                                 </div>
@@ -360,132 +354,142 @@
 @stop
 
 @section('css')
+    <style>
+        html {
+            overflow-y: scroll;
+        }
 
+        /* Bootstrap modal */
+        body.modal-open {
+            padding-right: 0 !important;
+        }
+
+        /* SweetAlert */
+        body.swal2-shown {
+            padding-right: 0 !important;
+        }
+
+        /* Card lebih clean & premium */
+        .card {
+            border-radius: 12px;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Nav pills modern */
+        .nav-pills .nav-link {
+            border-radius: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .nav-pills .nav-link.active {
+            background: linear-gradient(45deg, #007bff, #00c6ff);
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+        }
+
+        /* Input lebih halus */
+        .form-control {
+            border-radius: 8px;
+            box-shadow: none !important;
+            border: 1px solid #e0e0e0;
+            transition: 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1) !important;
+        }
+
+        /* Label lebih rapi */
+        .col-form-label {
+            font-weight: 600;
+            color: #444;
+        }
+
+        /* Button premium */
+        .btn-primary {
+            border-radius: 8px;
+            background: linear-gradient(45deg, #007bff, #00c6ff);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        /* Input group prefix */
+        .input-group-text {
+            border-radius: 8px 0 0 8px;
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .input-group .form-control {
+            border-radius: 0 8px 8px 0;
+        }
+    </style>
 @stop
-<style>
-    body {
-        overflow-y: scroll;
-    }
-</style>
+
 @section('js')
+
+    {{-- ================= TOAST NOTIFICATION ================= --}}
     <script>
-        $(document).ready(function() {
-            @if ($errors->has('image'))
-                $('#profileImageModal').modal('show');
-            @endif
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true
         });
+
+        // SUCCESS TOAST
+        @if (session('success'))
+            Toast.fire({
+                icon: 'success',
+                title: "{{ session('success') }}"
+            });
+        @endif
+
+        // ERROR TOAST (validation umum)
+        @if ($errors->any())
+            @foreach ($errors->all() as $error)
+                Toast.fire({
+                    icon: 'error',
+                    title: "{{ $error }}"
+                });
+            @endforeach
+        @endif
+
+        // ERROR IMAGE → tetap buka modal (tidak diubah logic)
+        @if ($errors->has('image'))
+            $(document).ready(function() {
+                $('#profileImageModal').modal('show');
+            });
+        @endif
     </script>
 
+
+    {{-- ================= AUTO HIDE ALERT (tetap) ================= --}}
     <script>
         $(document).ready(function() {
             $(".alert").delay(6000).slideUp(300);
         });
     </script>
 
-    <script>
-        $(document).ready(function() {
-            function toggleDayFields(dayId) {
-                var isChecked = $('#' + dayId).prop('checked');
-                $('#' + dayId + 'From, #' + dayId + 'To').prop('disabled', !isChecked);
 
-                // Show or hide the "Add More" button based on the checkbox state
-                if (isChecked) {
-                    $('#' + dayId + 'AddMore').removeClass('d-none');
-                } else {
-                    $('#' + dayId + 'AddMore').addClass('d-none');
-                    // Remove all additional fields for the day if unchecked
-                    $('.additional-' + dayId).remove();
-                }
-            }
-
-            function addMoreFields(dayId) {
-                // Clone the original row for the specific day
-                var originalRow = $('#' + dayId + 'AddMore').closest('.row');
-                var clonedRow = originalRow.clone();
-
-                // Reset the values in the cloned row (but don't enable the fields yet)
-                clonedRow.find('input').each(function() {
-                    $(this).val(''); // Clear the value
-                });
-
-                // Replace the col-md-2 section with a blank div for the cloned row
-                clonedRow.find('.col-md-2').replaceWith('<div class="col-md-2"></div>');
-
-                // Update "Add More" to "Remove" for the cloned row
-                clonedRow.find(`#${dayId}AddMore`).text('Remove').attr('id', '').addClass(
-                    'remove-field text-danger');
-
-                // Add a unique class to the cloned row for targeting specific day rows
-                clonedRow.addClass('additional-' + dayId);
-
-                // Append the cloned row after the original row or the last cloned row
-                if (originalRow.closest('.row').siblings('.additional-' + dayId).length === 0) {
-                    originalRow.after(clonedRow);
-                } else {
-                    originalRow.closest('.row').siblings('.additional-' + dayId).last().after(clonedRow);
-                }
-            }
-
-            // Remove cloned rows
-            $(document).on('click', '.remove-field', function() {
-                $(this).closest('.row').remove();
-            });
-
-            // Bind change and add-more events to all days
-            ['monday',
-                'tuesday',
-                'wednesday',
-                'thursday',
-                'friday',
-                'saturday',
-                'sunday',
-            ].forEach(function(day) {
-                $('#' + day).on('change', function() {
-                    toggleDayFields(day);
-                }).trigger('change');
-
-                $('#' + day + 'AddMore').on('click', function() {
-                    addMoreFields(day);
-                });
-            });
-        });
-    </script>
-
-    <script>
-        $(document).ready(function() {
-            // Initially hide the row with id 'employee' when the page loads
-            // Check if the checkbox is checked on page load and toggle visibility accordingly
-            if ($('#is_employee').prop('checked')) {
-                $('#employee').show(); // Show the row if checkbox is checked
-            } else {
-                $('#employee').hide(); // Hide the row if checkbox is unchecked
-            }
-
-            // When the 'Is Employee' checkbox is changed, toggle the row visibility
-            $('#is_employee').change(function() {
-                if ($(this).prop('checked')) {
-                    $('#employee').show(); // Show the row if checkbox is checked
-                } else {
-                    $('#employee').hide(); // Hide the row if checkbox is unchecked
-                }
-            });
-        });
-    </script>
-
-
-    <script>
-        $(document).ready(function() {
-            $('.myTable').DataTable({
-                responsive: true
-            });
-
-        });
-    </script>
-
+    {{-- ================= SWAL VALIDATION (tetap boleh dipakai) ================= --}}
     <script>
         $(function() {
 
-            // ✅ ERROR VALIDATION
+            // ⚠️ OPTIONAL: kalau masih ada error besar selain toast
             @if ($errors->any())
                 Swal.fire({
                     icon: 'error',
@@ -495,25 +499,14 @@
                 });
             @endif
 
-            // ✅ SUCCESS
-            @if (session('success'))
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil',
-                    text: "{{ session('success') }}",
-                    confirmButtonColor: '#28a745',
-                    timer: 3000,
-                    showConfirmButton: false
-                });
-            @endif
-
-            // ✅ AUTO OPEN MODAL JIKA ERROR IMAGE
-            @if ($errors->has('image'))
-                $('#profileImageModal').modal('show');
-            @endif
+            // ⚠️ SUCCESS sudah diganti TOAST (ini sengaja di-nonaktifkan)
+            // supaya tidak dobel popup
 
         });
     </script>
+
+
+    {{-- ================= CONFIRM ACTION BUTTON ================= --}}
     <script>
         $(document).ready(function() {
 
@@ -556,7 +549,6 @@
                     config.icon = 'warning';
                 }
 
-
                 Swal.fire({
                     ...config,
                     showCancelButton: true,
@@ -574,4 +566,5 @@
 
         });
     </script>
+
 @stop

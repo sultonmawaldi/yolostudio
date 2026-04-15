@@ -112,7 +112,7 @@ class EmployeeController extends Controller
         ]);
 
         $employee->update($data);
-        return back()->withSuccess('Profile has been updated successfullly!');
+        return back()->withSuccess('Bio berhasil diperbarui');
     }
 
     public function categories(Employee $employee)

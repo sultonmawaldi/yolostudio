@@ -11,7 +11,6 @@
                 <h1 class="m-0 font-weight-bold">
                     <i class="fas fa-edit text-primary mr-2"></i>
                     Edit Addon
-                    <small class="text-muted">({{ $addon->name }})</small>
                 </h1>
             </div>
 
@@ -157,8 +156,7 @@
                             <div class="card-header">
                                 <h3 class="card-title">Detail Addon</h3>
                                 <div class="card-tools">
-                                    <button type="button" class="btn btn-tool" data-card-widget="collapse"
-                                        title="Tutup">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Tutup">
                                         <i class="fas fa-minus"></i>
                                     </button>
                                 </div>

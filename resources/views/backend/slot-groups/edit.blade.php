@@ -12,7 +12,6 @@
                 <h1 class="m-0 font-weight-bold">
                     <i class="fas fa-edit text-primary mr-2"></i>
                     Edit Grup Waktu
-                    <small class="text-muted">({{ $slotGroup->name }})</small>
                 </h1>
             </div>
 

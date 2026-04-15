@@ -206,14 +206,14 @@
                                                 data-booking-date="{{ $bookingDate }}"
                                                 data-booking-time-start="{{ $startTime }}"
                                                 data-booking-time-end="{{ $endTime }}">
-                                                Reschedule
+                                                Jadwal ulang
                                             </button>
                                         @elseif($hasRescheduled)
                                             <span
                                                 class="flex-1 sm:flex-none text-center px-3 py-2 rounded
                                            bg-gray-100 text-gray-500
                                            dark:bg-gray-700 dark:text-gray-300 text-xs">
-                                                Sudah di-reschedule
+                                                Sudah di jadwal ulang
                                             </span>
                                         @endif
 
@@ -237,7 +237,7 @@
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content rounded-2xl">
                 <div class="modal-header">
-                    <h5 class="modal-title fw-bold">Reschedule Booking</h5>
+                    <h5 class="modal-title fw-bold">Jadwal ulang janji temu</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
@@ -528,13 +528,13 @@
                     })
                     .then(res => res.json())
                     .then(res => {
-                        if (!res.success) return Swal.fire('Gagal', res.message || 'Gagal reschedule',
+                        if (!res.success) return Swal.fire('Gagal', res.message || 'Gagal jadwal ulang',
                             'error');
 
                         Swal.fire({
                             icon: 'success',
                             title: 'Berhasil',
-                            text: res.message || 'Reschedule berhasil!',
+                            text: res.message || 'Jadwal ulang berhasil!',
                             confirmButtonText: 'OK'
                         }).then(() => {
                             location.reload();

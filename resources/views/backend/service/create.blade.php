@@ -145,7 +145,7 @@
                                             value="{{ old('sale_price') }}">
 
                                         <small class="text-muted d-block">
-                                            Harga diskon.
+                                            Harga diskon
                                         </small>
 
                                         @error('sale_price')
@@ -514,8 +514,8 @@
         }
 
         /* =========================
-                   FIX PANAH TANPA UBAH POSISI
-                ========================== */
+                       FIX PANAH TANPA UBAH POSISI
+                    ========================== */
 
         .select2-container--default .select2-selection--single .select2-selection__arrow b {
             margin: 0 !important;

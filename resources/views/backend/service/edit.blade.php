@@ -12,7 +12,6 @@
                 <h1 class="m-0 font-weight-bold">
                     <i class="fas fa-edit text-primary mr-2"></i>
                     Edit Layanan
-                    <small class="text-muted">({{ $service->title }})</small>
                 </h1>
             </div>
 
@@ -520,8 +519,8 @@
         }
 
         /* =========================
-                       FIX PANAH TANPA UBAH POSISI
-                    ========================== */
+                           FIX PANAH TANPA UBAH POSISI
+                        ========================== */
 
         .select2-container--default .select2-selection--single .select2-selection__arrow b {
             margin: 0 !important;

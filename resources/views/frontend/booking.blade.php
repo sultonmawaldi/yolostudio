@@ -549,7 +549,7 @@
                                         <li class="d-flex align-items-start mb-3">
                                             <i class="fa-solid fa-arrows-rotate text-info me-3 mt-1"></i>
                                             <span>
-                                                Reschedule dapat dilakukan maksimal
+                                                Jadwal ulang dapat dilakukan maksimal
                                                 <strong>H-1 sebelum jadwal booking</strong>
                                                 dan hanya dapat dilakukan
                                                 <strong>1 (satu) kali</strong>.
@@ -1579,7 +1579,7 @@
 
                         const $slotsContainer = $(
                             "<div class='slots-grid d-flex flex-wrap justify-content-center gap-2'></div>"
-                            );
+                        );
 
                         slots.forEach(slot => {
                             const displayText = `${slot.start} - ${slot.end}`;
@@ -2167,10 +2167,6 @@
 
         });
     </script>
-
-    @if ($setting->footer)
-        {!! $setting->footer !!}
-    @endif
 
     <script>
         const serviceNameEl = document.getElementById("service-name");

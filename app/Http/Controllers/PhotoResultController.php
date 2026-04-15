@@ -38,10 +38,10 @@ class PhotoResultController extends Controller
             });
         }
 
-        // ================= FILTER CREW (optional GET support) =================
-        if ($request->filled('crew')) {
+        // ================= FILTER KARYAWAN (optional GET support) =================
+        if ($request->filled('employee')) {
             $query->whereHas('appointment', function ($q) use ($request) {
-                $q->where('employee_id', $request->crew);
+                $q->where('employee_id', $request->employee);
             });
         }
 

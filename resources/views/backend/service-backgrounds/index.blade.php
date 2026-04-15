@@ -26,7 +26,7 @@
                 <thead class="bg-gradient text-white" style="background: linear-gradient(90deg, #007bff, #00b4d8);">
                     <tr>
                         <th>#</th>
-                        <th>ID Layanan</th>
+                        <th>Layanan</th>
                         <th>Nama</th>
                         <th>Value</th>
                         <th>Preview</th>
@@ -40,7 +40,7 @@
                         <tr class="bg-white shadow-sm-hover">
                             <td class="fw-semibold text-muted">{{ $loop->iteration }}</td>
 
-                            <td class="fw-bold">{{ $bg->service_id ?? '-' }}</td>
+                            <td class="fw-bold">{{ $bg->service->title ?? '-' }}</td>
 
                             <td>{{ $bg->name }}</td>
 

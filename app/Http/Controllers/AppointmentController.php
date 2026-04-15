@@ -51,7 +51,7 @@ class AppointmentController extends Controller
             });
         });
 
-        // ===== Tambahkan employee untuk filter Crew =====
+        // ===== Tambahkan employee untuk filter Karyawan =====
         if ($user->hasRole('admin') || $user->hasRole('moderator')) {
             $employees = \App\Models\Employee::whereHas('user', function ($q) {
                 $q->role('employee'); // hanya user role employee
@@ -288,7 +288,7 @@ class AppointmentController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Appointment booked successfully!',
+            'message' => 'Pemesanan janji temu berhasil',
             'booking_id' => $appointment->booking_id,
             'qr_url' => $transaction->qr_url ?? null,
             'transaction_code' => $transactionCode,
@@ -399,7 +399,7 @@ class AppointmentController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Janji temu berhasil diperbarui.',
+            'message' => 'Janji temu berhasil diperbarui',
             'appointment' => $appointment
         ]);
     }
@@ -418,7 +418,7 @@ class AppointmentController extends Controller
 
         event(new StatusUpdated($appointment));
 
-        return redirect()->back()->with('success', 'Status janji temu berhasil diperbarui.');
+        return redirect()->back()->with('success', 'Status janji temu berhasil diperbarui');
     }
 
 
@@ -428,7 +428,7 @@ class AppointmentController extends Controller
         if ($appointment->reschedule_count >= 1) {
             return response()->json([
                 'success' => false,
-                'message' => 'Reschedule hanya dapat dilakukan 1 kali'
+                'message' => 'Jadwal ulang hanya dapat dilakukan 1 kali'
             ], 403);
         }
 
@@ -438,7 +438,7 @@ class AppointmentController extends Controller
         if (now()->startOfDay()->gte($bookingDate)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Reschedule hanya dapat dilakukan maksimal H-1 sebelum jadwal booking'
+                'message' => 'Jadwal ulang hanya dapat dilakukan maksimal H-1 sebelum jadwal booking'
             ], 403);
         }
 
@@ -481,7 +481,7 @@ class AppointmentController extends Controller
                 }
             }
         } catch (\Exception $e) {
-            \Log::error('Google Calendar reschedule error', [
+            \Log::error('Google Calendar jadwal ulang error', [
                 'appointment_id' => $appointment->id,
                 'message' => $e->getMessage(),
             ]);
@@ -489,7 +489,7 @@ class AppointmentController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Booking berhasil di-reschedule'
+            'message' => 'Janji temu berhasil di jadwal ulang'
         ]);
     }
 
@@ -503,7 +503,7 @@ class AppointmentController extends Controller
         if (!$employee || !$service || !$slotGroupId) {
             return response()->json([
                 'success' => false,
-                'message' => 'Data appointment tidak lengkap'
+                'message' => 'Data janji temu tidak lengkap'
             ], 422);
         }
 

@@ -17,16 +17,16 @@
     <div class="card border-0 shadow-lg rounded-4">
         <div class="card-body">
 
-            <!-- ================= FILTER CREW & LAYANAN ================= -->
+            <!-- ================= FILTER KARYAWAN & LAYANAN ================= -->
             <div class="row mb-3 g-3 align-items-end date-filter-wrapper">
 
-                <!-- Crew -->
+                <!-- Karyawan -->
                 <div class="col-md-4">
-                    <label class="filter-label" for="filterCrew"><i class="fas fa-users me-2"></i> Pilih Crew </label>
+                    <label class="filter-label" for="filterEmployee"><i class="fas fa-users me-2"></i> Pilih Karyawan </label>
 
-                    <select id="filterCrew" class="form-select filter-select">
+                    <select id="filterEmployee" class="form-select filter-select">
                         @if (auth()->user()->hasRole('admin') || auth()->user()->hasRole('moderator'))
-                            <option value="">Semua Crew</option>
+                            <option value="">Semua Karyawan</option>
                             @foreach ($employees as $employee)
                                 @if ($employee->user->hasRole('employee'))
                                     {{-- Hanya tampilkan yang role employee --}}
@@ -68,9 +68,9 @@
                             <th>#</th>
                             <th>Kode</th>
                             <th>ID Pemesanan</th>
-                            <th>Klien</th>
+                            <th>Pengguna</th>
                             <th>Layanan</th>
-                            <th>Crew</th>
+                            <th>Karyawan</th>
                             <th>Total</th>
                             <th>Status</th>
                             <th>Dibuat</th>
@@ -93,15 +93,27 @@
                                 <td>
                                     @php
                                         $status = $transaction->payment_status ?? 'Pending';
+
+                                        // Mapping Bahasa Indonesia
+                                        $statusLabel = [
+                                            'Pending' => 'Menunggu',
+                                            'DP' => 'Uang Muka',
+                                            'Paid' => 'Lunas',
+                                            'Failed' => 'Gagal',
+                                        ];
+
                                         $badgeClass = match ($status) {
                                             'Paid' => 'bg-gradient-success',
                                             'DP' => 'bg-gradient-warning',
                                             'Failed' => 'bg-gradient-danger',
                                             default => 'bg-gradient-secondary',
                                         };
+
+                                        $label = $statusLabel[$status] ?? $status;
                                     @endphp
+
                                     <span class="badge text-white px-3 py-2 rounded-pill shadow-sm {{ $badgeClass }}">
-                                        {{ $status }}
+                                        {{ $label }}
                                     </span>
                                 </td>
                                 <td>{{ $transaction->created_at->format('d M Y H:i') }}</td>
@@ -296,7 +308,7 @@
         }
 
         /* ======== Filter Seragam ======== */
-        #filterCrew,
+        #filterEmployee,
         #filterService,
         .filter-select {
             border-radius: 50px;
@@ -315,7 +327,7 @@
         }
 
         /* Focus & Hover */
-        #filterCrew:focus,
+        #filterEmployee:focus,
         #filterService:focus,
         .filter-select:focus {
             box-shadow: 0 0 0 0.25rem rgba(108, 117, 125, 0.3);
@@ -323,7 +335,7 @@
             border-color: #6abfe3;
         }
 
-        #filterCrew:hover,
+        #filterEmployee:hover,
         #filterService:hover,
         .filter-select:hover {
             background-color: #fff;
@@ -355,7 +367,7 @@
         /* Untuk tampilan mobile responsive */
         @media (max-width: 768px) {
 
-            #filterCrew,
+            #filterEmployee,
             #filterService,
             .filter-select {
                 width: 100%;
@@ -582,7 +594,7 @@
                 });
 
             // ================= FILTER =================
-            $('#filterCrew, #filterService').on('change', function() {
+            $('#filterEmployee, #filterService').on('change', function() {
                 applyFilters();
             });
 
@@ -591,15 +603,15 @@
                 // Reset filter seperti appointment
                 $.fn.dataTable.ext.search = [];
 
-                var crewVal = $('#filterCrew').val();
+                var employeeVal = $('#filterEmployee').val();
                 var serviceVal = $('#filterService').val();
 
-                // FILTER CREW
-                if (crewVal) {
+                // FILTER KARYAWAN
+                if (employeeVal) {
                     $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
                         var row = table.row(dataIndex).node();
                         var employeeId = $(row).data('employee-id');
-                        return employeeId == crewVal;
+                        return employeeId == employeeVal;
                     });
                 }
 

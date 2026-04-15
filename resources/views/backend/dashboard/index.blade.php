@@ -44,11 +44,11 @@
                             <!-- ================= LEFT : CLIENT INFO ================= -->
                             <div class="col-md-6 pe-md-4 border-md-end">
                                 <h6 class="text-uppercase text-bold fw-bold mb-3">
-                                    Informasi Klien
+                                    Informasi Pengguna
                                 </h6>
 
                                 <div class="mb-3">
-                                    <small class="text-muted d-block">Klien</small>
+                                    <small class="text-muted d-block">Pengguna</small>
                                     <div class="fw-semibold fs-6" id="modalAppointmentName">-</div>
                                 </div>
 
@@ -66,12 +66,12 @@
                             <!-- ================= RIGHT : BOOKING DETAIL ================= -->
                             <div class="col-md-6 ps-2 ps-md-4 mt-2 mt-md-0 h-100 d-flex flex-column">
                                 <h6 class="text-uppercase text-bold fw-bold mb-3">
-                                    Detail Booking
+                                    Detail Janji Temu
                                 </h6>
 
                                 <div class="mb-3">
-                                    <small class="text-muted d-block">Crew</small>
-                                    <div class="fw-semibold" id="modalCrew">-</div>
+                                    <small class="text-muted d-block">Karyawan</small>
+                                    <div class="fw-semibold" id="modalEmployee">-</div>
                                 </div>
 
                                 <div class="mb-3">
@@ -105,10 +105,6 @@
                                     </div>
                                 </div>
 
-                                <div class="mt-3">
-                                    <small class="text-muted d-block">Biaya</small>
-                                    <div class="fw-bold fs-5" id="modalAmount">-</div>
-                                </div>
                             </div>
                         </div>
 
@@ -139,12 +135,12 @@
                                 </label>
 
                                 <select name="status" id="modalStatusSelect">
-                                    <option value="Pending">Pending</option>
-                                    <option value="Processing">Processing</option>
-                                    <option value="Confirmed">Confirmed</option>
-                                    <option value="Completed">Completed</option>
-                                    <option value="Cancelled">Cancelled</option>
-                                    <option value="Rescheduled">Rescheduled</option>
+                                    <option value="Pending">Menunggu</option>
+                                    <option value="Processing">Diproses</option>
+                                    <option value="Confirmed">Dikonfirmasi</option>
+                                    <option value="Completed">Selesai</option>
+                                    <option value="Cancelled">Dibatalkan</option>
+                                    <option value="Rescheduled">Dijadwalkan Ulang</option>
                                 </select>
                             </div>
 
@@ -170,7 +166,6 @@
 @stop
 
 @section('css')
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet" />
     <style>
         /* ========== LAYOUT DASAR ========== */
         html {
@@ -554,8 +549,8 @@
         }
 
         /* ============================================
-                                                                                                                                                                                                               📱 MODERN MOBILE / iOS CALENDAR STYLE
-                                                                                                                                                                                                               ============================================ */
+                                                                                                                                                                                                                                                                                       📱 MODERN MOBILE / iOS CALENDAR STYLE
+                                                                                                                                                                                                                                                                                       ============================================ */
 
         /* ---- GLOBAL CALENDAR CARD ---- */
         #calendar {
@@ -764,8 +759,6 @@
 
 
 @section('js')
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
     <script>
         const Toast = Swal.mixin({
             toast: true,
@@ -863,7 +856,7 @@
                     $('#modalService').text(ev.extendedProps.service_title || '-');
                     $('#modalEmail').text(ev.extendedProps.email || '-');
                     $('#modalPhone').text(ev.extendedProps.phone || '-');
-                    $('#modalCrew').text(ev.extendedProps.crew || '-');
+                    $('#modalEmployee').text(ev.extendedProps.employee || '-');
                     $('#modalAmount').text(ev.extendedProps.amount || '-');
                     $('#modalNotes').text(ev.extendedProps.description || '-');
 
@@ -929,31 +922,41 @@
                     const status = ev.extendedProps.status || 'Pending';
                     $('#modalStatusSelect').val(status);
 
+                    const statusLabels = {
+                        'Pending': 'Menunggu',
+                        'Processing': 'Diproses',
+                        'Confirmed': 'Dikonfirmasi',
+                        'Cancelled': 'Dibatalkan',
+                        'Completed': 'Selesai',
+                        'Rescheduled': 'Dijadwalkan Ulang'
+                    };
+
                     const badgeColors = {
                         'Pending': '#f39c12',
                         'Processing': '#3498db',
                         'Confirmed': '#2ecc71',
                         'Cancelled': '#e74c3c',
                         'Completed': '#16a085',
-                        'Rescheduled': '#9b59b6' // TAMBAHKAN INI
+                        'Rescheduled': '#9b59b6'
                     };
+
                     $('#modalStatusBadge').html(
-                        `<span class="badge" style="background-color:${badgeColors[status]};color:white">${status}</span>`
+                        `<span class="badge" style="background-color:${badgeColors[status]};color:white">
+                        ${statusLabels[status] || status}
+                    </span>`
                     );
 
-                    const modal = new bootstrap.Modal(document.getElementById('appointmentModal'));
-                    modal.show();
+                    $('#appointmentModal').modal('show');
                 }
             });
 
             calendar.render();
         });
+        document.addEventListener('hidden.bs.modal', function() {
+            document.body.classList.remove('modal-open');
+            document.body.style.paddingRight = '0px';
 
-        window.addEventListener('shown.bs.modal', () => {
-            document.body.style.paddingRight = '0px';
-        });
-        window.addEventListener('hidden.bs.modal', () => {
-            document.body.style.paddingRight = '0px';
+            document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
         });
     </script>
 @stop

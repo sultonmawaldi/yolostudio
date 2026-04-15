@@ -12,7 +12,6 @@
                 <h1 class="m-0 font-weight-bold">
                     <i class="fas fa-edit text-primary mr-2"></i>
                     Edit Transaksi
-                    <small class="text-muted">({{ $transaction->transaction_code }})</small>
                 </h1>
             </div>
 
@@ -82,7 +81,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label>Customer</label>
+                            <label>Pengguna</label>
                             <input type="text" class="form-control"
                                 value="{{ optional($transaction->appointment)->name ?? '-' }}" readonly>
                         </div>
@@ -94,13 +93,13 @@
                         </div>
 
                         <div class="form-group">
-                            <label>Total Amount</label>
+                            <label>Total Biaya</label>
                             <input type="text" class="form-control"
                                 value="Rp {{ number_format($transaction->total_amount, 0, ',', '.') }}" readonly>
                         </div>
 
                         <div class="form-group">
-                            <label>Amount Paid</label>
+                            <label>Total Dibayar (DP / Pembayaran Masuk)</label>
                             <input type="text" class="form-control"
                                 value="Rp {{ number_format($transaction->amount, 0, ',', '.') }}" readonly>
                         </div>
@@ -126,13 +125,13 @@
                     <div class="card-body">
 
                         <div class="form-group">
-                            <label>DP Method</label>
+                            <label>Metode Pembayaran DP</label>
                             <input type="text" class="form-control" value="{{ $transaction->dp_method ?? '-' }}"
                                 readonly>
                         </div>
 
                         <div class="form-group">
-                            <label>Pelunasan Method</label>
+                            <label>Metode Pelunasan</label>
                             <input type="text" class="form-control" value="{{ $transaction->pelunasan_method ?? '-' }}"
                                 readonly>
                         </div>
@@ -174,26 +173,26 @@
 
                                     <option value="Pending"
                                         {{ $transaction->payment_status == 'Pending' ? 'selected' : '' }}>
-                                        Pending
+                                        Menunggu
                                     </option>
 
                                     <option value="DP" {{ $transaction->payment_status == 'DP' ? 'selected' : '' }}>
-                                        DP
+                                        Uang Muka (DP)
                                     </option>
 
                                     <option value="Paid" {{ $transaction->payment_status == 'Paid' ? 'selected' : '' }}>
-                                        Paid
+                                        Lunas
                                     </option>
 
                                     <option value="Failed"
                                         {{ $transaction->payment_status == 'Failed' ? 'selected' : '' }}>
-                                        Failed
+                                        Gagal
                                     </option>
 
                                 </select>
 
                                 <small class="text-muted">
-                                    Ubah status pembayaran transaksi.
+                                    Ubah status pembayaran transaksi
                                 </small>
 
                             </div>

@@ -43,10 +43,10 @@
 
                         <!-- Informasi Utama -->
                         <div class="detail-section">
-                            <div class="detail-row"><span>Klien</span><strong id="modalAppointmentName">-</strong></div>
+                            <div class="detail-row"><span>Pengguna</span><strong id="modalAppointmentName">-</strong></div>
                             <div class="detail-row"><span>Email</span><strong id="modalEmail">-</strong></div>
                             <div class="detail-row"><span>Telepon</span><strong id="modalPhone">-</strong></div>
-                            <div class="detail-row"><span>Crew</span><strong id="modalCrew">-</strong></div>
+                            <div class="detail-row"><span>Karyawan</span><strong id="modalEmployee">-</strong></div>
                             <div class="detail-row"><span>Layanan</span><strong id="modalService">-</strong></div>
                             <div class="detail-row" id="backgroundRow" style="display:none;">
                                 <span>Background</span><strong id="modalBackground">-</strong>
@@ -111,12 +111,12 @@
                             <!-- UBAH STATUS -->
                             <label class="change-status-label">Ubah Status</label>
                             <select name="status" id="modalStatusSelect">
-                                <option value="Pending">Pending</option>
-                                <option value="Processing">Processing</option>
-                                <option value="Confirmed">Confirmed</option>
-                                <option value="Completed">Completed</option>
-                                <option value="Cancelled">Cancelled</option>
-                                <option value="Rescheduled">Rescheduled</option>
+                                <option value="Pending">Menunggu</option>
+                                <option value="Processing">Diproses</option>
+                                <option value="Confirmed">Dikonfirmasi</option>
+                                <option value="Completed">Selesai</option>
+                                <option value="Cancelled">Dibatalkan</option>
+                                <option value="Rescheduled">Dijadwalkan Ulang</option>
                             </select>
 
                         </div>
@@ -157,7 +157,7 @@
                 <div class="modal-header">
                     <h5 class="modal-title d-flex align-items-center">
                         <i class="fas fa-calendar-alt mr-2"></i>
-                        <span class="fw-semibold">Reschedule Booking</span>
+                        <span class="fw-semibold">Jadwal Ulang Janji Temu</span>
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-dismiss="modal"></button>
                 </div>
@@ -244,19 +244,19 @@
                         <!-- ================= FILTER BAR ================= -->
                         <div class="filter-wrapper mb-1">
 
-                            <!-- Row 1 : Crew & Layanan -->
+                            <!-- Row 1 : Karyawan & Layanan -->
                             <div class="row align-items-end g-3">
 
-                                <!-- Crew -->
+                                <!-- Karyawan -->
                                 <div class="col-md-4 mb-3">
                                     <label class="filter-label">
                                         <i class="fas fa-users me-2"></i>
-                                        Pilih Crew
+                                        Pilih Karyawan
                                     </label>
 
-                                    <select id="filterCrew" class="form-control filter-select mt-2">
+                                    <select id="filterEmployee" class="form-control filter-select mt-2">
                                         @if (auth()->user()->hasRole('admin') || auth()->user()->hasRole('moderator'))
-                                            <option value="">Semua Crew</option>
+                                            <option value="">Semua Karyawan</option>
                                             @foreach ($employees as $employee)
                                                 <option value="{{ $employee->id }}">
                                                     {{ $employee->user->name ?? '-' }}
@@ -338,101 +338,121 @@
 
 
                         <div class="card-body p-0">
-                            <table id="myTable" class="table">
-                                <thead class="bg-light">
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Klien</th>
-                                        <th>Layanan</th>
-                                        <th>Crew</th>
-                                        <th>Tanggal</th>
-                                        <th>Waktu</th>
-                                        <th class="text-center">Status</th>
-                                        <th>Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @php
-                                        $statusColors = [
-                                            'Pending' => '#f39c12',
-                                            'Processing' => '#3498db',
-                                            'Confirmed' => '#2ecc71',
-                                            'Cancelled' => '#ff0000',
-                                            'Completed' => '#008000',
-                                            'Rescheduled' => '#f1c40f',
-                                        ];
-
-                                        $appointments = $appointments->sortBy([
-                                            ['booking_date', 'asc'],
-                                            ['booking_start_time', 'asc'],
-                                        ]);
-                                    @endphp
-
-                                    @foreach ($appointments as $appointment)
-                                        <tr data-service-id="{{ $appointment->service->id }}"
-                                            data-employee-id="{{ $appointment->employee_id }}">
-                                            <td data-label="#"> {{ $loop->iteration }} </td>
-                                            <td data-label="Klien">
-                                                <div class="font-weight-semibold text-dark">{{ $appointment->name }}</div>
-                                            </td>
-                                            <td data-label="Layanan">{{ $appointment->service->title ?? 'N/A' }}</td>
-                                            <td data-label="Crew">{{ $appointment->employee->user->name }}</td>
-                                            <td data-label="Tanggal" data-date="{{ $appointment->booking_date }}"
-                                                data-order="{{ $appointment->booking_date }}">
-                                                {{ \Carbon\Carbon::parse($appointment->booking_date)->translatedFormat('l, d M Y') }}
-                                            </td>
-                                            <td data-label="Waktu">
-                                                {{ \Carbon\Carbon::createFromFormat('H:i:s', $appointment->booking_start_time)->format('H:i') }}
-                                                WIB
-                                            </td>
-                                            <td data-label="Status" class="text-center">
-                                                @php
-                                                    $status = $appointment->status;
-                                                    $color = $statusColors[$status] ?? '#7f8c8d';
-                                                @endphp
-                                                <span class="badge px-3 py-2"
-                                                    style="background-color: {{ $color }}; color: #fff; border-radius: 30px;">
-                                                    {{ $status }}
-                                                </span>
-                                            </td>
-                                            <td data-label="Aksi">
-                                                <button
-                                                    class="btn btn-sm btn-outline-primary rounded-pill view-appointment-btn"
-                                                    data-toggle="modal" data-target="#appointmentModal"
-                                                    data-id="{{ $appointment->id }}"
-                                                    data-booking="{{ $appointment->booking_id }}"
-                                                    data-name="{{ $appointment->name }}"
-                                                    data-service="{{ $appointment->service->title ?? 'N/A' }}"
-                                                    data-service_price="{{ $appointment->service->price ?? 0 }}"
-                                                    data-background="{{ optional($appointment->background)->name }}"
-                                                    data-email="{{ $appointment->email }}"
-                                                    data-phone="{{ $appointment->phone }}"
-                                                    data-people="{{ $appointment->people_count ?? '-' }}"
-                                                    data-employee="{{ $appointment->employee->user->name }}"
-                                                    data-date="{{ \Carbon\Carbon::parse($appointment->booking_date)->locale('id')->translatedFormat('l, d M Y') }}"
-                                                    data-start_time="{{ \Carbon\Carbon::createFromFormat('H:i:s', $appointment->booking_start_time)->format('H:i') }}"
-                                                    data-end_time="{{ \Carbon\Carbon::createFromFormat('H:i:s', $appointment->booking_end_time)->format('H:i') }} WIB"
-                                                    data-amount="{{ $appointment->transaction->total_amount ?? 0 }}"
-                                                    data-dp="{{ $appointment->transaction->amount ?? 0 }}"
-                                                    data-payment_type="{{ $appointment->transaction
-                                                        ? ($appointment->transaction->amount == 0
-                                                            ? 'unpaid'
-                                                            : ($appointment->transaction->amount < $appointment->transaction->total_amount
-                                                                ? 'dp'
-                                                                : 'full'))
-                                                        : 'unpaid' }}"
-                                                    data-notes="{{ $appointment->notes }}"
-                                                    data-status="{{ $appointment->status }}"
-                                                    data-addons='@json($appointment->addonData)'>
-
-                                                    <i class="fas fa-eye"></i> Lihat
-                                                </button>
-                                            </td>
+                            <div class="table-responsive table-scroll">
+                                <table id="myTable" class="table">
+                                    <thead class="bg-light">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Pengguna</th>
+                                            <th>Layanan</th>
+                                            <th>Karyawan</th>
+                                            <th>Tanggal</th>
+                                            <th>Waktu</th>
+                                            <th class="text-center">Status</th>
+                                            <th>Aksi</th>
                                         </tr>
-                                    @endforeach
-                                </tbody>
+                                    </thead>
+                                    <tbody>
+                                        @php
+                                            // 🔥 TAMBAHAN INI (WAJIB BIAR AMAN)
+                                            $normalizeStatus = function ($status) {
+                                                return ucfirst(strtolower($status));
+                                            };
 
-                            </table>
+                                            // ================= WARNA STATUS =================
+                                            $statusColors = [
+                                                'Pending' => '#f39c12',
+                                                'Processing' => '#3498db',
+                                                'Confirmed' => '#2ecc71',
+                                                'Cancelled' => '#e74c3c',
+                                                'Completed' => '#16a085',
+                                                'Rescheduled' => '#9b59b6',
+                                            ];
+
+                                            // ================= LABEL INDONESIA (BARU) =================
+                                            $statusLabel = [
+                                                'Pending' => 'Menunggu',
+                                                'Processing' => 'Diproses',
+                                                'Confirmed' => 'Dikonfirmasi',
+                                                'Cancelled' => 'Dibatalkan',
+                                                'Completed' => 'Selesai',
+                                                'Rescheduled' => 'Jadwal Ulang',
+                                            ];
+
+                                            $appointments = $appointments->sortBy([
+                                                ['booking_date', 'asc'],
+                                                ['booking_start_time', 'asc'],
+                                            ]);
+                                        @endphp
+
+                                        @foreach ($appointments as $appointment)
+                                            <tr data-service-id="{{ $appointment->service->id }}"
+                                                data-employee-id="{{ $appointment->employee_id }}">
+                                                <td data-label="#"> {{ $loop->iteration }} </td>
+                                                <td data-label="Pengguna">
+                                                    <div class="font-weight-semibold text-dark">{{ $appointment->name }}
+                                                    </div>
+                                                </td>
+                                                <td data-label="Layanan">{{ $appointment->service->title ?? 'N/A' }}</td>
+                                                <td data-label="Karyawan">{{ $appointment->employee->user->name }}</td>
+                                                <td data-label="Tanggal" data-date="{{ $appointment->booking_date }}"
+                                                    data-order="{{ $appointment->booking_date }}">
+                                                    {{ \Carbon\Carbon::parse($appointment->booking_date)->translatedFormat('l, d M Y') }}
+                                                </td>
+                                                <td data-label="Waktu">
+                                                    {{ \Carbon\Carbon::createFromFormat('H:i:s', $appointment->booking_start_time)->format('H:i') }}
+                                                    WIB
+                                                </td>
+                                                <td data-label="Status" class="text-center">
+                                                    @php
+                                                        $status = $normalizeStatus($appointment->status);
+                                                        $color = $statusColors[$status] ?? '#7f8c8d';
+                                                    @endphp
+
+                                                    <span class="badge px-3 py-2"
+                                                        style="background-color: {{ $color }}; color: #fff; border-radius: 30px;">
+                                                        {{ $statusLabel[$status] ?? $status }}
+                                                    </span>
+                                                </td>
+                                                <td data-label="Aksi">
+                                                    <button
+                                                        class="btn btn-sm btn-outline-primary rounded-pill view-appointment-btn"
+                                                        data-toggle="modal" data-target="#appointmentModal"
+                                                        data-id="{{ $appointment->id }}"
+                                                        data-booking="{{ $appointment->booking_id }}"
+                                                        data-name="{{ $appointment->name }}"
+                                                        data-service="{{ $appointment->service->title ?? 'N/A' }}"
+                                                        data-service_price="{{ $appointment->service->price ?? 0 }}"
+                                                        data-background="{{ optional($appointment->background)->name }}"
+                                                        data-email="{{ $appointment->email }}"
+                                                        data-phone="{{ $appointment->phone }}"
+                                                        data-people="{{ $appointment->people_count ?? '-' }}"
+                                                        data-employee="{{ $appointment->employee->user->name }}"
+                                                        data-date="{{ \Carbon\Carbon::parse($appointment->booking_date)->locale('id')->translatedFormat('l, d M Y') }}"
+                                                        data-start_time="{{ \Carbon\Carbon::createFromFormat('H:i:s', $appointment->booking_start_time)->format('H:i') }}"
+                                                        data-end_time="{{ \Carbon\Carbon::createFromFormat('H:i:s', $appointment->booking_end_time)->format('H:i') }} WIB"
+                                                        data-amount="{{ $appointment->transaction->total_amount ?? 0 }}"
+                                                        data-dp="{{ $appointment->transaction->amount ?? 0 }}"
+                                                        data-payment_type="{{ $appointment->transaction
+                                                            ? ($appointment->transaction->amount == 0
+                                                                ? 'unpaid'
+                                                                : ($appointment->transaction->amount < $appointment->transaction->total_amount
+                                                                    ? 'dp'
+                                                                    : 'full'))
+                                                            : 'unpaid' }}"
+                                                        data-notes="{{ $appointment->notes }}"
+                                                        data-status="{{ $appointment->status }}"
+                                                        data-addons='@json($appointment->addonData)'>
+
+                                                        <i class="fas fa-eye"></i> Lihat
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+
+                                </table>
+                            </div>
                         </div>
 
                     </div>
@@ -447,7 +467,7 @@
     <style>
         /* ======== Filter Seragam ======== */
         #filterDate,
-        #filterCrew,
+        #filterEmployee,
         #filterService,
         #dateRangePicker,
         .filter-select {
@@ -462,7 +482,7 @@
         }
 
         #filterDate:focus,
-        #filterCrew:focus,
+        #filterEmployee:focus,
         #filterService:focus,
         #dateRangePicker:focus {
             box-shadow: 0 0 0 0.25rem rgba(108, 117, 125, 0.3);
@@ -471,7 +491,7 @@
         }
 
         #filterDate:hover,
-        #filterCrew:hover,
+        #filterEmployee:hover,
         #filterService:hover,
         #dateRangePicker:hover {
             background-color: #fff;
@@ -518,61 +538,6 @@
             transition: 0.25s ease;
         }
 
-
-        /* ======== Responsive Card View (Mobile & Tablet) ======== */
-        @media (max-width: 1024px) {
-            #myTable {
-                border: none;
-            }
-
-            #myTable thead {
-                display: none;
-            }
-
-            #myTable tbody {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 15px;
-            }
-
-            #myTable tr {
-                display: flex;
-                flex-direction: column;
-                background: #fff;
-                border-radius: 14px;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-                padding: 1rem;
-                width: 90%;
-                max-width: 420px;
-                transition: transform 0.2s ease;
-            }
-
-            #myTable tr:hover {
-                transform: translateY(-4px);
-            }
-
-            #myTable td {
-                display: grid;
-                grid-template-columns: 140px auto;
-                /* kolom kiri tetap, kanan fleksibel */
-                align-items: center;
-                /* rata tengah vertikal */
-                gap: 4px;
-                padding: 6px 0;
-                font-size: 0.95rem;
-            }
-
-            #myTable td::before {
-                content: attr(data-label) " :";
-                font-weight: 600;
-                color: #444;
-                text-align: left;
-                white-space: nowrap;
-                /* mencegah label turun ke bawah */
-            }
-
-        }
 
         /* ======== Animasi Ringan ======== */
         @keyframes fadeIn {
@@ -799,8 +764,8 @@
 
 
         /* ===============================
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               DETAIL MODAL FINAL CLEAN
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ================================= */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       DETAIL MODAL FINAL CLEAN
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ================================= */
 
         .detail-section {
             background: #f8fafc;
@@ -1288,6 +1253,30 @@
                 width: 100%;
             }
         }
+
+        /* ===== HORIZONTAL SCROLL TABLE (LIKE TRANSAKSI) ===== */
+        .table-scroll {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* supaya tabel tidak berubah jadi card */
+        #myTable {
+            min-width: 900px;
+            /* bisa kamu naikkan kalau kolom banyak */
+            white-space: nowrap;
+        }
+
+        /* scrollbar lebih halus */
+        .table-scroll::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .table-scroll::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
     </style>
 @stop
 
@@ -1393,7 +1382,7 @@
                 }
             });
 
-            $('#filterCrew, #filterService').on('change', function() {
+            $('#filterEmployee, #filterService').on('change', function() {
                 applyFilters();
             });
 
@@ -1429,10 +1418,10 @@
                     return true;
                 });
 
-                // ================= FILTER CREW BASED ON EMPLOYEE ID =================
-                var staffVal = $('#filterCrew').val();
+                // ================= FILTER KARYAWAN BASED ON EMPLOYEE ID =================
+                var employeeVal = $('#filterEmployee').val();
 
-                if (staffVal) {
+                if (employeeVal) {
                     $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
                         var row = table.row(dataIndex).node();
                         var employeeId = $(row).data('employee-id');
@@ -1500,7 +1489,7 @@
                 $('#modalEmail').text($(this).data('email'));
                 $('#modalPhone').text($(this).data('phone'));
                 $('#modalPeopleCount').text($(this).data('people'));
-                $('#modalCrew').text($(this).data('employee'));
+                $('#modalEmployee').text($(this).data('employee'));
                 $('#modalDate').text($(this).data('date'));
                 $('#modalStartTime').text($(this).data('start_time'));
                 $('#modalEndTime').text($(this).data('end_time'));
@@ -1590,9 +1579,24 @@
                 $('#modalAddons').html(addonHtml);
                 // 🔥 END ADD ON
 
-                var status = $(this).data('status');
+                var status = $(this).data('status') || 'Pending';
+
+                // set value select (tetap pakai value DB, jangan diubah)
                 $('#modalStatusSelect').val(status);
 
+                // ================= LABEL BAHASA INDONESIA =================
+                var statusLabel = {
+                    'Pending': 'Menunggu',
+                    'Processing': 'Diproses',
+                    'Confirmed': 'Dikonfirmasi',
+                    'Cancelled': 'Dibatalkan',
+                    'Completed': 'Selesai',
+                    'On Hold': 'Ditahan',
+                    'Rescheduled': 'Jadwal Ulang',
+                    'No Show': 'Tidak Hadir'
+                };
+
+                // ================= WARNA STATUS =================
                 var statusColors = {
                     'Pending': 'linear-gradient(90deg, #f39c12, #f7c65f)',
                     'Processing': 'linear-gradient(90deg, #3498db, #5dade2)',
@@ -1604,10 +1608,19 @@
                     'No Show': 'linear-gradient(90deg, #e67e22, #f0b27a)'
                 };
 
+                // fallback aman kalau status tidak ada di mapping
                 var gradient = statusColors[status] || 'linear-gradient(90deg, #bdc3c7, #95a5a6)';
-                $('#modalStatusBadge').html(
-                    `<span class="badge text-white px-3 py-2 shadow-sm" style="background:${gradient}; border-radius:30px;">${status}</span>`
-                );
+
+                // ambil label indonesia
+                var label = statusLabel[status] || status;
+
+                // ================= RENDER BADGE =================
+                $('#modalStatusBadge').html(`
+    <span class="badge text-white px-3 py-2 shadow-sm"
+        style="background:${gradient}; border-radius:30px;">
+        ${label}
+    </span>
+`);
             });
 
             // ================= ALERT AUTO CLOSE =================
@@ -1646,7 +1659,7 @@
                     const appointmentId = document.getElementById('modalAppointmentId')?.value;
 
                     if (!appointmentId) {
-                        Swal.fire('Error', 'Appointment tidak ditemukan', 'error');
+                        Swal.fire('Error', 'Janji temu tidak ditemukan', 'error');
                         return;
                     }
 
@@ -1889,13 +1902,13 @@
                         .then(res => {
 
                             if (!res.success) {
-                                throw new Error(res.message || 'Gagal reschedule');
+                                throw new Error(res.message || 'Gagal jadwal ulang');
                             }
 
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Berhasil',
-                                text: 'Reschedule berhasil'
+                                text: 'Jadwal ulang berhasil'
                             }).then(() => location.reload());
                         })
                         .catch(err => {

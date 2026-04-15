@@ -1191,7 +1191,7 @@
                 function updateCalendar() {
                     // Update employee name display
                     const employee = bookingState.selectedEmployee;
-                    $(".selected-employee-name").text(`Selected Crew: ${employee.user.name}`);
+                    $(".selected-employee-name").text(`Selected Employee: ${employee.user.name}`);
 
                     // Clear previous selections
                     bookingState.selectedDate = null;
@@ -1212,7 +1212,7 @@
                 function updateCalendar() {
                     // Update employee name display
                     const employee = bookingState.selectedEmployee;
-                    $(".selected-employee-name").text(`Selected Crew: ${employee.user.name}`);
+                    $(".selected-employee-name").text(`Selected Employee: ${employee.user.name}`);
 
                     // Clear previous selections
                     bookingState.selectedDate = null;

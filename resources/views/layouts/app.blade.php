@@ -1,82 +1,83 @@
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="min-h-screen bg-gray-100">
 
+<!doctype html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="min-h-screen bg-gray-100">
+
+@php
+    $setting = \App\Models\Setting::first();
+@endphp
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <!-- @TODO: replace SET_YOUR_CLIENT_KEY_HERE with your client key -->
-    <script type="text/javascript" src="https://app.stg.midtrans.com/snap/snap.js"
-        data-client-key="{{ config('midtrans.client_key') }}"></script>
-    <!-- Note: replace with src="https://app.midtrans.com/snap/snap.js" for Production environment -->
-    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="SB-Mid-client-wOopH1HTjOtfrXWE"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css"
-        integrity="sha512-10/jx2EXwxxWqCLX/hHth/vu2KY3jCF70dCQB8TSgNjbCVAC/8vai53GfMDrO2Emgwccf2pJqxct9ehpzG+MTw=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-
+    <!-- SEO SETTING -->
     <title>
-        {{ config('app.name') }}
         @hasSection('title')
-            | @yield('title')
+            @yield('title') | {{ $setting->meta_title ?? config('app.name') }}
+        @else
+            {{ $setting->meta_title ?? config('app.name') }}
         @endif
     </title>
 
+    <meta name="description" content="{{ $setting->meta_description ?? '' }}">
+    <meta name="keywords" content="{{ $setting->meta_keywords ?? '' }}">
+    <meta name="author" content="{{ $setting->bname ?? config('app.name') }}">
 
+    <!-- Open Graph -->
+    <meta property="og:title" content="{{ $setting->meta_title ?? config('app.name') }}">
+    <meta property="og:description" content="{{ $setting->meta_description ?? '' }}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    @if (!empty($setting->logo))
+        <meta property="og:image" content="{{ asset('uploads/images/logo/' . $setting->logo) }}">
+    @endif
 
+    <!-- Midtrans -->
+    <script type="text/javascript" src="https://app.stg.midtrans.com/snap/snap.js"
+        data-client-key="{{ config('midtrans.client_key') }}"></script>
 
-    <!-- Fonts -->
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="SB-Mid-client-wOopH1HTjOtfrXWE"></script>
+
+    <!-- CSS & LIBRARY (JANGAN DIUBAH) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
 
-    <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-    <!-- FontAwesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Swiper CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!-- ✅ GLightbox CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" />
-
-    <!-- ✅ GLightbox JS -->
     <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
 
-    <!-- CDN SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/6.8.0/css/flag-icons.min.css"
-        integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-
-
-
-
-
-
-
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
-
-    <!-- Fix glitch Alpine -->
+    <!-- Fix Alpine glitch -->
     <style>
         [x-cloak] {
             display: none !important;
         }
     </style>
+
 </head>
 
 <body class="min-h-screen bg-gray-100 dark:bg-gray-900 font-sans" x-data="navbar()" x-init="init()"
@@ -186,12 +187,16 @@
            dark:from-gray-900/80 dark:via-gray-800/60 dark:to-gray-700/60">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
                 <div class="flex h-16 items-center justify-between relative">
-                    <!-- Logo -->
                     <a href="/" class="flex-shrink-0 h-16 w-16 block">
-                        <img src="{{ asset('uploads/images/logohitam.webp') }}"
+
+                        {{-- LIGHT LOGO --}}
+                        <img src="{{ asset('uploads/images/logo/' . ($setting->logo ?? 'default.png')) }}"
                             class="h-full w-full object-contain block dark:hidden">
-                        <img src="{{ asset('uploads/images/logoputih.webp') }}"
+
+                        {{-- DARK LOGO --}}
+                        <img src="{{ asset('uploads/images/logo/' . ($setting->dark_logo ?? $setting->logo)) }}"
                             class="h-full w-full object-contain hidden dark:block">
+
                     </a>
 
                     @if (empty($isMemberSidebar))
@@ -595,32 +600,71 @@
             @yield('content')
         </main>
 
-        <!-- Footer -->
-        <footer class="bg-gray-800 text-gray-300 mt-auto flex flex-col items-center justify-between">
-            <!-- Copyright & Social Media -->
-            <div class="w-full text-center py-6 border-t border-gray-700 flex flex-col items-center gap-2">
-                <!-- Tahun dan brand -->
-                <div class="text-base font-semibold">
-                    © {{ date('Y') }} <span class="font-bold">YOLO STUDIO</span>
+        <footer class="bg-gray-800 text-gray-300 mt-auto">
+
+            <div class="w-full text-center py-6 flex flex-col items-center">
+
+                {{-- SOCIAL MEDIA --}}
+                <div class="flex gap-5 mb-3">
+
+                    @if (!empty($setting->social['instagram']))
+                        <a href="{{ $setting->social['instagram'] }}" target="_blank"
+                            class="hover:text-pink-500 transition transform hover:scale-110">
+                            <i class="fab fa-instagram fa-lg"></i>
+                        </a>
+                    @endif
+
+                    @if (!empty($setting->social['x']))
+                        <a href="{{ $setting->social['x'] }}" target="_blank"
+                            class="hover:text-gray-200 transition transform hover:scale-110">
+                            <i class="fab fa-x-twitter fa-lg"></i>
+                        </a>
+                    @endif
+
+                    @if (!empty($setting->social['tiktok']))
+                        <a href="{{ $setting->social['tiktok'] }}" target="_blank"
+                            class="hover:text-white transition transform hover:scale-110">
+                            <i class="fab fa-tiktok fa-lg"></i>
+                        </a>
+                    @endif
+
+                    @if (!empty($setting->social['facebook']))
+                        <a href="{{ $setting->social['facebook'] }}" target="_blank"
+                            class="hover:text-blue-500 transition transform hover:scale-110">
+                            <i class="fab fa-facebook fa-lg"></i>
+                        </a>
+                    @endif
+
+                    @if (!empty($setting->social['youtube']))
+                        <a href="{{ $setting->social['youtube'] }}" target="_blank"
+                            class="hover:text-red-500 transition transform hover:scale-110">
+                            <i class="fab fa-youtube fa-lg"></i>
+                        </a>
+                    @endif
+
                 </div>
 
-                <!-- All rights reserved -->
-                <div class="text-sm text-gray-400">
-                    All rights reserved.
+                {{-- GARIS FULL --}}
+                <div class="w-full h-[1px] bg-gray-700 mb-4"></div>
+
+                {{-- BRAND + COPYRIGHT --}}
+                <div class="flex flex-col items-center gap-1 mt-2">
+
+                    <div class="text-sm font-semibold">
+                        © {{ date('Y') }}
+                        <span class="font-bold">
+                            {{ $setting->bname ?? 'Nama Website' }}
+                        </span>
+                    </div>
+
+                    <div class="text-xs text-gray-400">
+                        All rights reserved.
+                    </div>
+
                 </div>
 
-                <!-- Social Media -->
-                <div class="flex gap-4 mt-2">
-                    <a href="https://www.instagram.com/yolostudio_id" target="_blank"
-                        class="hover:text-pink-500 transition">
-                        <i class="fab fa-instagram fa-lg"></i>
-                    </a>
-                    <a href="https://www.tiktok.com/@yolostudio_id" target="_blank"
-                        class="hover:text-black transition">
-                        <i class="fab fa-tiktok fa-lg"></i>
-                    </a>
-                </div>
             </div>
+
         </footer>
 
 

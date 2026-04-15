@@ -42,7 +42,7 @@ class AdminNotificationBookingUpdated extends Notification implements ShouldQueu
             ->line('**Booking Status Updated for:**' . ' ' . $this->appointment['name'])  // make content strong
             ->line('Name: ' . $this->appointment['name'])
             ->line('Phone: ' . $this->appointment['phone'])
-            ->line('Crew: ' . $this->appointment->employee->user['name'])
+            ->line('Employee: ' . $this->appointment->employee->user['name'])
             ->line('Service: ' . $this->appointment->service['title'])
             ->line('Amount: ' . $this->appointment['amount'])
             ->line('Appointment Date : ' . Carbon::parse($this->appointment['booking_date'])->format('d M Y'))
