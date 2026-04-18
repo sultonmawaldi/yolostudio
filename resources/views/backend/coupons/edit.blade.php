@@ -80,15 +80,16 @@
                             <div class="form-group">
                                 <label>Jenis Kupon</label>
 
-                                <select name="type" class="form-control">
+                                <select name="type" class="form-select" required>
 
-                                    <option value="fixed" {{ old('type', $coupon->type) == 'fixed' ? 'selected' : '' }}>
-                                        Fixed (Rp)
+                                    <option value="fixed"
+                                        {{ old('type', $coupon->type ?? '') == 'fixed' ? 'selected' : '' }}>
+                                        Tetap (Rp)
                                     </option>
 
                                     <option value="percentage"
-                                        {{ old('type', $coupon->type) == 'percentage' ? 'selected' : '' }}>
-                                        Percentage (%)
+                                        {{ old('type', $coupon->type ?? '') == 'percentage' ? 'selected' : '' }}>
+                                        Persentase (%)
                                     </option>
 
                                 </select>
@@ -102,7 +103,7 @@
                                 <input type="number" step="1" min="0" name="value"
                                     class="form-control @error('value') is-invalid @enderror"
                                     value="{{ old('value', $coupon->value) }}"
-                                    placeholder="Contoh: fixed (Rp) 10000 / percentage (%) 10">
+                                    placeholder="Contoh: Tetap (Rp) 10000 / Persentase (%) 10">
 
                                 @error('value')
                                     <small class="text-danger">{{ $message }}</small>
@@ -209,39 +210,38 @@
                                 <div class="form-group">
                                     <label>Status Aktif</label>
 
-                                    <select name="active" class="form-control">
+                                    <select name="active" class="form-select" required>
 
-                                        <option value="1" {{ old('active', $coupon->active) == 1 ? 'selected' : '' }}>
+                                        <option value="1"
+                                            {{ old('active', $coupon->active ?? '') == 1 ? 'selected' : '' }}>
                                             Aktif
                                         </option>
 
-                                        <option value="0" {{ old('active', $coupon->active) == 0 ? 'selected' : '' }}>
+                                        <option value="0"
+                                            {{ old('active', $coupon->active ?? '') == 0 ? 'selected' : '' }}>
                                             Nonaktif
                                         </option>
 
                                     </select>
-
                                 </div>
 
 
-                                {{-- Status --}}
                                 <div class="form-group">
                                     <label>Status Kupon</label>
 
-                                    <select name="status" class="form-control">
+                                    <select name="status" class="form-select" required>
 
                                         <option value="unused"
-                                            {{ old('status', $coupon->status) == 'unused' ? 'selected' : '' }}>
+                                            {{ old('status', $coupon->status ?? '') == 'unused' ? 'selected' : '' }}>
                                             Belum Digunakan
                                         </option>
 
                                         <option value="used"
-                                            {{ old('status', $coupon->status) == 'used' ? 'selected' : '' }}>
+                                            {{ old('status', $coupon->status ?? '') == 'used' ? 'selected' : '' }}>
                                             Sudah Digunakan
                                         </option>
 
                                     </select>
-
                                 </div>
 
 

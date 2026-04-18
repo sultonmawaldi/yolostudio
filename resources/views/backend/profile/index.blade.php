@@ -27,31 +27,43 @@
 
 
     {{-- MODAL FOTO PROFIL --}}
-    <div class="modal fade" id="profileImageModal">
+    <div class="modal fade" id="profileImageModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <form action="{{ route('user.profile.image.update', $user->id) }}" method="post" enctype="multipart/form-data">
+
+                @csrf
+                @method('PUT')
+
                 <div class="modal-content shadow">
+
+                    {{-- HEADER --}}
                     <div class="modal-header bg-info text-white">
                         <h5 class="modal-title">Ubah Foto Profil</h5>
-                        <button type="button" class="close text-white" data-dismiss="modal">
-                            <span>&times;</span>
-                        </button>
+
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
                     </div>
 
+                    {{-- BODY --}}
                     <div class="modal-body">
-                        @csrf
-                        @method('PUT')
                         <input type="file" name="image" class="form-control">
 
                         @error('image')
-                            <span class="text-danger">{{ $message }}</span>
+                            <small class="text-danger d-block mt-2">{{ $message }}</small>
                         @enderror
                     </div>
 
+                    {{-- FOOTER --}}
                     <div class="modal-footer">
-                        <button class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Simpan</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            Batal
+                        </button>
+
+                        <button type="submit" class="btn btn-primary">
+                            Simpan
+                        </button>
                     </div>
+
                 </div>
             </form>
         </div>
@@ -71,7 +83,7 @@
                                 alt="Foto Profil" style="width:120px;height:120px;object-fit:cover;">
 
                             <div class="mb-2">
-                                <a data-toggle="modal" data-target="#profileImageModal" href="#">
+                                <a data-bs-toggle="modal" data-bs-target="#profileImageModal" href="#">
                                     Ganti Foto
                                 </a>
 
@@ -128,34 +140,34 @@
 
                                 @if ($user->comments)
                                     <li class="nav-item">
-                                        <a class="nav-link" href="#timeline" data-toggle="tab">
+                                        <a class="nav-link" href="#timeline" data-bs-toggle="tab">
                                             <i class="fas fa-comments mr-1"></i> Komentar
                                         </a>
                                     </li>
                                 @endif
 
                                 <li class="nav-item">
-                                    <a class="nav-link active" href="#settings" data-toggle="tab">
+                                    <a class="nav-link active" href="#settings" data-bs-toggle="tab">
                                         <i class="fas fa-user mr-1"></i> Profil
                                     </a>
                                 </li>
 
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#logs" data-toggle="tab">
+                                    <a class="nav-link" href="#logs" data-bs-toggle="tab">
                                         <i class="fas fa-history mr-1"></i> Riwayat Login
                                     </a>
                                 </li>
 
                                 @if ($user->employee)
                                     <li class="nav-item">
-                                        <a class="nav-link" href="#bio" data-toggle="tab">
+                                        <a class="nav-link" href="#bio" data-bs-toggle="tab">
                                             <i class="fas fa-id-card mr-1"></i> Bio
                                         </a>
                                     </li>
                                 @endif
 
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#password" data-toggle="tab">
+                                    <a class="nav-link" href="#password" data-bs-toggle="tab">
                                         <i class="fas fa-lock mr-1"></i> Ubah Kata Sandi
                                     </a>
                                 </li>

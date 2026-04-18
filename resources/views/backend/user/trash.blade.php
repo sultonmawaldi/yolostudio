@@ -36,13 +36,13 @@
             <div class="table-responsive">
                 <table id="trashTable" class="table align-middle table-hover table-borderless">
 
-                    <thead class="bg-gradient text-white" style="background: linear-gradient(90deg,#007bff,#00b4d8);">
+                    <thead class="table-header-gradient">
                         <tr>
                             <th>#</th>
                             <th>Nama</th>
                             <th>Email</th>
                             <th>Foto</th>
-                            <th>Role</th>
+                            <th>Peran</th>
                             <th>Status</th>
                             <th>Dihapus</th>
                             <th class="text-center">Aksi</th>
@@ -155,15 +155,36 @@
             font-size: 0.95rem;
         }
 
-        .table thead th {
-            font-weight: 700;
+        /* ================================
+                                                                                                                   TABLE HEADER GRADIENT (PROPER)
+                                                                                                                ================================ */
+        .table-header-gradient {
+            background: linear-gradient(90deg, #007bff, #00b4d8) !important;
+        }
+
+        /* pastikan th tidak override background */
+        .table-header-gradient th {
+            background: transparent !important;
+            color: #fff !important;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid rgba(0, 123, 255, 0.25);
+            letter-spacing: 0.3px;
+            font-size: 0.75rem;
+            padding: 10px;
             text-align: center;
-            vertical-align: middle;
-            color: #fff;
-            padding: 14px 12px;
+            border: none !important;
+        }
+
+        /* optional: biar lebih halus */
+        .table-header-gradient th:first-child {
+            border-top-left-radius: 10px;
+        }
+
+        .table-header-gradient th:last-child {
+            border-top-right-radius: 10px;
+        }
+
+        .table thead th {
             white-space: nowrap;
         }
 
@@ -288,12 +309,6 @@
 
         .table {
             font-size: 0.82rem;
-        }
-
-        .table thead th {
-            font-weight: 600;
-            font-size: 0.75rem;
-            padding: 10px 10px;
         }
 
         .table td {

@@ -118,27 +118,27 @@ class DashboardController extends Controller
         return view('frontend.member.dashboard', compact('transactions', 'coupons', 'usedCoupons'));
     }
 
-    // Helper warna status appointment
     private function getStatusColor($status)
     {
         $colors = [
-            'Pending'     => '#d68910', // dark orange
-            'Processing'  => '#21618c', // dark blue
-            'Confirmed' => '#28b463',
-            'Cancelled'   => '#922b21', // dark red
-            'Completed'   => '#145a32', // deeper green
-            'Rescheduled' => '#7d6608', // dark yellow / gold
+            'Pending'     => '#d68910', // lebih gelap dari #f39c12
+            'Processing'  => '#1f6fa3', // lebih gelap dari #3498db
+            'Confirmed'   => '#1e9e5a', // lebih gelap dari #2ecc71
+            'Cancelled'   => '#c0392b', // lebih gelap dari #e74c3c
+            'Completed'   => '#117a65', // lebih gelap dari #16a085
+            'Rescheduled' => '#6c3483', // lebih gelap dari #9b59b6
+            'On Hold'     => '#566573', // lebih gelap dari #7f8c8d
+            'No Show'     => '#ba6f1a', // lebih gelap dari #e67e22
         ];
 
-        return $colors[$status] ?? '#7f8c8d';
+        return $colors[$status] ?? '#566573';
     }
 
-    // Update status appointment
     public function updateStatus(Request $request)
     {
         $request->validate([
             'appointment_id' => 'required|exists:appointments,id',
-            'status' => 'required|in:Pending,Processing,Confirmed,Cancelled,Completed,Rescheduled'
+            'status' => 'required|in:Pending,Processing,Confirmed,Cancelled,Completed,Rescheduled,On Hold,No Show'
         ]);
 
         $appointment = Appointment::findOrFail($request->appointment_id);
@@ -147,6 +147,6 @@ class DashboardController extends Controller
 
         event(new \App\Events\StatusUpdated($appointment));
 
-        return back()->with('success', 'Status berhasil diperbarui.');
+        return back()->with('success', 'Status berhasil diperbarui');
     }
 }

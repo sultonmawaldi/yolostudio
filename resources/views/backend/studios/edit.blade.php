@@ -124,30 +124,45 @@
                             </div>
 
                             {{-- GAMBAR --}}
-                            <div class="form-group">
-                                <label>Upload Gambar</label>
+                            <div class="mb-3">
+                                <label class="form-label">Upload Gambar</label>
 
+                                {{-- GAMBAR LAMA --}}
                                 @if ($studio->image)
                                     <div class="mb-2">
-                                        <img id="oldImage" src="{{ asset('uploads/studios/' . $studio->image) }}"
-                                            style="max-height:100px; border-radius:10px; border:1px solid #ddd;">
+                                        <img src="{{ asset('uploads/studios/' . $studio->image) }}"
+                                            class="img-thumbnail rounded-4 shadow-sm" style="max-height: 120px;">
                                     </div>
                                 @endif
 
-                                <input type="file" name="image"
-                                    class="form-control-file @error('image') is-invalid @enderror">
+                                {{-- DROP AREA --}}
+                                <div id="dropArea" class="drop-zone border rounded-4 p-4 text-center">
+
+                                    <input type="file" name="image" id="imageInput"
+                                        class="d-none @error('image') is-invalid @enderror">
+
+                                    <div class="drop-content">
+                                        <i class="fa fa-cloud-upload-alt fa-2x text-primary mb-2"></i>
+
+                                        <h6 class="mb-1 fw-semibold">Seret & Lepas gambar baru</h6>
+                                        <small class="text-muted">atau klik untuk memilih file (PNG, JPG, JPEG)</small>
+                                    </div>
+                                </div>
 
                                 @error('image')
-                                    <small class="text-danger d-block">{{ $message }}</small>
+                                    <div class="invalid-feedback d-block">
+                                        {{ $message }}
+                                    </div>
                                 @enderror
                             </div>
 
-                            {{-- PREVIEW --}}
-                            <div class="form-group">
-                                <label>Preview Gambar Baru</label>
+                            {{-- PREVIEW BARU --}}
+                            <div class="mb-3">
+                                <label class="form-label">Preview Gambar Baru</label>
+
                                 <div>
-                                    <img id="previewImage" src="#"
-                                        style="display:none; max-height:120px; border-radius:10px; border:1px solid #ddd;">
+                                    <img id="previewImage" class="img-thumbnail rounded-4 shadow-sm d-none"
+                                        style="max-height: 180px;">
                                 </div>
                             </div>
 
@@ -173,13 +188,19 @@
                             <div class="card-body pb-0">
 
                                 {{-- STATUS --}}
-                                <div class="form-group">
-                                    <label>Status</label>
-                                    <select name="status" class="form-control">
-                                        <option value="1" {{ old('status', $studio->status) ? 'selected' : '' }}>Aktif
+                                <div class="mb-3">
+                                    <label class="form-label">Status</label>
+
+                                    <select name="status" class="form-select">
+                                        <option value="1"
+                                            {{ old('status', $studio->status) == 1 ? 'selected' : '' }}>
+                                            Aktif
                                         </option>
-                                        <option value="0" {{ old('status', $studio->status) == 0 ? 'selected' : '' }}>
-                                            Nonaktif</option>
+
+                                        <option value="0"
+                                            {{ old('status', $studio->status) == 0 ? 'selected' : '' }}>
+                                            Nonaktif
+                                        </option>
                                     </select>
                                 </div>
 
@@ -205,19 +226,76 @@
     </div>
 @stop
 
+@section('css')
+    <style>
+        .drop-zone {
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            border: 2px dashed #cfd4da;
+        }
+
+        .drop-zone:hover {
+            background: #eef5ff;
+            border-color: #0d6efd;
+            transform: translateY(-2px);
+        }
+
+        .drop-zone.dragover {
+            background: #e7f1ff;
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.15);
+        }
+
+        .drop-content {
+            pointer-events: none;
+        }
+    </style>
+@stop
+
 @section('js')
     <script>
-        // Preview gambar baru
-        const inputImage = document.querySelector('input[name="image"]');
+        const dropArea = document.getElementById('dropArea');
+        const inputImage = document.getElementById('imageInput');
         const preview = document.getElementById('previewImage');
 
+        dropArea.addEventListener('click', () => {
+            inputImage.click();
+        });
+
+        function showPreview(file) {
+            if (!file) return;
+
+            const url = URL.createObjectURL(file);
+            preview.src = url;
+            preview.classList.remove('d-none');
+        }
+
         inputImage.addEventListener('change', function(e) {
-            const file = e.target.files[0];
+            showPreview(e.target.files[0]);
+        });
+
+        dropArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            dropArea.classList.add('dragover');
+        });
+
+        dropArea.addEventListener('dragleave', function() {
+            dropArea.classList.remove('dragover');
+        });
+
+        dropArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            dropArea.classList.remove('dragover');
+
+            const file = e.dataTransfer.files[0];
+
             if (file) {
-                preview.src = URL.createObjectURL(file);
-                preview.style.display = 'block';
+                inputImage.files = e.dataTransfer.files;
+                showPreview(file);
             }
         });
+
 
         // Validation error
         @if ($errors->any())

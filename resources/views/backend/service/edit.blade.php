@@ -67,7 +67,7 @@
                                     value="{{ old('title', $service->title) }}">
 
                                 <small class="text-muted d-block">
-                                    Nama ini akan tampil sebagai judul layanan di website Anda.
+                                    Nama ini akan tampil sebagai judul layanan di website Anda
                                 </small>
 
                                 @error('title')
@@ -85,7 +85,7 @@
                                     value="{{ old('slug', $service->slug) }}">
 
                                 <small class="text-muted d-block">
-                                    URL unik untuk layanan.
+                                    URL unik untuk layanan
                                 </small>
 
                                 @error('slug')
@@ -125,7 +125,7 @@
                                             name="price" id="price" value="{{ old('price', $service->price) }}">
 
                                         <small class="text-muted d-block">
-                                            Harga utama.
+                                            Harga utama
                                         </small>
 
                                         @error('price')
@@ -146,7 +146,7 @@
                                             value="{{ old('sale_price', $service->sale_price) }}">
 
                                         <small class="text-muted d-block">
-                                            Harga diskon.
+                                            Harga diskon
                                         </small>
 
                                         @error('sale_price')
@@ -167,7 +167,7 @@
                                             value="{{ old('dp_amount', $service->dp_amount) }}">
 
                                         <small class="text-muted d-block">
-                                            Jumlah DP yang harus dibayar saat pemesanan.
+                                            Jumlah DP yang harus dibayar saat pemesanan
                                         </small>
 
                                         @error('dp_amount')
@@ -189,7 +189,7 @@
                                             value="{{ old('reward_points', $service->reward_points) }}">
 
                                         <small class="text-muted d-block">
-                                            Poin yang didapat pelanggan setelah membeli layanan ini.
+                                            Poin yang didapat pelanggan setelah membeli layanan ini
                                         </small>
 
                                         @error('reward_points')
@@ -233,7 +233,7 @@
                                             value="{{ old('min_people', $service->min_people) }}">
 
                                         <small class="text-muted d-block">
-                                            Jumlah minimal orang untuk layanan ini.
+                                            Jumlah minimal orang untuk layanan ini
                                         </small>
 
                                         @error('min_people')
@@ -254,7 +254,7 @@
                                             value="{{ old('max_people', $service->max_people) }}">
 
                                         <small class="text-muted d-block">
-                                            Jumlah maksimal orang untuk layanan ini.
+                                            Jumlah maksimal orang untuk layanan ini
                                         </small>
 
                                         @error('max_people')
@@ -337,7 +337,7 @@
                                     </select>
 
                                     <small class="text-muted d-block">
-                                        Pilih kategori layanan.
+                                        Pilih kategori layanan
                                     </small>
 
                                     @error('category_id')
@@ -353,21 +353,20 @@
 
                                     <label>Status</label>
 
-                                    <select required name="status" class="form-control custom-select">
-
-                                        <option disabled value="">Pilih Status</option>
+                                    <select name="status" class="form-select" required>
 
                                         <option value="1"
-                                            {{ isset($service->status) && $service->status == 1 ? 'selected' : '' }}>
-                                            DITERBITKAN
+                                            {{ old('status', $service->status) == 1 ? 'selected' : '' }}>
+                                            Aktif
                                         </option>
 
                                         <option value="0"
-                                            {{ isset($service->status) && $service->status == 0 ? 'selected' : '' }}>
-                                            DRAFT
+                                            {{ old('status', $service->status) == 0 ? 'selected' : '' }}>
+                                            Nonaktif
                                         </option>
 
                                     </select>
+
                                 </div>
 
 
@@ -519,8 +518,8 @@
         }
 
         /* =========================
-                           FIX PANAH TANPA UBAH POSISI
-                        ========================== */
+                               FIX PANAH TANPA UBAH POSISI
+                            ========================== */
 
         .select2-container--default .select2-selection--single .select2-selection__arrow b {
             margin: 0 !important;

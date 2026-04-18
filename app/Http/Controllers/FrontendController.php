@@ -273,7 +273,7 @@ class FrontendController extends Controller
                     $isBooked = Appointment::where('employee_id', $employee->id)
                         ->where('slot_group_id', $slotGroupId)
                         ->where('booking_date', $date->toDateString())
-                        ->whereNotIn('status', ['Cancelled'])
+                        ->whereNotIn('status', ['Cancelled', 'No Show'])
                         ->where(function ($q) use ($current, $slotEnd) {
                             $q->where('booking_start_time', '<', $slotEnd)
                                 ->where('booking_end_time', '>', $current);
@@ -331,7 +331,7 @@ class FrontendController extends Controller
         $existingAppointments = Appointment::where('booking_date', $date->toDateString())
             ->where('employee_id', $employeeId)
             ->where('slot_group_id', $slotGroupId) // tambahkan filter slot group
-            ->whereNotIn('status', ['Cancelled'])
+            ->whereNotIn('status', ['Cancelled', 'No Show'])
             ->get(['booking_start_time', 'booking_end_time']);
 
 

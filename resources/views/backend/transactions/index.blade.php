@@ -63,7 +63,7 @@
 
             <div class="table-responsive">
                 <table id="transactionsTable" class="table align-middle table-hover table-borderless">
-                    <thead class="bg-gradient text-white" style="background: linear-gradient(90deg, #007bff, #00b4d8);">
+                    <thead class="table-header-gradient text-white">
                         <tr>
                             <th>#</th>
                             <th>Kode</th>
@@ -83,12 +83,12 @@
                                 data-employee-id="{{ $transaction->appointment->employee_id ?? '' }}"
                                 data-service-id="{{ $transaction->appointment->service_id ?? '' }}">
                                 <td class="fw-semibold text-muted">{{ $loop->iteration }}</td>
-                                <td class="fw-bold text-dark">{{ $transaction->transaction_code }}</td>
+                                <td>{{ $transaction->transaction_code }}</td>
                                 <td>{{ $transaction->appointment->booking_id ?? '-' }}</td>
                                 <td>{{ $transaction->appointment->name ?? '-' }}</td>
                                 <td>{{ $transaction->appointment->service->title ?? '-' }}</td>
                                 <td>{{ $transaction->appointment->employee->user->name ?? '-' }}</td>
-                                <td class="fw-bold text-primary">Rp
+                                <td class="text-primary">Rp
                                     {{ number_format($transaction->total_amount ?? 0, 0, ',', '.') }}</td>
                                 <td>
                                     @php
@@ -190,16 +190,37 @@
             /* 🔥 lebih kecil & compact */
         }
 
-        /* === HEADER TABEL === */
-        .table thead th {
+        /* ================================
+                           TABLE HEADER GRADIENT (PROPER)
+                        ================================ */
+        .table-header-gradient {
+            background: linear-gradient(90deg, #007bff, #00b4d8) !important;
+        }
+
+        /* pastikan th tidak override background */
+        .table-header-gradient th {
+            background: transparent !important;
+            color: #fff !important;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.3px;
             font-size: 0.75rem;
-            /* 🔥 header lebih kecil */
-            padding: 10px 10px;
-            /* 🔥 padding lebih rapat */
+            padding: 10px;
             text-align: center;
+            border: none !important;
+        }
+
+        /* optional: biar lebih halus */
+        .table-header-gradient th:first-child {
+            border-top-left-radius: 10px;
+        }
+
+        .table-header-gradient th:last-child {
+            border-top-right-radius: 10px;
+        }
+
+        .table thead th {
+            white-space: nowrap;
         }
 
         /* === ISI TABEL === */

@@ -66,14 +66,22 @@
                                 @enderror
                             </div>
 
-                            {{-- TYPE --}}
+                            {{-- JENIS KUPON --}}
                             <div class="form-group">
                                 <label>Jenis Kupon</label>
-                                <select name="type" class="form-control">
-                                    <option value="fixed" {{ old('type') == 'fixed' ? 'selected' : '' }}>Fixed (Rp)
+
+                                <select name="type" class="form-select" required>
+
+                                    <option value="fixed"
+                                        {{ old('type', $coupon->type ?? '') == 'fixed' ? 'selected' : '' }}>
+                                        Tetap (Rp)
                                     </option>
-                                    <option value="percentage" {{ old('type') == 'percentage' ? 'selected' : '' }}>
-                                        Percentage (%)</option>
+
+                                    <option value="percentage"
+                                        {{ old('type', $coupon->type ?? '') == 'percentage' ? 'selected' : '' }}>
+                                        Persentase (%)
+                                    </option>
+
                                 </select>
                             </div>
 
@@ -82,7 +90,7 @@
                                 <label>Nilai</label>
                                 <input type="number" step="1" min="0" name="value"
                                     class="form-control @error('value') is-invalid @enderror" value="{{ old('value') }}"
-                                    placeholder="Contoh: fixed (Rp) 10000 / percentage (%) 10">
+                                    placeholder="Contoh: Tetap (Rp) 10000 / Persentase (%) 10">
 
                                 @error('value')
                                     <small class="text-danger">{{ $message }}</small>
@@ -164,20 +172,38 @@
 
                                 <div class="form-group">
                                     <label>Status Aktif</label>
-                                    <select name="active" class="form-control">
-                                        <option value="1" {{ old('active') == '1' ? 'selected' : '' }}>Aktif</option>
-                                        <option value="0" {{ old('active') == '0' ? 'selected' : '' }}>Nonaktif
+
+                                    <select name="active" class="form-select" required>
+
+                                        <option value="1"
+                                            {{ old('active', $data->active ?? '') == 1 ? 'selected' : '' }}>
+                                            Aktif
                                         </option>
+
+                                        <option value="0"
+                                            {{ old('active', $data->active ?? '') == 0 ? 'selected' : '' }}>
+                                            Nonaktif
+                                        </option>
+
                                     </select>
                                 </div>
 
+
                                 <div class="form-group">
                                     <label>Status Kupon</label>
-                                    <select name="status" class="form-control">
-                                        <option value="unused" {{ old('status') == 'unused' ? 'selected' : '' }}>Belum
-                                            Digunakan</option>
-                                        <option value="used" {{ old('status') == 'used' ? 'selected' : '' }}>Sudah
-                                            Digunakan</option>
+
+                                    <select name="status" class="form-select" required>
+
+                                        <option value="unused"
+                                            {{ old('status', $data->status ?? '') == 'unused' ? 'selected' : '' }}>
+                                            Belum Digunakan
+                                        </option>
+
+                                        <option value="used"
+                                            {{ old('status', $data->status ?? '') == 'used' ? 'selected' : '' }}>
+                                            Sudah Digunakan
+                                        </option>
+
                                     </select>
                                 </div>
 

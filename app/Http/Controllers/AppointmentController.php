@@ -93,7 +93,7 @@ class AppointmentController extends Controller
             'booking_date' => 'required|date',
             'booking_start_time' => 'required',
             'booking_end_time' => 'required',
-            'status' => 'required|in:Pending,Processing,Confirmed,Completed,Cancelled,Rescheduled',
+            'status' => 'required|in:Pending,Processing,Confirmed,Completed,Cancelled,Rescheduled,On Hold,No Show',
             'payment_status' => 'nullable|in:Pending,DP,Paid,Failed',
             'people_count' => 'required|integer|min:1',
             'payment_method' => 'nullable|string',
@@ -409,7 +409,7 @@ class AppointmentController extends Controller
     {
         $request->validate([
             'appointment_id' => 'required|exists:appointments,id',
-            'status' => 'required|in:Pending,Processing,Confirmed,Completed,Cancelled,Rescheduled',
+            'status' => 'required|in:Pending,Processing,Confirmed,Completed,Cancelled,Rescheduled,On Hold,No Show',
         ]);
 
         $appointment = Appointment::findOrFail($request->appointment_id);
@@ -452,7 +452,7 @@ class AppointmentController extends Controller
             'booking_date' => $request->new_date,
             'booking_start_time' => $request->new_start_time,
             'booking_end_time' => $request->new_end_time,
-            'status' => 'Confirmed',
+            'status' => 'Rescheduled',
             'reschedule_count' => $appointment->reschedule_count + 1
         ]);
 
@@ -532,7 +532,7 @@ class AppointmentController extends Controller
         $existingAppointments = Appointment::where('employee_id', $employee->id)
             ->where('slot_group_id', $slotGroupId)
             ->where('booking_date', $date->toDateString())
-            ->whereNotIn('status', ['Cancelled'])
+            ->whereNotIn('status', ['Cancelled', 'No Show'])
             ->where('id', '!=', $appointment->id)
             ->get(['booking_start_time', 'booking_end_time']);
 

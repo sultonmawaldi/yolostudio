@@ -74,10 +74,10 @@
                             </div>
 
                             {{-- SERVICE --}}
-                            <div class="form-group">
-                                <label>Layanan</label>
+                            <div class="mb-3">
+                                <label class="form-label">Layanan</label>
 
-                                <select name="service_id" class="form-control @error('service_id') is-invalid @enderror">
+                                <select name="service_id" class="form-select @error('service_id') is-invalid @enderror">
 
                                     <option value="">-- Pilih Layanan --</option>
 
@@ -91,10 +91,11 @@
                                 </select>
 
                                 @error('service_id')
-                                    <small class="text-danger">{{ $message }}</small>
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
                                 @enderror
                             </div>
-
                             {{-- DESKRIPSI --}}
                             <div class="form-group">
                                 <label>Deskripsi</label>
@@ -109,33 +110,47 @@
 
                             {{-- GAMBAR SAAT INI --}}
                             @if ($gallery->image)
-                                <div class="form-group">
-                                    <label>Gambar Saat Ini</label>
+                                <div class="mb-3">
+                                    <label class="form-label">Gambar Saat Ini</label>
+
                                     <div>
                                         <img src="{{ asset('uploads/gallery/' . $gallery->image) }}"
-                                            style="max-height:120px; border-radius:10px; border:1px solid #ddd;">
+                                            class="img-thumbnail rounded-4 shadow-sm" style="max-height: 160px;">
                                     </div>
                                 </div>
                             @endif
 
-                            {{-- UPLOAD BARU --}}
-                            <div class="form-group">
-                                <label>Ganti Gambar</label>
+                            {{-- UPLOAD BARU (DRAG & DROP) --}}
+                            <div class="mb-3">
+                                <label class="form-label">Ganti Gambar</label>
 
-                                <input type="file" name="image"
-                                    class="form-control-file @error('image') is-invalid @enderror">
+                                <div id="dropArea" class="drop-zone border rounded-4 p-4 text-center position-relative">
+
+                                    <input type="file" name="image" id="imageInput"
+                                        class="d-none @error('image') is-invalid @enderror">
+
+                                    <div class="drop-content">
+                                        <i class="fa fa-cloud-upload-alt fa-2x text-primary mb-2"></i>
+
+                                        <h6 class="mb-1 fw-semibold">Seret & Lepas gambar baru</h6>
+                                        <small class="text-muted">atau klik untuk memilih file (PNG, JPG, JPEG)</small>
+                                    </div>
+                                </div>
 
                                 @error('image')
-                                    <small class="text-danger d-block">{{ $message }}</small>
+                                    <div class="invalid-feedback d-block">
+                                        {{ $message }}
+                                    </div>
                                 @enderror
                             </div>
 
                             {{-- PREVIEW BARU --}}
-                            <div class="form-group">
-                                <label>Preview Baru</label>
+                            <div class="mb-3">
+                                <label class="form-label">Preview Baru</label>
+
                                 <div>
-                                    <img id="previewImage" src="#"
-                                        style="display:none; max-height:120px; border-radius:10px; border:1px solid #ddd;">
+                                    <img id="previewImage" class="img-thumbnail rounded-4 shadow-sm d-none"
+                                        style="max-height: 180px;">
                                 </div>
                             </div>
 
@@ -165,14 +180,15 @@
                             <div class="card-body pb-0">
 
                                 {{-- STATUS --}}
-                                <div class="form-group">
-                                    <label>Status</label>
+                                <div class="mb-3">
+                                    <label class="form-label">Status</label>
 
-                                    <select name="status" class="form-control">
+                                    <select name="status" class="form-select">
                                         <option value="1"
                                             {{ old('status', (string) ($gallery->status ?? '1')) == '1' ? 'selected' : '' }}>
                                             Aktif
                                         </option>
+
                                         <option value="0"
                                             {{ old('status', (string) ($gallery->status ?? '1')) == '0' ? 'selected' : '' }}>
                                             Nonaktif
@@ -207,19 +223,73 @@
     </div>
 @stop
 
+@section('css')
+    <style>
+        .drop-zone {
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            border: 2px dashed #cfd4da;
+        }
+
+        .drop-zone:hover {
+            background: #eef5ff;
+            border-color: #0d6efd;
+            transform: translateY(-2px);
+        }
+
+        .drop-zone.dragover {
+            background: #e7f1ff;
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.15);
+        }
+
+        .drop-content {
+            pointer-events: none;
+        }
+    </style>
+@stop
 
 @section('js')
     <script>
-        // Preview gambar baru
-        const inputImage = document.querySelector('input[name="image"]');
+        const dropArea = document.getElementById('dropArea');
+        const inputImage = document.getElementById('imageInput');
         const preview = document.getElementById('previewImage');
 
+        dropArea.addEventListener('click', () => {
+            inputImage.click();
+        });
+
+        function showPreview(file) {
+            if (!file) return;
+
+            const url = URL.createObjectURL(file);
+            preview.src = url;
+            preview.classList.remove('d-none');
+        }
+
         inputImage.addEventListener('change', function(e) {
-            const file = e.target.files[0];
+            showPreview(e.target.files[0]);
+        });
+
+        dropArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            dropArea.classList.add('dragover');
+        });
+
+        dropArea.addEventListener('dragleave', function() {
+            dropArea.classList.remove('dragover');
+        });
+
+        dropArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            dropArea.classList.remove('dragover');
+
+            const file = e.dataTransfer.files[0];
 
             if (file) {
-                preview.src = URL.createObjectURL(file);
-                preview.style.display = 'block';
+                inputImage.files = e.dataTransfer.files;
+                showPreview(file);
             }
         });
 

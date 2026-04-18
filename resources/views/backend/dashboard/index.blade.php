@@ -49,7 +49,7 @@
 
                                 <div class="mb-3">
                                     <small class="text-muted d-block">Pengguna</small>
-                                    <div class="fw-semibold fs-6" id="modalAppointmentName">-</div>
+                                    <div id="modalAppointmentName">-</div>
                                 </div>
 
                                 <div class="mb-3">
@@ -64,19 +64,19 @@
                             </div>
 
                             <!-- ================= RIGHT : BOOKING DETAIL ================= -->
-                            <div class="col-md-6 ps-2 ps-md-4 mt-2 mt-md-0 h-100 d-flex flex-column">
+                            <div class="col-md-6 ps-2 ps-md-4 h-100 d-flex flex-column">
                                 <h6 class="text-uppercase text-bold fw-bold mb-3">
                                     Detail Janji Temu
                                 </h6>
 
                                 <div class="mb-3">
                                     <small class="text-muted d-block">Karyawan</small>
-                                    <div class="fw-semibold" id="modalEmployee">-</div>
+                                    <div id="modalEmployee">-</div>
                                 </div>
 
                                 <div class="mb-3">
                                     <small class="text-muted d-block">Layanan</small>
-                                    <div class="fw-semibold" id="modalService">-</div>
+                                    <div id="modalService">-</div>
                                 </div>
 
                                 <div class="mb-3">
@@ -111,36 +111,31 @@
                         <hr class="my-4">
 
                         <!-- ================= NOTES & STATUS ================= -->
-                        <div class="row g-4">
+                        <div class="row g-4 notes-status-section">
 
                             <div class="col-md-8">
-                                <h6 class="text-uppercase text-muted fw-bold mb-2">
-                                    Catatan
-                                </h6>
-                                <div class="p-3 bg-white rounded-3 shadow-sm border" id="modalNotes"
-                                    style="min-height:90px;">
-                                    -
-                                </div>
+                                <h6 class="section-label">Catatan</h6>
+                                <div class="notes-box" id="modalNotes">-</div>
                             </div>
 
-                            <div class="col-md-4">
-                                <h6 class="text-uppercase text-muted fw-bold mb-2">
-                                    Status
-                                </h6>
+                            <div class="col-md-4 status-section">
+                                <h6 class="section-label">Status</h6>
 
                                 <div id="modalStatusBadge" class="mb-3"></div>
 
-                                <label for="modalStatusSelect" class="fw-semibold small mb-1">
+                                <label for="modalStatusSelect" class="status-label">
                                     Ubah Status
                                 </label>
 
-                                <select name="status" id="modalStatusSelect">
+                                <select name="status" id="modalStatusSelect" class="w-100">
                                     <option value="Pending">Menunggu</option>
                                     <option value="Processing">Diproses</option>
                                     <option value="Confirmed">Dikonfirmasi</option>
                                     <option value="Completed">Selesai</option>
                                     <option value="Cancelled">Dibatalkan</option>
-                                    <option value="Rescheduled">Dijadwalkan Ulang</option>
+                                    <option value="Rescheduled">Jadwal Ulang</option>
+                                    <option value="On Hold">Ditahan</option>
+                                    <option value="No Show">Tidak Hadir</option>
                                 </select>
                             </div>
 
@@ -148,13 +143,13 @@
 
                     </div>
 
-                    <div class="modal-footer bg-light px-4">
+                    <div class="modal-footer bg-light px-4 d-flex justify-content-end gap-2">
 
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <button type="button" class="btn btn-outline-secondary btn-modal" data-bs-dismiss="modal">
                             <i class="fa fa-times me-1"></i> Tutup
                         </button>
 
-                        <button type="submit" class="btn btn-gradient-success shadow-sm" id="saveStatusBtn">
+                        <button type="submit" class="btn btn-gradient-success btn-modal shadow-sm" id="saveStatusBtn">
                             <i class="fa fa-save me-1"></i> Simpan Perubahan
                         </button>
 
@@ -181,54 +176,26 @@
             width: 100%;
             max-width: 1200px;
             margin: 0 auto;
+            transition: all 0.3s ease;
         }
 
-        #calendar {
-            border-radius: 20px;
-            transition: 0.3s;
-        }
 
         #calendar:hover {
             box-shadow: 0 10px 28px rgba(0, 0, 0, 0.1);
         }
 
-        /* Toolbar */
-        .fc-toolbar-title {
-            font-weight: 700 !important;
-            font-size: 1.5rem !important;
-            color: #2c3e50;
-        }
-
-        .fc-button {
-            border-radius: 8px !important;
-            border: none !important;
-            font-weight: 600 !important;
-        }
-
-        .fc-button-primary {
-            background: linear-gradient(135deg, #007bff, #00b4d8) !important;
-            color: #fff !important;
-        }
-
-        .fc-button-primary:hover {
-            background: linear-gradient(135deg, #0069d9, #0096c7) !important;
+        /* ===== TOOLBAR WRAPPER (background halus) ===== */
+        .fc-header-toolbar {
+            background: linear-gradient(135deg, #007bff, #00b4d8);
+            padding: 12px 16px;
+            border-radius: 16px;
+            color: #fff;
         }
 
         /* Events */
         .fc-daygrid-day:hover {
             background: rgba(0, 123, 255, 0.05);
             cursor: pointer;
-        }
-
-        /* Tombol simpan */
-        .btn-gradient-success {
-            background: linear-gradient(45deg, #00c853, #009624);
-            color: white;
-            border: none;
-        }
-
-        .btn-gradient-success:hover {
-            background: linear-gradient(45deg, #009624, #00c853);
         }
 
         /* Tooltip */
@@ -341,9 +308,10 @@
         }
 
         .modal-footer {
-            border-top: none;
-            background: #fff;
-            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            align-items: center;
         }
 
         /* Catatan */
@@ -354,22 +322,35 @@
             border-radius: 10px;
         }
 
-        /* Tombol Gradasi */
+        /* ===== BUTTON GRADIENT SUCCESS (NORMAL STATE) ===== */
         .btn-gradient-success {
+            height: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
             background: linear-gradient(135deg, #00b09b, #96c93d);
             color: #fff !important;
             border: none;
             font-weight: 600;
             border-radius: 10px;
-            padding: 8px 18px;
-            transition: 0.3s ease;
+            padding: 0 16px;
+
             box-shadow: 0 3px 10px rgba(0, 176, 155, 0.3);
+            transition: all 0.3s ease;
         }
 
+        /* ===== HOVER ===== */
         .btn-gradient-success:hover {
             background: linear-gradient(135deg, #00a087, #7bb92c);
             transform: translateY(-2px);
             box-shadow: 0 4px 14px rgba(0, 176, 155, 0.4);
+        }
+
+        /* optional: active click */
+        .btn-gradient-success:active {
+            transform: translateY(0px);
+            box-shadow: 0 2px 8px rgba(0, 176, 155, 0.25);
         }
 
         /* Wrapper spacing */
@@ -425,8 +406,16 @@
         }
 
         /* Optional: smooth badge spacing */
-        #modalStatusBadge {
-            margin-bottom: 10px;
+        #modalStatusBadge .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            font-size: 11px;
+            font-weight: 600;
+            border-radius: 999px;
+            color: #fff;
+            text-align: center;
+            min-width: 95px;
+            line-height: 1.2;
         }
 
         /* ===== ✨ Premium Smooth & Stable FullCalendar List View (Dot Bulat Elegan) ===== */
@@ -445,70 +434,144 @@
             z-index: 2;
         }
 
-        /* Waktu & judul */
-        .fc-list-event-time,
-        .fc-list-event-title {
-            color: #2f3640 !important;
-            font-size: 0.95rem;
-            transition: color 0.3s ease;
-        }
-
-        /* ===== Tanggal (list-day) ===== */
+        /* ===== LIST HEADER (tanggal di list view) ===== */
         .fc-list-day {
-            color: #1a3c73 !important;
-            background: linear-gradient(90deg, #e3f2fd, #ffffff) !important;
-            font-weight: 600;
-            font-size: 1rem;
-            letter-spacing: 0.3px;
-            border-left: 4px solid #007bff !important;
+            background: #f8fafc !important;
+            /* sama kayak header atas */
+            border-left: 4px solid #e5e7eb !important;
+            /* soft, bukan biru */
             padding: 0.75rem 1rem !important;
         }
 
-        /* ===== Baris event ===== */
-        .fc-list-event td {
-            background: #ffffff !important;
-            border-bottom: 1px solid #f2f4f6 !important;
-            padding: 0.85rem 1rem !important;
-            position: relative;
-            z-index: 1;
-            overflow: hidden;
-            transition: all 0.35s ease;
-        }
-
-        /* ===== Efek hover elegan (hanya baris aktif, tidak geser) ===== */
-        .fc-list-event:hover td {
-            background: linear-gradient(90deg, rgba(0, 123, 255, 0.05), rgba(0, 180, 216, 0.08)) !important;
-            box-shadow: inset 4px 0 0 #007bff, 0 3px 10px rgba(0, 123, 255, 0.1);
-            cursor: pointer;
-            transition: all 0.35s ease-in-out;
-        }
-
-        /* ===== Garis aksen di sisi kiri (fade halus) ===== */
-        .fc-list-event td::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0;
-            height: 100%;
-            background: linear-gradient(180deg, #007bff, #00b4d8);
-            transition: width 0.4s ease;
-            z-index: 0;
-            border-radius: 0 4px 4px 0;
-        }
-
-        .fc-list-event:hover td::before {
-            width: 4px;
-        }
-
-        /* ===== Warna teks saat hover ===== */
-        .fc-list-event:hover a {
-            color: #004c8c !important;
+        /* teks hari & tanggal */
+        .fc-list-day-cushion {
+            color: #2c3e50 !important;
+            /* 🔥 samakan */
+            font-weight: 600 !important;
             letter-spacing: 0.3px;
         }
 
+        /* kalau masih dianggap link */
+        .fc-list-day-cushion a {
+            color: #2c3e50 !important;
+            text-decoration: none !important;
+        }
+
+        /* ===== ROW WRAPPER (FINAL MERGE) ===== */
+        .fc-list-event {
+            position: relative;
+            overflow: hidden;
+
+            border-radius: 14px !important;
+            margin-bottom: 10px !important;
+
+            background: #ffffff !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+            transition: all 0.25s ease;
+        }
+
+        /* ===== HOVER EFFECT UTAMA ===== */
+        .fc-list-event:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 123, 255, 0.12);
+            cursor: pointer;
+        }
+
+        /* ===== BACKGROUND HOVER FULL (layer bawah) ===== */
+        .fc-list-event::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+
+            background: linear-gradient(90deg,
+                    rgba(0, 123, 255, 0.06),
+                    rgba(0, 180, 216, 0.1));
+
+            opacity: 0;
+            transition: opacity 0.25s ease;
+            z-index: 0;
+        }
+
+        /* aktif saat hover */
+        .fc-list-event:hover::before {
+            opacity: 1;
+        }
+
+        /* ===== AKSEN KIRI ===== */
+        .fc-list-event::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 20%;
+            height: 60%;
+            width: 4px;
+
+            background: linear-gradient(180deg, #007bff, #00b4d8);
+            border-radius: 4px;
+
+            opacity: 0;
+            transition: 0.3s ease;
+        }
+
+        .fc-list-event:hover::after {
+            opacity: 1;
+        }
+
+        /* ===== CELL ===== */
+        .fc-list-event td {
+            background: transparent !important;
+            /* penting */
+            border: none !important;
+            /* hilangkan garis pecah */
+            padding: 0.9rem 1rem !important;
+            position: relative;
+            z-index: 1;
+            transition: all 0.25s ease;
+        }
+
+        /* waktu */
+        .fc-list-event-time {
+            font-size: 0.85rem;
+            color: #6b7280 !important;
+        }
+
+        /* judul */
+        .fc-list-event-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        /* warna saat hover */
         .fc-list-event:hover .fc-list-event-time {
             color: #007bff !important;
+        }
+
+        .fc-list-event:hover .fc-list-event-title {
+            color: #004c8c !important;
+        }
+
+        /* ===== FIX LEBAR KOLOM TIME ===== */
+        .fc-list-event-time {
+            min-width: 110px;
+            /* 🔥 ini kunci */
+            display: inline-block;
+        }
+
+        /* ===== KOLOM DOT BIAR ADA NAFAS ===== */
+        .fc-list-event-graphic {
+            width: 40px;
+            text-align: center;
+        }
+
+        /* ===== DOT POSISI CENTER & GA NEMPEL ===== */
+        .fc-list-event-dot {
+            margin: 0 auto;
+        }
+
+        /* ===== TITLE BIAR GA KEJEPIT ===== */
+        .fc-list-event-title {
+            padding-left: 8px;
         }
 
 
@@ -549,8 +612,8 @@
         }
 
         /* ============================================
-                                                                                                                                                                                                                                                                                       📱 MODERN MOBILE / iOS CALENDAR STYLE
-                                                                                                                                                                                                                                                                                       ============================================ */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       📱 MODERN MOBILE / iOS CALENDAR STYLE
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       ============================================ */
 
         /* ---- GLOBAL CALENDAR CARD ---- */
         #calendar {
@@ -561,61 +624,65 @@
             border: 1px solid #f1f3f4;
         }
 
-        /* ---- HEADER TITLE (iOS BOLD STYLE) ---- */
+        /* ---- HEADER TITLE (BACKDROP LEBIH TEBAL) ---- */
         .fc-toolbar-title {
             font-weight: 800 !important;
             font-size: 1.65rem !important;
-            color: #1a1d21 !important;
+            color: #ffffff !important;
             letter-spacing: -0.3px;
+
+            /* 🔥 backdrop lebih tebal */
+            background: rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(10px);
+
+            /* tambahan biar makin solid */
+            padding: 4px 12px;
+            border-radius: 10px;
+
+            /* efek depth */
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+
+            /* biar rapi */
+            display: inline-block;
         }
 
-        /* ---- HEADER NAV BUTTONS (rounded soft) ---- */
+        /* ===== BUTTON NAV (ANTI NYARU) ===== */
         .fc-button {
             border-radius: 12px !important;
             padding: 6px 14px !important;
             border: none !important;
             font-weight: 600 !important;
-            background: #f1f3f4 !important;
-            color: #333 !important;
-            transition: 0.25s;
-        }
 
-        .fc-button:hover {
-            background: #e5e8ea !important;
-        }
-
-        /* Today Button */
-        .fc-button-primary {
-            background: #007aff !important;
+            /* 🔥 beda total dari toolbar */
+            background: rgba(255, 255, 255, 0.2) !important;
             color: #fff !important;
-            box-shadow: 0 2px 7px rgba(0, 122, 255, 0.25);
+            backdrop-filter: blur(6px);
+
+            transition: all 0.25s ease;
         }
 
+        /* hover */
+        .fc-button:hover {
+            background: rgba(255, 255, 255, 0.35) !important;
+            transform: translateY(-1px);
+        }
+
+        /* tombol aktif */
+        .fc-button-primary {
+            background: #ffffff !important;
+            color: #000000 !important;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* hover active */
         .fc-button-primary:hover {
-            background: #006be6 !important;
+            background: #f1f5ff !important;
         }
 
-        /* ---- WEEKDAY HEADER (Mon, Tue...) ---- */
-        .fc-col-header-cell-cushion {
-            font-weight: 700 !important;
-            color: #2d3436 !important;
-            padding: 10px 0 !important;
-            font-size: 0.9rem !important;
-        }
-
-        /* ---- DAY CELLS ---- */
-        .fc-daygrid-day {
-            border: none !important;
-            padding: 6px !important;
-        }
-
-        .fc-daygrid-day-frame {
-            border-radius: 14px !important;
-            transition: 0.25s ease;
-        }
-
-        .fc-daygrid-day-frame:hover {
-            background: #f3f7ff !important;
+        /* icon panah */
+        .fc-icon {
+            color: #000000 !important;
         }
 
 
@@ -631,9 +698,21 @@
         .fc-event {
             border: none !important;
             border-radius: 10px !important;
-            padding: 4px 6px !important;
-            font-size: 0.78rem !important;
+
+            padding: 6px 8px !important;
+            /* sedikit lebih lega */
+            font-size: 0.8rem !important;
             font-weight: 600 !important;
+
+            line-height: 1.2 !important;
+            /* ini penting biar tidak kepotong */
+
+            min-height: 26px;
+            /* bikin event lebih “tinggi” */
+            display: flex;
+            align-items: center;
+            /* teks selalu di tengah vertikal */
+
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
         }
 
@@ -653,28 +732,6 @@
         .fc-timegrid-axis {
             font-size: 0.75rem;
             color: #95a5a6;
-        }
-
-        /* ---- LIST VIEW ---- */
-        .fc-list-day {
-            background: #eef3ff !important;
-            border-left: 5px solid #007aff !important;
-            padding: 12px 10px !important;
-            font-weight: 700 !important;
-            color: #2c3e50 !important;
-        }
-
-        .fc-list-event {
-            border-radius: 14px !important;
-            margin-bottom: 8px !important;
-            background: #fff !important;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            transition: 0.25s ease;
-        }
-
-        .fc-list-event:hover {
-            transform: scale(1.02);
-            background: #f4f9ff !important;
         }
 
         /* ---- RESPONSIVE MOBILE VIEW ---- */
@@ -710,12 +767,16 @@
         }
 
         /* Border di header hari (Senin, Selasa, ...) */
-        .fc-col-header-cell {
-            border-right: 1px solid #e5e5e5 !important;
+        .fc-col-header {
+            background: #f8fafc;
+            /* soft abu */
+            border-radius: 10px;
         }
 
-        .fc-col-header-cell:last-child {
-            border-right: none !important;
+        .fc-col-header-cell-cushion {
+            color: #374151 !important;
+            font-weight: 600 !important;
+            letter-spacing: 0.3px;
         }
 
         /* ===== PAGE TITLE STYLE ===== */
@@ -754,6 +815,90 @@
                 height: 3px;
             }
         }
+
+        /* ===== WRAPPER SECTION ===== */
+        .notes-status-section {
+            margin-top: 10px;
+        }
+
+        /* ===== LABEL (Catatan & Status) ===== */
+        .section-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        /* ===== BOX CATATAN ===== */
+        .notes-box {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 12px 14px;
+            min-height: 90px;
+            border: 1px solid #e5e7eb;
+
+            /* lebih soft */
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+            font-size: 14px;
+            color: #374151;
+        }
+
+        /* ===== STATUS SECTION ===== */
+        .status-section {
+            padding-top: 4px;
+        }
+
+        /* label kecil */
+        .status-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        /* dropdown lebih clean */
+        #modalStatusSelect {
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 13px;
+        }
+
+        /* ===== MOBILE SPACING ===== */
+        @media (max-width: 768px) {
+            .status-section {
+                margin-top: 18px;
+            }
+
+            .notes-box {
+                min-height: 80px;
+            }
+        }
+
+        .modal-header .btn-close {
+            filter: invert(1) grayscale(100%) !important;
+            opacity: 1 !important;
+        }
+
+        /* ===== MODAL BUTTON UNIFORM STYLE ===== */
+        .modal-footer .btn {
+            height: 38px;
+            padding: 0 16px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .modal-footer .btn-outline-secondary {
+            border-radius: 10px;
+        }
     </style>
 @stop
 
@@ -783,15 +928,19 @@
         @endif
     </script>
     <script>
+        let calendar;
+
         document.addEventListener('DOMContentLoaded', function() {
             const calendarEl = document.getElementById('calendar');
+
             const tooltip = document.createElement('div');
             tooltip.className = 'custom-tooltip';
             document.body.appendChild(tooltip);
 
-            const calendar = new FullCalendar.Calendar(calendarEl, {
+            calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 locale: 'id',
+                noEventsContent: 'Tidak ada jadwal',
                 allDaySlot: false,
                 slotMinTime: '06:00:00',
                 slotMaxTime: '22:00:00',
@@ -825,7 +974,9 @@
                         'Confirmed': '#2ecc71',
                         'Cancelled': '#e74c3c',
                         'Completed': '#16a085',
-                        'Rescheduled': '#9b59b6' // TAMBAHKAN INI
+                        'Rescheduled': '#9b59b6',
+                        'On Hold': '#7f8c8d',
+                        'No Show': '#e67e22'
                     };
                     info.el.style.backgroundColor = colors[info.event.extendedProps.status] ||
                         '#95a5a6';
@@ -928,7 +1079,9 @@
                         'Confirmed': 'Dikonfirmasi',
                         'Cancelled': 'Dibatalkan',
                         'Completed': 'Selesai',
-                        'Rescheduled': 'Dijadwalkan Ulang'
+                        'Rescheduled': 'Jadwal Ulang',
+                        'On Hold': 'Ditahan',
+                        'No Show': 'Tidak Hadir'
                     };
 
                     const badgeColors = {
@@ -937,26 +1090,51 @@
                         'Confirmed': '#2ecc71',
                         'Cancelled': '#e74c3c',
                         'Completed': '#16a085',
-                        'Rescheduled': '#9b59b6'
+                        'Rescheduled': '#9b59b6',
+                        'On Hold': '#7f8c8d',
+                        'No Show': '#e67e22'
                     };
 
                     $('#modalStatusBadge').html(
-                        `<span class="badge" style="background-color:${badgeColors[status]};color:white">
-                        ${statusLabels[status] || status}
-                    </span>`
+                        `<span class="status-badge" style="background-color:${badgeColors[status] || '#6c757d'};">
+                            ${statusLabels[status] || status}
+                        </span>`
                     );
 
-                    $('#appointmentModal').modal('show');
+                    const modalEl = document.getElementById('appointmentModal');
+
+                    if (modalEl) {
+                        const modal = new bootstrap.Modal(modalEl);
+                        modal.show();
+                    }
                 }
             });
 
             calendar.render();
         });
-        document.addEventListener('hidden.bs.modal', function() {
-            document.body.classList.remove('modal-open');
-            document.body.style.paddingRight = '0px';
 
-            document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+        let resizeTimeout;
+
+        function safeUpdateCalendar() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                calendar.updateSize();
+            }, 80);
+        }
+
+        // Resize browser / layout
+        new ResizeObserver(safeUpdateCalendar)
+            .observe(document.querySelector('.content-wrapper'));
+
+        // Sidebar toggle AdminLTE
+        $(document).on('collapsed.lte.pushmenu shown.lte.pushmenu', function() {
+            safeUpdateCalendar();
+        });
+
+        const modalEl = document.getElementById('appointmentModal');
+
+        modalEl.addEventListener('hidden.bs.modal', function() {
+            // opsional saja kalau kamu pernah punya bug backdrop nyangkut
         });
     </script>
 @stop

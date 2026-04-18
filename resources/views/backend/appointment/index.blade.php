@@ -30,7 +30,7 @@
                         <h5 class="modal-title">
                             <i class="fas fa-calendar-check me-2"></i> Detail Janji Temu
                         </h5>
-                        <button type="button" class="btn-close btn-close-white" data-dismiss="modal"></button>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
 
                     <!-- Body -->
@@ -116,7 +116,9 @@
                                 <option value="Confirmed">Dikonfirmasi</option>
                                 <option value="Completed">Selesai</option>
                                 <option value="Cancelled">Dibatalkan</option>
-                                <option value="Rescheduled">Dijadwalkan Ulang</option>
+                                <option value="Rescheduled">Jadwal Ulang</option>
+                                <option value="On Hold">Ditahan</option>
+                                <option value="No Show">Tidak Hadir</option>
                             </select>
 
                         </div>
@@ -126,8 +128,8 @@
                     <!-- Footer -->
                     <div class="modal-footer custom-footer">
 
-                        <button type="button" class="btn btn-outline-secondary rounded-pill" data-dismiss="modal">
-                            Tutup
+                        <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">
+                            <i class="fa fa-times me-1"></i>Tutup
                         </button>
 
                         <button type="button" id="btnReschedule" class="btn btn-warning rounded-pill">
@@ -159,7 +161,7 @@
                         <i class="fas fa-calendar-alt mr-2"></i>
                         <span class="fw-semibold">Jadwal Ulang Janji Temu</span>
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-dismiss="modal"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
 
                 <div class="modal-body space-y-4">
@@ -226,7 +228,7 @@
 
 
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                     <button class="btn btn-primary" id="reschedule-submit-btn">Simpan Perubahan</button>
                 </div>
 
@@ -290,14 +292,14 @@
 
 
                             <!-- Tanggal Section -->
-                            <div class="mt-4 mb-0">
+                            <div class="mt-2 mb-1">
 
                                 <div class="date-title mb-3">
                                     <i class="fas fa-calendar-alt me-2"></i>
                                     Filter Jadwal
                                 </div>
 
-                                <div class="d-flex flex-wrap gap-3">
+                                <div class="d-flex flex-wrap gap-1">
 
                                     <button type="button"
                                         class="btn btn-outline-primary btn-sm uniform-btn date-filter-btn active"
@@ -354,9 +356,8 @@
                                     </thead>
                                     <tbody>
                                         @php
-                                            // 🔥 TAMBAHAN INI (WAJIB BIAR AMAN)
                                             $normalizeStatus = function ($status) {
-                                                return ucfirst(strtolower($status));
+                                                return ucwords(str_replace('_', ' ', strtolower($status)));
                                             };
 
                                             // ================= WARNA STATUS =================
@@ -367,9 +368,11 @@
                                                 'Cancelled' => '#e74c3c',
                                                 'Completed' => '#16a085',
                                                 'Rescheduled' => '#9b59b6',
+                                                'On Hold' => '#7f8c8d',
+                                                'No Show' => '#e67e22',
                                             ];
 
-                                            // ================= LABEL INDONESIA (BARU) =================
+                                            // ================= LABEL INDONESIA =================
                                             $statusLabel = [
                                                 'Pending' => 'Menunggu',
                                                 'Processing' => 'Diproses',
@@ -377,6 +380,8 @@
                                                 'Cancelled' => 'Dibatalkan',
                                                 'Completed' => 'Selesai',
                                                 'Rescheduled' => 'Jadwal Ulang',
+                                                'On Hold' => 'Ditahan',
+                                                'No Show' => 'Tidak Hadir',
                                             ];
 
                                             $appointments = $appointments->sortBy([
@@ -409,15 +414,15 @@
                                                         $color = $statusColors[$status] ?? '#7f8c8d';
                                                     @endphp
 
-                                                    <span class="badge px-3 py-2"
-                                                        style="background-color: {{ $color }}; color: #fff; border-radius: 30px;">
+                                                    <span class="status-badge"
+                                                        style="background-color: {{ $color }};">
                                                         {{ $statusLabel[$status] ?? $status }}
                                                     </span>
                                                 </td>
                                                 <td data-label="Aksi">
                                                     <button
                                                         class="btn btn-sm btn-outline-primary rounded-pill view-appointment-btn"
-                                                        data-toggle="modal" data-target="#appointmentModal"
+                                                        data-bs-toggle="modal" data-bs-target="#appointmentModal"
                                                         data-id="{{ $appointment->id }}"
                                                         data-booking="{{ $appointment->booking_id }}"
                                                         data-name="{{ $appointment->name }}"
@@ -433,7 +438,7 @@
                                                         data-end_time="{{ \Carbon\Carbon::createFromFormat('H:i:s', $appointment->booking_end_time)->format('H:i') }} WIB"
                                                         data-amount="{{ $appointment->transaction->total_amount ?? 0 }}"
                                                         data-dp="{{ $appointment->transaction->amount ?? 0 }}"
-                                                        data-payment_type="{{ $appointment->transaction
+                                                        data-payment-type="{{ $appointment->transaction
                                                             ? ($appointment->transaction->amount == 0
                                                                 ? 'unpaid'
                                                                 : ($appointment->transaction->amount < $appointment->transaction->total_amount
@@ -463,7 +468,6 @@
 @stop
 
 @section('css')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
         /* ======== Filter Seragam ======== */
         #filterDate,
@@ -764,8 +768,8 @@
 
 
         /* ===============================
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       DETAIL MODAL FINAL CLEAN
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ================================= */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           DETAIL MODAL FINAL CLEAN
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ================================= */
 
         .detail-section {
             background: #f8fafc;
@@ -840,7 +844,7 @@
 
         /* Nominal Total */
         .total-row strong {
-            font-size: 20px;
+            font-size: 15px;
             font-weight: 500;
             color: #000000;
             /* Hijau elegan */
@@ -1114,11 +1118,6 @@
             margin: 0 !important;
         }
 
-        /* Wrapper spacing */
-        .mt-4 {
-            margin-top: 22px !important;
-        }
-
         /* Label kecil */
         .small.fw-semibold {
             font-size: 13px;
@@ -1277,6 +1276,25 @@
             background: #c1c1c1;
             border-radius: 10px;
         }
+
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            /* lebih kecil */
+            font-size: 11px;
+            /* lebih kecil */
+            font-weight: 600;
+            border-radius: 999px;
+            color: #fff;
+            text-align: center;
+            min-width: 95px;
+            /* ikut diperkecil biar proporsional */
+        }
+
+        .modal-header .btn-close {
+            filter: invert(1) grayscale(100%) !important;
+            opacity: 1 !important;
+        }
     </style>
 @stop
 
@@ -1425,7 +1443,7 @@
                     $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
                         var row = table.row(dataIndex).node();
                         var employeeId = $(row).data('employee-id');
-                        return employeeId == staffVal;
+                        return employeeId == employeeVal;
                     });
                 }
 
@@ -1473,10 +1491,12 @@
             applyFilters(); // filter default
             // ================= MODAL POPULATE =================
             $(document).on('click', '.view-appointment-btn', function() {
+
                 $('#modalAppointmentId').val($(this).data('id'));
                 $('#modalBookingId').text('ID Pemesanan : ' + $(this).data('booking'));
                 $('#modalAppointmentName').text($(this).data('name'));
                 $('#modalService').text($(this).data('service'));
+
                 let background = $(this).data('background');
 
                 if (background) {
@@ -1486,6 +1506,7 @@
                     $('#modalBackground').text('-');
                     $('#backgroundRow').hide();
                 }
+
                 $('#modalEmail').text($(this).data('email'));
                 $('#modalPhone').text($(this).data('phone'));
                 $('#modalPeopleCount').text($(this).data('people'));
@@ -1493,28 +1514,27 @@
                 $('#modalDate').text($(this).data('date'));
                 $('#modalStartTime').text($(this).data('start_time'));
                 $('#modalEndTime').text($(this).data('end_time'));
-                // ✅ TAMBAHKAN DI SINI
+
+                // ================= PRICE =================
                 let servicePrice = $(this).data('service_price');
                 $('#modalServicePrice').text(
                     'Rp ' + Number(servicePrice).toLocaleString('id-ID')
                 );
+
                 let totalAmount = Number($(this).data('amount')) || 0;
                 let paidAmount = Number($(this).data('dp')) || 0;
-                let paymentType = $(this).data('payment_type');
+                let paymentType = $(this).data('paymentType');
 
                 let remaining = totalAmount - paidAmount;
 
-                // Set total biaya
                 $('#modalAmount').text('Rp ' + totalAmount.toLocaleString('id-ID'));
 
-                // Jika belum bayar sama sekali
                 if (paidAmount <= 0) {
                     $('#paymentSection').hide();
-                    return;
+                    // tetap lanjut modal tampil
+                } else {
+                    $('#paymentSection').show();
                 }
-
-                // Tampilkan payment section
-                $('#paymentSection').show();
 
                 // ================= FULL PAYMENT =================
                 if (paymentType === 'full' || remaining <= 0) {
@@ -1543,84 +1563,84 @@
 
                     $('#remainingRow').show();
                 }
+
                 $('#modalNotes').text($(this).data('notes'));
 
-                // 🔥 ADD ON DI SINI
+                // ================= ADD ON =================
                 let addons = $(this).data('addons');
                 let addonHtml = '';
 
                 if (addons && Array.isArray(addons) && addons.length > 0) {
                     addonHtml += '<ul class="list-group list-group-flush">';
+
                     addons.forEach(function(a) {
                         addonHtml += `
                 <li class="list-group-item border-bottom px-0 py-2 bg-transparent">
-    <div class="d-flex justify-content-between align-items-start">
-        <div>
-            <div class="fw-semibold">
-                ${a.name}
-            </div>
-            <small class="text-muted">
-                ${a.qty} x Rp ${Number(a.price).toLocaleString('id-ID')}
-            </small>
-        </div>
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div>
+                                ${a.name}
+                            </div>
+                            <small class="text-muted">
+                                ${a.qty} x Rp ${Number(a.price).toLocaleString('id-ID')}
+                            </small>
+                        </div>
 
-        <div class="fw-bold text-end">
-            Rp ${Number(a.subtotal).toLocaleString('id-ID')}
-        </div>
-    </div>
-</li>
+                        <div>
+                            Rp ${Number(a.subtotal).toLocaleString('id-ID')}
+                        </div>
+                    </div>
+                </li>
             `;
                     });
+
                     addonHtml += '</ul>';
                 } else {
                     addonHtml = '<em class="text-muted">Tidak ada add on</em>';
                 }
 
                 $('#modalAddons').html(addonHtml);
-                // 🔥 END ADD ON
 
+                // ================= STATUS =================
                 var status = $(this).data('status') || 'Pending';
 
-                // set value select (tetap pakai value DB, jangan diubah)
                 $('#modalStatusSelect').val(status);
 
-                // ================= LABEL BAHASA INDONESIA =================
                 var statusLabel = {
                     'Pending': 'Menunggu',
                     'Processing': 'Diproses',
                     'Confirmed': 'Dikonfirmasi',
                     'Cancelled': 'Dibatalkan',
                     'Completed': 'Selesai',
-                    'On Hold': 'Ditahan',
                     'Rescheduled': 'Jadwal Ulang',
+                    'On Hold': 'Ditahan',
                     'No Show': 'Tidak Hadir'
                 };
 
-                // ================= WARNA STATUS =================
                 var statusColors = {
-                    'Pending': 'linear-gradient(90deg, #f39c12, #f7c65f)',
-                    'Processing': 'linear-gradient(90deg, #3498db, #5dade2)',
-                    'Confirmed': 'linear-gradient(90deg, #2ecc71, #58d68d)',
-                    'Cancelled': 'linear-gradient(90deg, #e74c3c, #ff7675)',
-                    'Completed': 'linear-gradient(90deg, #16a085, #48c9b0)',
-                    'On Hold': 'linear-gradient(90deg, #7f8c8d, #95a5a6)',
-                    'Rescheduled': 'linear-gradient(90deg, #f1c40f, #f7dc6f)',
-                    'No Show': 'linear-gradient(90deg, #e67e22, #f0b27a)'
+                    'Pending': '#f39c12',
+                    'Processing': '#3498db',
+                    'Confirmed': '#2ecc71',
+                    'Cancelled': '#e74c3c',
+                    'Completed': '#16a085',
+                    'Rescheduled': '#9b59b6',
+                    'On Hold': '#7f8c8d',
+                    'No Show': '#e67e22'
                 };
 
-                // fallback aman kalau status tidak ada di mapping
-                var gradient = statusColors[status] || 'linear-gradient(90deg, #bdc3c7, #95a5a6)';
-
-                // ambil label indonesia
                 var label = statusLabel[status] || status;
 
-                // ================= RENDER BADGE =================
                 $('#modalStatusBadge').html(`
-    <span class="badge text-white px-3 py-2 shadow-sm"
-        style="background:${gradient}; border-radius:30px;">
-        ${label}
-    </span>
-`);
+        <span class="status-badge"
+            style="background-color:${statusColors[status] || '#6c757d'};">
+            ${label}
+        </span>
+    `);
+
+                // ================= FIX BOOTSTRAP 5 MODAL OPEN =================
+                const modalEl = document.getElementById('appointmentModal');
+                const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                modal.show();
             });
 
             // ================= ALERT AUTO CLOSE =================

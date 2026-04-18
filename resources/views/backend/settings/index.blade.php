@@ -70,13 +70,15 @@
                         {{-- TAB NAV --}}
                         <div class="card-header bg-white">
                             <ul class="nav nav-pills">
-                                <li class="nav-item"><a class="nav-link active" href="#business" data-toggle="tab">Informasi
+                                <li class="nav-item"><a class="nav-link active" href="#business"
+                                        data-bs-toggle="tab">Informasi
                                         Bisnis</a></li>
-                                <li class="nav-item"><a class="nav-link" href="#social" data-toggle="tab">Media Sosial</a>
+                                <li class="nav-item"><a class="nav-link" href="#social" data-bs-toggle="tab">Media
+                                        Sosial</a>
                                 </li>
-                                <li class="nav-item"><a class="nav-link" href="#header" data-toggle="tab">Header</a></li>
-                                <li class="nav-item"><a class="nav-link" href="#footer" data-toggle="tab">Footer</a></li>
-                                <li class="nav-item"><a class="nav-link" href="#seo" data-toggle="tab">SEO</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#header" data-bs-toggle="tab">Header</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#footer" data-bs-toggle="tab">Footer</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#seo" data-bs-toggle="tab">SEO</a></li>
                             </ul>
                         </div>
 

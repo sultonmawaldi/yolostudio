@@ -264,7 +264,7 @@
 
                                     <div class="form-group">
                                         <label>Status</label>
-                                        <select name="status" class="form-control @error('status') is-invalid @enderror">
+                                        <select name="status" class="form-select @error('status') is-invalid @enderror">
                                             <option value="1"
                                                 {{ old('status', $user->status) == '1' ? 'selected' : '' }}>Aktif</option>
                                             <option value="0"

@@ -645,10 +645,10 @@
                 </div>
 
                 {{-- GARIS FULL --}}
-                <div class="w-full h-[1px] bg-gray-700 mb-4"></div>
+                <div class="w-full h-[1px] bg-gray-700 mb-2"></div>
 
                 {{-- BRAND + COPYRIGHT --}}
-                <div class="flex flex-col items-center gap-1 mt-2">
+                <div class="flex flex-col items-center gap-1 mt-1">
 
                     <div class="text-sm font-semibold">
                         © {{ date('Y') }}

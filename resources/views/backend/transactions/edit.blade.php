@@ -169,7 +169,7 @@
 
                                 <label>Status</label>
 
-                                <select name="payment_status" class="form-control" required>
+                                <select name="payment_status" class="form-select" required>
 
                                     <option value="Pending"
                                         {{ $transaction->payment_status == 'Pending' ? 'selected' : '' }}>

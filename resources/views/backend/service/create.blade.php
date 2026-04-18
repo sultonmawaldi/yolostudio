@@ -69,7 +69,7 @@
                                     value="{{ old('title') }}">
 
                                 <small class="text-muted d-block">
-                                    Nama ini akan tampil sebagai judul layanan di website Anda.
+                                    Nama ini akan tampil sebagai judul layanan di website Anda
                                 </small>
 
                                 @error('title')
@@ -86,7 +86,7 @@
                                     id="slug" name="slug" placeholder="slug-layanan" value="{{ old('slug') }}">
 
                                 <small class="text-muted d-block">
-                                    URL unik untuk layanan.
+                                    URL unik untuk layanan
                                 </small>
 
                                 @error('slug')
@@ -125,7 +125,7 @@
                                             id="price" name="price" placeholder="Harga" value="{{ old('price') }}">
 
                                         <small class="text-muted d-block">
-                                            Harga utama.
+                                            Harga utama
                                         </small>
 
                                         @error('price')
@@ -166,7 +166,7 @@
                                             placeholder="Down Payment (opsional)" value="{{ old('dp_amount') }}">
 
                                         <small class="text-muted d-block">
-                                            Jumlah DP yang harus dibayar saat pemesanan.
+                                            Jumlah DP yang harus dibayar saat pemesanan
                                         </small>
 
                                         @error('dp_amount')
@@ -188,7 +188,7 @@
                                             placeholder="Jumlah poin hadiah" value="{{ old('reward_points') }}">
 
                                         <small class="text-muted d-block">
-                                            Poin yang didapat pelanggan setelah membeli layanan ini.
+                                            Poin yang didapat pelanggan setelah membeli layanan ini
                                         </small>
 
                                         @error('reward_points')
@@ -237,7 +237,7 @@
                                             placeholder="Jumlah minimal orang" value="{{ old('min_people') }}">
 
                                         <small class="text-muted d-block">
-                                            Jumlah minimal orang untuk layanan ini.
+                                            Jumlah minimal orang untuk layanan ini
                                         </small>
 
                                         @error('min_people')
@@ -263,7 +263,7 @@
                                             placeholder="Jumlah maksimal orang" value="{{ old('max_people') }}">
 
                                         <small class="text-muted d-block">
-                                            Jumlah maksimal orang untuk layanan ini.
+                                            Jumlah maksimal orang untuk layanan ini
                                         </small>
 
                                         @error('max_people')
@@ -351,7 +351,7 @@
                                     </select>
 
                                     <small class="text-muted d-block">
-                                        Pilih kategori layanan.
+                                        Pilih kategori layanan
                                     </small>
 
                                     @error('category_id')
@@ -367,16 +367,16 @@
 
                                     <label>Status</label>
 
-                                    <select required name="status" id="inputStatus" class="form-control custom-select">
+                                    <select name="status" class="form-select" required>
 
-                                        <option disabled value="">Pilih Status</option>
-
-                                        <option value="1" selected>
-                                            DITERBITKAN
+                                        <option value="1"
+                                            {{ old('status', $data->status ?? '') == 1 ? 'selected' : '' }}>
+                                            Aktif
                                         </option>
 
-                                        <option value="0">
-                                            DRAFT
+                                        <option value="0"
+                                            {{ old('status', $data->status ?? '') == 0 ? 'selected' : '' }}>
+                                            Nonaktif
                                         </option>
 
                                     </select>
@@ -514,8 +514,8 @@
         }
 
         /* =========================
-                       FIX PANAH TANPA UBAH POSISI
-                    ========================== */
+                               FIX PANAH TANPA UBAH POSISI
+                            ========================== */
 
         .select2-container--default .select2-selection--single .select2-selection__arrow b {
             margin: 0 !important;

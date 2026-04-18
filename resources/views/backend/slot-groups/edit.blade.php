@@ -65,11 +65,11 @@
                             <div class="card-body">
 
                                 {{-- EMPLOYEE --}}
-                                <div class="form-group">
-                                    <label>Karyawan</label>
+                                <div class="mb-3">
+                                    <label class="form-label">Karyawan</label>
 
                                     <select name="employee_id"
-                                        class="form-control @error('employee_id') is-invalid @enderror">
+                                        class="form-select @error('employee_id') is-invalid @enderror">
 
                                         <option value="">-- Pilih Karyawan --</option>
 
@@ -85,7 +85,9 @@
                                     </select>
 
                                     @error('employee_id')
-                                        <small class="text-danger">{{ $message }}</small>
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
                                     @enderror
                                 </div>
 

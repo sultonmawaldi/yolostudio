@@ -58,16 +58,19 @@
                             {{-- SERVICE --}}
                             <div class="form-group">
                                 <label>Layanan</label>
-                                <select name="service_id" class="form-control @error('service_id') is-invalid @enderror">
+
+                                <select name="service_id" class="form-select @error('service_id') is-invalid @enderror"
+                                    required>
 
                                     <option value="">-- Pilih Layanan --</option>
 
                                     @foreach ($services as $service)
                                         <option value="{{ $service->id }}"
-                                            {{ old('service_id', $background->service_id) == $service->id ? 'selected' : '' }}>
+                                            {{ old('service_id', $background->service_id ?? '') == $service->id ? 'selected' : '' }}>
                                             {{ $service->title }}
                                         </option>
                                     @endforeach
+
                                 </select>
 
                                 @error('service_id')
@@ -129,15 +132,15 @@
 
                             <div class="card-body pb-0">
 
-                                <div class="form-group">
-                                    <label>Status</label>
-                                    <select name="is_active" class="form-control">
+                                <div class="mb-3">
+                                    <label class="form-label">Status</label>
+                                    <select name="is_active" class="form-select">
                                         <option value="1"
-                                            {{ old('is_active', $background->is_active) == true ? 'selected' : '' }}>
+                                            {{ old('is_active', $background->is_active) == 1 ? 'selected' : '' }}>
                                             Aktif
                                         </option>
                                         <option value="0"
-                                            {{ old('is_active', $background->is_active) == false ? 'selected' : '' }}>
+                                            {{ old('is_active', $background->is_active) == 0 ? 'selected' : '' }}>
                                             Nonaktif
                                         </option>
                                     </select>

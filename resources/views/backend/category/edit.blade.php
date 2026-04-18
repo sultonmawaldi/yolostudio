@@ -66,7 +66,7 @@
                                         value="{{ old('title', $category->title) }}">
 
                                     <small class="text-muted d-block">
-                                        Nama ini akan tampil di website Anda.
+                                        Nama ini akan tampil di website Anda
                                     </small>
 
                                     @error('title')
@@ -85,8 +85,8 @@
                                         value="{{ old('slug', $category->slug) }}">
 
                                     <small class="text-muted d-block">
-                                        Slug adalah versi URL dari nama kategori. Biasanya menggunakan huruf kecil
-                                        dan hanya berisi huruf, angka, serta tanda hubung.
+                                        Slug adalah versi URL dari nama kategori
+                                        Biasanya menggunakan huruf kecil dan tanda hubung (-)
                                     </small>
 
                                     @error('slug')
@@ -103,7 +103,7 @@
                             <div class="card-header">
                                 <h3 class="card-title">Deskripsi</h3>
                                 <small>&nbsp;&nbsp; Deskripsi tidak selalu ditampilkan, tergantung tema yang
-                                    digunakan.</small>
+                                    digunakan</small>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Tutup">
                                         <i class="fas fa-minus" aria-hidden="true"></i>
@@ -146,25 +146,21 @@
                                 <div class="card-body pb-0">
 
                                     <div class="form-group">
-                                        <label for="inputStatus">Status</label>
+                                        <label>Status</label>
 
-                                        <select required="required" name="status" id="inputStatus"
-                                            class="form-control custom-select">
-
-                                            <option disabled value="">Pilih Status</option>
+                                        <select name="status" class="form-select" required>
 
                                             <option value="1"
-                                                {{ old('published', $category->status) == 1 ? 'selected' : '' }}>
-                                                DITERBITKAN
+                                                {{ old('status', $category->status) == 1 ? 'selected' : '' }}>
+                                                Aktif
                                             </option>
 
                                             <option value="0"
-                                                {{ old('published', $category->status) == 0 ? 'selected' : '' }}>
-                                                DRAFT
+                                                {{ old('status', $category->status) == 0 ? 'selected' : '' }}>
+                                                Nonaktif
                                             </option>
 
                                         </select>
-
                                     </div>
 
                                     <div class="form-group mt-4 d-flex justify-content-end">

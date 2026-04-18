@@ -343,25 +343,25 @@ class UserController extends Controller
         if (\Auth::id() === $user->id) {
             if ($request->filled('roles') && $request->roles !== $user->roles->first()->name) {
                 return back()->withErrors([
-                    'roles' => 'Anda tidak dapat mengubah peran Anda sendiri.'
+                    'roles' => 'Anda tidak dapat mengubah peran Anda sendiri'
                 ]);
             }
 
             if ($request->has('status') && $request->status != $user->status) {
                 return back()->withErrors([
-                    'status' => 'Anda tidak dapat mengubah status Anda sendiri.'
+                    'status' => 'Anda tidak dapat mengubah status Anda sendiri'
                 ]);
             }
         }
 
         if ($user->id === 1 && $request->roles !== 'admin') {
             return redirect()->back()->withErrors([
-                'roles' => 'Pengguna pertama harus selalu memiliki peran admin.'
+                'roles' => 'Pengguna pertama harus selalu memiliki peran admin'
             ]);
         }
 
         if ($user->hasRole('admin') && $request->roles !== 'admin') {
-            return redirect()->back()->withErrors(['roles' => 'Peran admin tidak dapat dihapus.']);
+            return redirect()->back()->withErrors(['roles' => 'Peran admin tidak dapat dihapus']);
         }
 
         $status = $user->id === 1 ? 1 : ($request->status ?? 0);
@@ -379,7 +379,7 @@ class UserController extends Controller
                 ->exists()
             ) {
                 return back()
-                    ->withErrors(['phone' => 'Nomor HP sudah digunakan.'])
+                    ->withErrors(['phone' => 'Nomor HP sudah digunakan'])
                     ->withInput();
             }
         }
@@ -556,11 +556,11 @@ class UserController extends Controller
     public function destroy(User $user, Request $request)
     {
         if ($user->id == 1) {
-            return back()->with('error', 'Pengguna admin pertama tidak dapat dihapus.');
+            return back()->with('error', 'Pengguna admin pertama tidak dapat dihapus');
         }
 
         if ($user->id === $request->user()->id) {
-            return back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
+            return back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri');
         }
 
         $user->delete();
@@ -636,7 +636,7 @@ class UserController extends Controller
         ]);
 
         if (!Hash::check($request->current_password, $user->password)) {
-            return back()->withErrors(['current_password' => 'Kata sandi saat ini tidak sesuai.']);
+            return back()->withErrors(['current_password' => 'Kata sandi saat ini tidak sesuai']);
         }
 
         $user->password = Hash::make($request->password);
@@ -647,42 +647,66 @@ class UserController extends Controller
 
     public function updateProfileImage(Request $request, User $user)
     {
+        // 1. VALIDASI AMAN (hanya jika file dikirim)
         $request->validate([
-            'image' => 'required|image|mimes:png,jpg,jpeg,webp|max:2048',
-            'delete_image' => 'nullable'
+            'image' => 'nullable|image|mimes:png,jpg,jpeg,webp|max:2048',
         ]);
 
-        //remove old image
-        $destination = public_path('uploads/images/profile/' . $user->image);
-        if (\File::exists($destination)) {
-            \File::delete($destination);
+        // 2. CEK apakah ada file upload
+        if (!$request->hasFile('image')) {
+            return back()->withErrors([
+                'image' => 'Silakan pilih gambar terlebih dahulu'
+            ]);
         }
 
-        $imageName = time() . '.' . $request->image->getClientOriginalExtension();
-        $request->image->move(public_path('uploads/images/profile/'), $imageName);
+        $image = $request->file('image');
+
+        // 3. HAPUS FOTO LAMA (kalau ada)
+        if ($user->image) {
+            $oldPath = public_path('uploads/images/profile/' . $user->image);
+
+            if (file_exists($oldPath)) {
+                unlink($oldPath);
+            }
+        }
+
+        // 4. GENERATE NAMA FILE YANG AMAN
+        $imageName = 'profile_' . $user->id . '_' . time() . '.' . $image->getClientOriginalExtension();
+
+        // 5. SIMPAN FILE
+        $image->move(public_path('uploads/images/profile'), $imageName);
+
+        // 6. UPDATE DATABASE
         $user->update([
             'image' => $imageName
         ]);
 
-        return back()->withSuccess('Gambar profil berhasil diperbarui');
+        return back()->with('success', 'Gambar profil berhasil diperbarui');
     }
 
 
     // Hapus profile image (member)
     public function deleteProfileImage()
     {
-        $user = auth()->user(); // ambil user yang login
+        $user = auth()->user();
 
-        if ($user->image) {
-            $destination = public_path('uploads/images/profile/' . $user->image);
-            if (\File::exists($destination)) {
-                \File::delete($destination);
-            }
-
-            $user->update(['image' => null]);
+        if (!$user->image) {
+            return back()->withErrors([
+                'image' => 'Tidak ada gambar untuk dihapus'
+            ]);
         }
 
-        return back()->withSuccess('Gambar profil berhasil dihapus');
+        $path = public_path('uploads/images/profile/' . $user->image);
+
+        if (file_exists($path)) {
+            unlink($path);
+        }
+
+        $user->update([
+            'image' => null
+        ]);
+
+        return back()->with('success', 'Gambar profil berhasil dihapus');
     }
 
 

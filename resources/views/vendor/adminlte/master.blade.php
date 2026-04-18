@@ -19,12 +19,8 @@
     <!-- 2. DataTables CORE (WAJIB) -->
     <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
 
-    <!-- 3. Bootstrap (kalau pakai) -->
-    <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap4.min.js"></script>
-
     <!-- 4. Baru Buttons -->
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap4.min.js"></script>
 
     <!-- 5. Export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -35,7 +31,10 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 
     {{-- Custom Meta Tags --}}
@@ -128,15 +127,20 @@
 
     <footer>
         <div class="container text-center">
-            <!-- Tahun dan brand -->
-            <div class="text-dark text-sm text-bold h5 mb-2 mt-4">
+
+            <!-- BRAND + COPYRIGHT -->
+            <div class="text-dark text-sm font-weight-bold h5 mb-1 mt-4">
                 © {{ date('Y') }}
-                <a href="/" class="text-dark text-sm text-bold">YOLO STUDIO</a>
+                <a href="/" class="text-dark font-weight-bold text-decoration-none">
+                    {{ $setting->bname ?? 'Nama Website' }}
+                </a>
             </div>
-            <!-- All rights reserved di bawah -->
-            <div class="small text-dark mt-3">
+
+            <!-- ALL RIGHTS RESERVED -->
+            <div class="small text-dark mt-1 mb-3">
                 All rights reserved.
             </div>
+
         </div>
     </footer>
 
@@ -162,7 +166,6 @@
 
             @default
                 <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
-                <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
                 <script src="{{ asset('vendor/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
                 <script src="{{ asset('vendor/adminlte/dist/js/adminlte.min.js') }}"></script>
         @endswitch

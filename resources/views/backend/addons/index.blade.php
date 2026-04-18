@@ -13,17 +13,18 @@
 @stop
 
 @section('content')
+
+
+    <div class="mb-3 text-end">
+        <a href="{{ route('addons.create') }}" class="btn btn-gradient-primary shadow-sm">
+            <i class="fas fa-plus me-1"></i> Tambah Addon
+        </a>
+    </div>
     <div class="card border-0 shadow-lg rounded-4">
         <div class="card-body table-responsive p-4">
 
-            <div class="mb-3 text-end">
-                <a href="{{ route('addons.create') }}" class="btn btn-gradient-primary shadow-sm">
-                    <i class="fas fa-plus me-1"></i> Tambah Addon
-                </a>
-            </div>
-
             <table id="addonTable" class="table align-middle table-hover table-borderless">
-                <thead class="bg-gradient text-white" style="background: linear-gradient(90deg, #007bff, #00b4d8);">
+                <thead class="table-header-gradient">
                     <tr>
                         <th>#</th>
                         <th>Kode</th>
@@ -39,7 +40,7 @@
                     @foreach ($addons as $addon)
                         <tr class="bg-white shadow-sm-hover">
                             <td class="fw-semibold text-muted">{{ $loop->iteration }}</td>
-                            <td class="fw-bold">{{ $addon->code }}</td>
+                            <td>{{ $addon->code }}</td>
                             <td>{{ $addon->name }}</td>
                             <td>Rp {{ number_format($addon->price, 0, ',', '.') }}</td>
                             <td>{{ $addon->unit }}</td>
@@ -102,16 +103,37 @@
             overflow: hidden;
         }
 
-        .table thead th {
+        /* ================================
+                                                                                           TABLE HEADER GRADIENT (PROPER)
+                                                                                        ================================ */
+        .table-header-gradient {
+            background: linear-gradient(90deg, #007bff, #00b4d8) !important;
+        }
+
+        /* pastikan th tidak override background */
+        .table-header-gradient th {
+            background: transparent !important;
+            color: #fff !important;
             font-weight: 600;
-            font-size: 0.75rem;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            text-align: center;
-            vertical-align: middle;
-            color: #fff;
+            letter-spacing: 0.3px;
+            font-size: 0.75rem;
             padding: 10px;
-            border-bottom: 2px solid rgba(0, 123, 255, 0.25);
+            text-align: center;
+            border: none !important;
+        }
+
+        /* optional: biar lebih halus */
+        .table-header-gradient th:first-child {
+            border-top-left-radius: 10px;
+        }
+
+        .table-header-gradient th:last-child {
+            border-top-right-radius: 10px;
+        }
+
+        .table thead th {
+            white-space: nowrap;
         }
 
         .table td {
