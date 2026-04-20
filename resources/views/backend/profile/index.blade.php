@@ -25,50 +25,6 @@
 
 @section('content')
 
-
-    {{-- MODAL FOTO PROFIL --}}
-    <div class="modal fade" id="profileImageModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <form action="{{ route('user.profile.image.update', $user->id) }}" method="post" enctype="multipart/form-data">
-
-                @csrf
-                @method('PUT')
-
-                <div class="modal-content shadow">
-
-                    {{-- HEADER --}}
-                    <div class="modal-header bg-info text-white">
-                        <h5 class="modal-title">Ubah Foto Profil</h5>
-
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
-                    </div>
-
-                    {{-- BODY --}}
-                    <div class="modal-body">
-                        <input type="file" name="image" class="form-control">
-
-                        @error('image')
-                            <small class="text-danger d-block mt-2">{{ $message }}</small>
-                        @enderror
-                    </div>
-
-                    {{-- FOOTER --}}
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                            Batal
-                        </button>
-
-                        <button type="submit" class="btn btn-primary">
-                            Simpan
-                        </button>
-                    </div>
-
-                </div>
-            </form>
-        </div>
-    </div>
-
     {{-- CONTENT --}}
     <section class="content">
         <div class="container-fluid">
@@ -83,21 +39,42 @@
                                 alt="Foto Profil" style="width:120px;height:120px;object-fit:cover;">
 
                             <div class="mb-2">
-                                <a data-bs-toggle="modal" data-bs-target="#profileImageModal" href="#">
-                                    Ganti Foto
-                                </a>
 
+                                {{-- FORM UPLOAD LANGSUNG --}}
+                                <form id="formUploadFoto" action="{{ route('user.profile.image.update', $user->id) }}"
+                                    method="post" enctype="multipart/form-data">
+
+                                    @csrf
+                                    @method('PUT')
+
+                                    {{-- INPUT FILE HIDDEN --}}
+                                    <input type="file" name="image" id="inputFoto" class="d-none" accept="image/*">
+
+                                    {{-- BUTTON TRIGGER --}}
+                                    <button type="button" class="btn btn-sm btn-primary mb-1"
+                                        onclick="document.getElementById('inputFoto').click();">
+                                        <i class="fas fa-camera mr-1"></i>
+                                        Ganti Foto
+                                    </button>
+
+                                </form>
+
+                                {{-- HAPUS FOTO --}}
                                 @if ($user->image)
                                     <form action="{{ route('delete.profile.image', $user->id) }}" method="post"
-                                        class="mt-1">
+                                        class="d-inline">
+
                                         @csrf
                                         @method('PATCH')
+
                                         <button type="button" class="btn btn-sm btn-danger btn-confirm"
                                             data-type="delete-image">
                                             Hapus
                                         </button>
+
                                     </form>
                                 @endif
+
                             </div>
 
                             <h3 class="profile-username">{{ $user->name }}</h3>
@@ -243,7 +220,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="card-footer text-right bg-white">
+                                        <div class="card-footer text-right">
                                             <button type="submit" class="btn btn-primary px-4 btn-confirm"
                                                 data-type="update-profile">
                                                 <i class="fas fa-save mr-1"></i> Simpan Perubahan
@@ -303,7 +280,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="card-footer text-right bg-white">
+                                            <div class="card-footer text-right">
                                                 <button type="submit" class="btn btn-primary px-4 btn-confirm"
                                                     data-type="update-bio">
                                                     <i class="fas fa-save mr-1"></i> Simpan Perubahan
@@ -349,7 +326,7 @@
                                         </div>
 
                                         {{-- tombol tetap posisi awal (kiri, sejajar input) --}}
-                                        <div class="card-footer text-right bg-white">
+                                        <div class="card-footer text-right">
                                             <button type="submit" class="btn btn-primary px-4 btn-confirm"
                                                 data-type="update-password">
                                                 <i class="fas fa-save mr-1"></i> Perbarui Kata Sandi
@@ -366,86 +343,11 @@
 @stop
 
 @section('css')
+
     <style>
-        html {
-            overflow-y: scroll;
-        }
-
-        /* Bootstrap modal */
-        body.modal-open {
-            padding-right: 0 !important;
-        }
-
-        /* SweetAlert */
         body.swal2-shown {
+            overflow-y: scroll !important;
             padding-right: 0 !important;
-        }
-
-        /* Card lebih clean & premium */
-        .card {
-            border-radius: 12px;
-            transition: all 0.2s ease-in-out;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-        }
-
-        /* Nav pills modern */
-        .nav-pills .nav-link {
-            border-radius: 8px;
-            font-weight: 500;
-            color: #555;
-        }
-
-        .nav-pills .nav-link.active {
-            background: linear-gradient(45deg, #007bff, #00c6ff);
-            color: #fff;
-            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
-        }
-
-        /* Input lebih halus */
-        .form-control {
-            border-radius: 8px;
-            box-shadow: none !important;
-            border: 1px solid #e0e0e0;
-            transition: 0.2s;
-        }
-
-        .form-control:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1) !important;
-        }
-
-        /* Label lebih rapi */
-        .col-form-label {
-            font-weight: 600;
-            color: #444;
-        }
-
-        /* Button premium */
-        .btn-primary {
-            border-radius: 8px;
-            background: linear-gradient(45deg, #007bff, #00c6ff);
-            border: none;
-        }
-
-        .btn-primary:hover {
-            opacity: 0.9;
-        }
-
-        /* Input group prefix */
-        .input-group-text {
-            border-radius: 8px 0 0 8px;
-            background: #f8f9fa;
-            border: 1px solid #e0e0e0;
-            font-weight: 600;
-            color: #555;
-        }
-
-        .input-group .form-control {
-            border-radius: 0 8px 8px 0;
         }
     </style>
 @stop
@@ -494,6 +396,23 @@
         $(document).ready(function() {
             $(".alert").delay(6000).slideUp(300);
         });
+        // ==========================
+        // AUTO UPLOAD FOTO PROFIL
+        // ==========================
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const inputFoto = document.getElementById('inputFoto');
+            const formFoto = document.getElementById('formUploadFoto');
+
+            if (inputFoto) {
+                inputFoto.addEventListener('change', function() {
+                    if (this.files && this.files.length > 0) {
+                        formFoto.submit();
+                    }
+                });
+            }
+
+        });
     </script>
 
 
@@ -534,12 +453,6 @@
                     icon: 'warning',
                 };
 
-                // Custom tiap tombol
-                if (type === 'update-status') {
-                    config.title = 'Ubah Status Booking?';
-                    config.text = 'Status booking akan diperbarui!';
-                }
-
                 if (type === 'update-profile') {
                     config.title = 'Simpan Perubahan?';
                     config.text = 'Data profil akan diperbarui!';
@@ -551,7 +464,7 @@
                 }
 
                 if (type === 'update-password') {
-                    config.title = 'Ubah Password?';
+                    config.title = 'Ubah Kata Sandi?';
                     config.text = 'Password akan diganti!';
                 }
 

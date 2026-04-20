@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Tambah Grup Waktu')
+@section('title', 'Tambah Grup Slot')
 
 @section('content_header')
 
@@ -11,7 +11,7 @@
             <div class="col-sm-6">
                 <h1 class="m-0 font-weight-bold">
                     <i class="fas fa-clock text-primary mr-2"></i>
-                    Tambah Grup Waktu
+                    Tambah Grup Slot
                 </h1>
             </div>
 
@@ -24,9 +24,9 @@
                         </a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{ route('slot-group.index') }}">Grup Waktu</a>
+                        <a href="{{ route('slot-group.index') }}">Grup Slot</a>
                     </li>
-                    <li class="breadcrumb-item active">Tambah Grup Waktu</li>
+                    <li class="breadcrumb-item active">Tambah Grup Slot</li>
                 </ol>
             </div>
 
@@ -51,7 +51,7 @@
                         {{-- CARD UTAMA --}}
                         <div class="card card-light">
                             <div class="card-header">
-                                <h3 class="card-title">Tambah Grup Waktu</h3>
+                                <h3 class="card-title">Tambah Grup Slot</h3>
 
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -89,7 +89,7 @@
 
                                 {{-- NAME --}}
                                 <div class="form-group">
-                                    <label>Nama Grup Waktu</label>
+                                    <label>Nama Grup Slot</label>
 
                                     <input type="text" name="name"
                                         class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}"
@@ -249,7 +249,7 @@
                             {{-- DETAIL --}}
                             <div class="card card-primary">
                                 <div class="card-header">
-                                    <h3 class="card-title">Detail Grup Waktu</h3>
+                                    <h3 class="card-title">Detail Grup Slot</h3>
                                 </div>
 
                                 <div class="card-body pb-0">

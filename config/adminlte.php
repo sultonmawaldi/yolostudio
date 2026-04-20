@@ -300,9 +300,19 @@ return [
 
     'menu' => [
         // Navbar items:
+
+        [
+            'text' => '',
+            'icon' => 'fas fa-moon',
+            'topnav_right' => true,
+            'url' => '#',
+            'data' => [
+                'dark-mode-toggle' => 'true',
+            ],
+        ],
         [
             'type' => 'navbar-search',
-            'text' => 'search',
+            'text' => 'Cari',
             'topnav_right' => false,
         ],
         [
@@ -313,135 +323,134 @@ return [
         // Sidebar items:
         [
             'type' => 'sidebar-menu-search',
-            'text' => 'search',
+            'text' => 'Cari',
         ],
 
         [
             'text' => 'Dashboard',
-            'route' => 'home',
+            'route' => 'dashboard',
             'icon' => 'fas fa-fw fa-home',
-            'route' => 'dashboard'
         ],
         [
-            'text' => 'All Appointments',
+            'text' => 'Semua Janji Temu',
             'route' => 'appointments.index',
             'icon' => 'fas fa-calendar-check',
             'can'  => 'appointments.view',
         ],
         [
-            'text' => 'Transactions',
+            'text' => 'Transaksi',
             'icon' => 'fas fa-receipt',
-            //'can'  => 'transactions.view | transactions.create | transactions.edit | transactions.delete',
             'submenu' => [
                 [
-                    'text' => 'View All',
+                    'text' => 'Lihat Semua',
                     'icon' => 'fas fa-fw fa-eye',
                     'route' => 'transactions.index',
-                    //'can'   => 'transactions.view'
                 ],
             ],
         ],
 
         [
-            'text' => 'Photo Results',
+            'text' => 'Hasil Foto',
             'icon' => 'fas fa-camera-retro',
-            //'can'  => 'transactions.view | transactions.edit', // hapus/comment
             'submenu' => [
                 [
-                    'text' => 'Manage Results',
+                    'text' => 'Kelola Hasil',
                     'icon' => 'fas fa-images',
                     'route' => 'photo-results.index',
-                    //'can'  => 'transactions.view', // hapus/comment
                 ],
             ],
         ],
 
-
-
         [
-            'text' => 'Categories',
+            'text' => 'Kategori',
             'icon' => 'fas fa-fw fa-folder',
             'url'  => 'category*',
             'can'  => 'categories.view | categories.create | categories.edit | categories.delete',
             'submenu' => [
                 [
-                    'text' => 'Add New',
+                    'text' => 'Tambah Baru',
                     'icon' => 'fas fa-fw fa-plus',
                     'route' => 'category.create',
                     'can'   => 'categories.create'
                 ],
                 [
-                    'text' => 'View All',
+                    'text' => 'Lihat Semua',
                     'icon' => 'fas fa-fw fa-eye',
                     'route' => 'category.index',
                     'can'   => 'categories.view'
                 ],
-
             ],
         ],
+
+
         [
-            'text'    => 'Users',
+            'text'    => 'Pengguna',
             'url'  => 'user*',
             'icon'    => 'fas fa-fw fa-users',
             'can'  => 'users.view | users.create | users.edit | users.delete',
             'submenu' => [
                 [
-                    'text' => 'Add New',
-                    'icon'    => 'fas fa-fw fa-plus',
-                    'route'  => 'user.create',
+                    'text' => 'Tambah Pengguna',
+                    'icon' => 'fas fa-fw fa-plus',
+                    'route' => 'user.create',
                     'can'  => 'users.create',
                 ],
                 [
-                    'text' => 'View All',
-                    'icon'    => 'fas fa-users',
+                    'text' => 'Semua Pengguna',
+                    'icon' => 'fas fa-users',
                     'route' => 'user.index',
                 ],
-
-
-
+                [
+                    'text' => 'Tempat Sampah',
+                    'icon' => 'fas fa-fw fa-trash',
+                    'route' => 'user.trash',
+                    'can'  => 'users.delete',
+                ],
             ],
         ],
+
         [
-            'text'    => 'Slot Groups',
+            'text'    => 'Grup Slot',
             'url'     => 'slot-group*',
             'icon'    => 'fas fa-fw fa-clock',
             'can'     => 'slot-groups.view | slot-groups.create | slot-groups.edit | slot-groups.delete',
             'active'  => ['slot-group.*'],
             'submenu' => [
                 [
-                    'text'  => 'Add New',
+                    'text'  => 'Tambah Baru',
                     'icon'  => 'fas fa-fw fa-plus',
                     'route' => 'slot-group.create',
                     'can'   => 'slot-groups.create',
                 ],
                 [
-                    'text'  => 'View All',
+                    'text'  => 'Lihat Semua',
                     'icon'  => 'fas fa-fw fa-eye',
                     'route' => 'slot-group.index',
                     'can'   => 'slot-groups.view',
                 ],
             ],
         ],
+
         [
-            'text'  => 'Services',
+            'text'  => 'Layanan',
             'icon'  => 'fas fa-fw fa-briefcase',
             'can'   => 'services.view | services.create | services.edit | services.delete',
-            'active' => ['service.*'], // ✅ PENTING
+            'active' => ['service.*'],
             'submenu' => [
                 [
-                    'text'  => 'Create Service',
+                    'text'  => 'Tambah Layanan',
                     'icon'  => 'fas fa-fw fa-plus',
                     'route' => 'service.create',
                     'can'   => 'services.create',
                 ],
                 [
-                    'text'  => 'View All',
+                    'text'  => 'Lihat Semua',
                     'icon'  => 'fas fa-fw fa-eye',
                     'route' => 'service.index',
                     'can'   => 'services.view',
                 ],
                 [
-                    'text'  => 'View Trash',
+                    'text'  => 'Tempat Sampah',
                     'icon'  => 'fas fa-fw fa-trash',
                     'route' => 'service.trash',
                     'can'   => 'services.view',
@@ -449,21 +458,20 @@ return [
             ],
         ],
 
-
         [
-            'text' => 'Addons',
+            'text' => 'Layanan Tambahan',
             'icon' => 'fas fa-puzzle-piece',
-            'can'  => 'addons.view | addons.create | addons.edit | addons.delete', // sama seperti services
-            'active' => ['addons.*'], // optional, tapi direkomendasikan
+            'can'  => 'addons.view | addons.create | addons.edit | addons.delete',
+            'active' => ['addons.*'],
             'submenu' => [
                 [
-                    'text' => 'Add New Addon',
+                    'text' => 'Tambah Layanan Tambahan',
                     'icon' => 'fas fa-plus',
                     'route' => 'addons.create',
                     'can'  => 'addons.create',
                 ],
                 [
-                    'text' => 'View All Addons',
+                    'text' => 'Lihat Semua',
                     'icon' => 'fas fa-eye',
                     'route' => 'addons.index',
                     'can'  => 'addons.view',
@@ -472,19 +480,19 @@ return [
         ],
 
         [
-            'text' => 'Coupons',
+            'text' => 'Kupon',
             'icon' => 'fas fa-ticket-alt',
-            'can'  => 'coupons.view | coupons.create | coupons.edit | coupons.delete', // sama seperti services/addons
-            'active' => ['coupons.*'], // optional, tapi direkomendasikan
+            'can'  => 'coupons.view | coupons.create | coupons.edit | coupons.delete',
+            'active' => ['coupons.*'],
             'submenu' => [
                 [
-                    'text' => 'Add New Coupon',
+                    'text' => 'Tambah Kupon',
                     'icon' => 'fas fa-plus',
                     'route' => 'coupons.create',
                     'can'  => 'coupons.create',
                 ],
                 [
-                    'text' => 'View All Coupons',
+                    'text' => 'Lihat Semua',
                     'icon' => 'fas fa-eye',
                     'route' => 'coupons.index',
                     'can'  => 'coupons.view',
@@ -493,19 +501,19 @@ return [
         ],
 
         [
-            'text' => 'Service Background',
+            'text' => 'Latar Layanan',
             'icon' => 'fas fa-palette',
-            'can'  => 'service-backgrounds.view | service-backgrounds.create | service-backgrounds.edit | service-backgrounds.delete', // sama seperti services/addons/coupons
-            'active' => ['service-backgrounds.*'], // optional, tapi direkomendasikan
+            'can'  => 'service-backgrounds.view | service-backgrounds.create | service-backgrounds.edit | service-backgrounds.delete',
+            'active' => ['service-backgrounds.*'],
             'submenu' => [
                 [
-                    'text' => 'Add New Background',
+                    'text' => 'Tambah Latar',
                     'icon' => 'fas fa-plus',
                     'route' => 'service-backgrounds.create',
                     'can'  => 'service-backgrounds.create',
                 ],
                 [
-                    'text' => 'View All Backgrounds',
+                    'text' => 'Lihat Semua',
                     'icon' => 'fas fa-eye',
                     'route' => 'service-backgrounds.index',
                     'can'  => 'service-backgrounds.view',
@@ -514,19 +522,19 @@ return [
         ],
 
         [
-            'text' => 'Gallery',
+            'text' => 'Galeri',
             'icon' => 'fas fa-images',
-            'can'  => 'gallery.view | gallery.create | gallery.edit | gallery.delete', // sama seperti services/addons/coupons
-            'active' => ['gallery.*'], // optional, tapi direkomendasikan
+            'can'  => 'gallery.view | gallery.create | gallery.edit | gallery.delete',
+            'active' => ['gallery.*'],
             'submenu' => [
                 [
-                    'text' => 'Add New Gallery',
+                    'text' => 'Tambah Galeri',
                     'icon' => 'fas fa-plus',
                     'route' => 'gallery.create',
                     'can'  => 'gallery.create',
                 ],
                 [
-                    'text' => 'View All Gallery',
+                    'text' => 'Lihat Semua',
                     'icon' => 'fas fa-eye',
                     'route' => 'gallery.index',
                     'can'  => 'gallery.view',
@@ -535,19 +543,19 @@ return [
         ],
 
         [
-            'text'   => 'Studios',
+            'text'   => 'Studio',
             'icon'   => 'fas fa-camera',
-            'can'    => 'studio.view | studio.create | studio.edit | studio.delete', // konsisten seperti menu lainnya
+            'can'    => 'studio.view | studio.create | studio.edit | studio.delete',
             'active' => ['studio.*'],
             'submenu' => [
                 [
-                    'text'  => 'Add New Studio',
+                    'text'  => 'Tambah Studio',
                     'icon'  => 'fas fa-plus',
                     'route' => 'studio.create',
                     'can'   => 'studio.create',
                 ],
                 [
-                    'text'  => 'View All Studios',
+                    'text'  => 'Lihat Semua',
                     'icon'  => 'fas fa-eye',
                     'route' => 'studio.index',
                     'can'   => 'studio.view',
@@ -555,20 +563,17 @@ return [
             ],
         ],
 
-
         [
-            'text' => 'profile',
+            'text' => 'Profil',
             'route' => 'profile',
             'icon' => 'fas fa-fw fa-user',
-
         ],
         [
-            'text' => 'Settings',
+            'text' => 'Pengaturan',
             'route'  => 'setting',
             'icon' => 'fas fa-fw fa-cog',
             'can'  => 'setting update',
         ],
-
     ],
 
     /*

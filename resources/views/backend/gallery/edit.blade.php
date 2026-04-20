@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Edit Gallery')
+@section('title', 'Edit Galeri')
 
 @section('content_header')
     <div class="container-fluid">
@@ -10,7 +10,7 @@
             <div class="col-sm-6">
                 <h1 class="m-0 font-weight-bold">
                     <i class="fas fa-images text-primary mr-2"></i>
-                    Edit Gallery
+                    Edit Galeri
                 </h1>
             </div>
 
@@ -23,9 +23,9 @@
                         </a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{ route('gallery.index') }}">Gallery</a>
+                        <a href="{{ route('gallery.index') }}">Galeri</a>
                     </li>
-                    <li class="breadcrumb-item active">Edit Gallery</li>
+                    <li class="breadcrumb-item active">Edit Galeri</li>
                 </ol>
             </div>
 
@@ -49,7 +49,7 @@
                     <div class="card card-light">
 
                         <div class="card-header">
-                            <h3 class="card-title">Informasi Gallery</h3>
+                            <h3 class="card-title">Informasi Galeri</h3>
 
                             <div class="card-tools">
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -66,7 +66,7 @@
 
                                 <input type="text" name="title"
                                     class="form-control @error('title') is-invalid @enderror"
-                                    value="{{ old('title', $gallery->title) }}" placeholder="Masukkan judul gallery">
+                                    value="{{ old('title', $gallery->title) }}" placeholder="Masukkan judul galeri">
 
                                 @error('title')
                                     <small class="text-danger">{{ $message }}</small>
@@ -168,7 +168,7 @@
                         <div class="card card-primary">
 
                             <div class="card-header">
-                                <h3 class="card-title">Detail Gallery</h3>
+                                <h3 class="card-title">Detail Galeri</h3>
 
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">

@@ -68,7 +68,7 @@
                         @csrf
 
                         {{-- TAB NAV --}}
-                        <div class="card-header bg-white">
+                        <div class="card-header">
                             <ul class="nav nav-pills">
                                 <li class="nav-item"><a class="nav-link active" href="#business"
                                         data-bs-toggle="tab">Informasi
@@ -277,78 +277,6 @@
 @stop
 
 @push('css')
-    <style>
-        /* Card lebih clean & premium */
-        .card {
-            border-radius: 12px;
-            transition: all 0.2s ease-in-out;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-        }
-
-        /* Nav pills modern */
-        .nav-pills .nav-link {
-            border-radius: 8px;
-            font-weight: 500;
-            color: #555;
-        }
-
-        .nav-pills .nav-link.active {
-            background: linear-gradient(45deg, #007bff, #00c6ff);
-            color: #fff;
-            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
-        }
-
-        /* Input lebih halus */
-        .form-control {
-            border-radius: 8px;
-            box-shadow: none !important;
-            border: 1px solid #e0e0e0;
-            transition: 0.2s;
-        }
-
-        .form-control:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1) !important;
-        }
-
-        /* Label lebih rapi */
-        .col-form-label {
-            font-weight: 600;
-            color: #444;
-        }
-
-        /* Button premium */
-        .btn-primary {
-            border-radius: 8px;
-            background: linear-gradient(45deg, #007bff, #00c6ff);
-            border: none;
-        }
-
-        .btn-primary:hover {
-            opacity: 0.9;
-        }
-
-        /* Input group prefix */
-        .input-group-text {
-            border-radius: 8px 0 0 8px;
-            background: #f8f9fa;
-            border: 1px solid #e0e0e0;
-            font-weight: 600;
-            color: #555;
-        }
-
-        .input-group .form-control {
-            border-radius: 0 8px 8px 0;
-        }
-
-        .input-group-text img {
-            border-radius: 2px;
-        }
-    </style>
 @endpush
 
 @section('js')

@@ -745,9 +745,9 @@
                 </select>
             </div>
             <div class="col-md-4 mb-3">
-                <label>Grup Waktu</label>
+                <label>Grup Slot</label>
                 <select name="slot_group_id[${service.id}]" class="form-control">
-                    <option value="">Pilih Grup Waktu</option>
+                    <option value="">Pilih Grup Slot</option>
                     ${slotGroups.map(sg => `<option value="${sg.id}" ${sg.id == slotGroupValue ? 'selected' : ''}>${sg.name ?? 'Slot Group #' + sg.id}</option>`).join('')}
                 </select>
             </div>

@@ -61,7 +61,7 @@ class ServiceBackgroundController extends Controller
 
         return redirect()
             ->route('service-backgrounds.index')
-            ->with('success', 'Service background berhasil ditambahkan.');
+            ->with('success', 'Latar layanan berhasil ditambahkan.');
     }
 
     /**
@@ -100,7 +100,7 @@ class ServiceBackgroundController extends Controller
 
         return redirect()
             ->route('service-backgrounds.index')
-            ->with('success', 'Service background berhasil diperbarui.');
+            ->with('success', 'Latar layanan berhasil diperbarui.');
     }
 
     /**
@@ -112,7 +112,7 @@ class ServiceBackgroundController extends Controller
 
         return redirect()
             ->route('service-backgrounds.index')
-            ->with('success', 'Service background berhasil dihapus.');
+            ->with('success', 'Latar layanan berhasil dihapus.');
     }
 
     public function getByService(Service $service)

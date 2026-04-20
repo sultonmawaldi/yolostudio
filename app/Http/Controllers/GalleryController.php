@@ -75,7 +75,7 @@ class GalleryController extends Controller
 
         return redirect()
             ->route('gallery.index')
-            ->with('success', 'Gallery berhasil ditambahkan.');
+            ->with('success', 'Galeri berhasil ditambahkan.');
     }
 
     public function edit(Gallery $gallery)

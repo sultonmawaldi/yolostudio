@@ -204,7 +204,7 @@
                                     Batal
                                 </a>
 
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-danger">
                                     <i class="fas fa-save mr-1"></i> Perbarui
                                 </button>
 

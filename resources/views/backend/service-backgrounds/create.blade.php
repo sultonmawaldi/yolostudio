@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Tambah Service Background')
+@section('title', 'Tambah Latar Layanan')
 
 @section('content_header')
     <div class="container-fluid">
@@ -9,7 +9,7 @@
             {{-- Judul --}}
             <div class="col-sm-6">
                 <h1 class="m-0 font-weight-bold">
-                    <i class="fas fa-plus-circle text-primary me-2"></i> Tambah Service Background
+                    <i class="fas fa-plus-circle text-primary me-2"></i> Tambah Latar Layanan
                 </h1>
             </div>
 
@@ -22,9 +22,9 @@
                         </a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{ route('service-backgrounds.index') }}">Service Background</a>
+                        <a href="{{ route('service-backgrounds.index') }}">Latar Layanan</a>
                     </li>
-                    <li class="breadcrumb-item active">Tambah Service Background</li>
+                    <li class="breadcrumb-item active">Tambah Latar Layanan</li>
                 </ol>
             </div>
 
@@ -43,7 +43,7 @@
 
                     <div class="card card-light">
                         <div class="card-header">
-                            <h3 class="card-title">Informasi Service Background</h3>
+                            <h3 class="card-title">Informasi Latar Layanan</h3>
                             <div class="card-tools">
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                     <i class="fas fa-minus"></i>
@@ -78,10 +78,10 @@
 
                             {{-- NAME --}}
                             <div class="form-group">
-                                <label>Nama Background</label>
+                                <label>Nama Latar</label>
                                 <input type="text" name="name"
                                     class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}"
-                                    placeholder="Masukkan nama background">
+                                    placeholder="Masukkan nama latar">
 
                                 @error('name')
                                     <small class="text-danger">{{ $message }}</small>
@@ -90,7 +90,7 @@
 
                             {{-- VALUE --}}
                             <div class="form-group">
-                                <label>Background Value (Color)</label>
+                                <label>Warna Latar (Kode Warna)</label>
                                 <input type="color" name="value" id="bgValue"
                                     class="form-control form-control-color @error('value') is-invalid @enderror"
                                     value="{{ old('value', '#ffffff') }}">
@@ -119,7 +119,7 @@
 
                         <div class="card card-primary">
                             <div class="card-header">
-                                <h3 class="card-title">Detail Service Background</h3>
+                                <h3 class="card-title">Detail Latar Layanan</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                         <i class="fas fa-minus"></i>

@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Edit Grup Waktu')
+@section('title', 'Edit Grup Slot')
 
 @section('content_header')
 
@@ -11,7 +11,7 @@
             <div class="col-sm-6">
                 <h1 class="m-0 font-weight-bold">
                     <i class="fas fa-edit text-primary mr-2"></i>
-                    Edit Grup Waktu
+                    Edit Grup Slot
                 </h1>
             </div>
 
@@ -24,9 +24,9 @@
                         </a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{ route('slot-group.index') }}">Grup Waktu</a>
+                        <a href="{{ route('slot-group.index') }}">Grup Slot</a>
                     </li>
-                    <li class="breadcrumb-item active">Edit Grup Waktu</li>
+                    <li class="breadcrumb-item active">Edit Grup Slot</li>
                 </ol>
             </div>
 
@@ -53,7 +53,7 @@
                         <div class="card card-light">
 
                             <div class="card-header">
-                                <h3 class="card-title">Edit Grup Waktu</h3>
+                                <h3 class="card-title">Edit Grup Slot</h3>
 
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -93,7 +93,7 @@
 
                                 {{-- NAME --}}
                                 <div class="form-group">
-                                    <label>Nama Grup Waktu</label>
+                                    <label>Nama Grup Slot</label>
 
                                     <input type="text" name="name"
                                         class="form-control @error('name') is-invalid @enderror"
@@ -282,7 +282,7 @@
                             <div class="card card-primary">
 
                                 <div class="card-header">
-                                    <h3 class="card-title">Detail Grup Waktu</h3>
+                                    <h3 class="card-title">Detail Grup Slot</h3>
 
                                     <div class="card-tools">
                                         <button type="button" class="btn btn-tool" data-card-widget="collapse">

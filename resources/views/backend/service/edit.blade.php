@@ -104,7 +104,7 @@
 
                         <div class="card-header">
                             <h3 class="card-title">Harga</h3>
-                            <small class="text-muted pl-2">Tanpa tanda mata uang dan tanpa spasi</small>
+                            <small>&nbsp;&nbsp;Tanpa tanda mata uang dan tanpa spasi</small>
 
                             <div class="card-tools">
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -518,8 +518,8 @@
         }
 
         /* =========================
-                               FIX PANAH TANPA UBAH POSISI
-                            ========================== */
+                                   FIX PANAH TANPA UBAH POSISI
+                                ========================== */
 
         .select2-container--default .select2-selection--single .select2-selection__arrow b {
             margin: 0 !important;

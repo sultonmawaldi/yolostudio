@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Tambah Addon')
+@section('title', 'Tambah Layanan Tambahan')
 
 @section('content_header')
     <div class="container-fluid">
@@ -9,7 +9,7 @@
             <div class="col-sm-6">
                 <h1 class="m-0 font-weight-bold">
                     <i class="fas fa-puzzle-piece text-primary mr-2"></i>
-                    Tambah Addon
+                    Tambah Layanan Tambahan
                 </h1>
             </div>
             {{-- Breadcrumb --}}
@@ -17,13 +17,13 @@
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item">
                         <a href="{{ route('dashboard') }}">
-                            <i class="fas fa-home"></i> Beranda
+                            <i class="fas fa-home"></i> Dashboard
                         </a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{ route('addons.index') }}">Addon</a>
+                        <a href="{{ route('addons.index') }}">Layanan Tambahan</a>
                     </li>
-                    <li class="breadcrumb-item active">Tambah Addon</li>
+                    <li class="breadcrumb-item active">Tambah Layanan Tambahan</li>
                 </ol>
             </div>
         </div>
@@ -39,7 +39,7 @@
                 <div class="col-md-8">
                     <div class="card card-light">
                         <div class="card-header">
-                            <h3 class="card-title">Informasi Addon</h3>
+                            <h3 class="card-title">Informasi Layanan Tambahan</h3>
                             <div class="card-tools">
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Tutup">
                                     <i class="fas fa-minus"></i>
@@ -48,7 +48,7 @@
                         </div>
                         <div class="card-body">
                             <div class="form-group">
-                                <label for="code">Kode Addon</label>
+                                <label for="code">Kode Layanan Tambahan</label>
                                 <input type="text" name="code" id="code"
                                     class="form-control @error('code') is-invalid @enderror"
                                     placeholder="Masukkan kode addon" value="{{ old('code') }}">
@@ -58,7 +58,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="name">Nama Addon</label>
+                                <label for="name">Nama Layanan Tambahan</label>
                                 <input type="text" name="name" id="name"
                                     class="form-control @error('name') is-invalid @enderror"
                                     placeholder="Masukkan nama addon" value="{{ old('name') }}">
@@ -124,7 +124,7 @@
                                     value="{{ old('sort_order', 0) }}">
 
                                 <small class="text-muted">
-                                    Urutan tampil addon (semakin kecil tampil lebih dulu)
+                                    Urutan tampil layanan tambahan (semakin kecil tampil lebih dulu)
                                 </small>
 
                                 @error('sort_order')
@@ -145,7 +145,7 @@
                                 </select>
 
                                 <small class="text-muted">
-                                    Addon ini tersedia untuk layanan yang dipilih
+                                    Layanan tambahan ini tersedia untuk layanan yang dipilih
                                 </small>
 
                             </div>
@@ -159,7 +159,7 @@
                         {{-- Detail Addon --}}
                         <div class="card card-primary sticky-bottom">
                             <div class="card-header">
-                                <h3 class="card-title">Detail Addon</h3>
+                                <h3 class="card-title">Detail Layanan Tambahan</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Tutup">
                                         <i class="fas fa-minus"></i>

@@ -57,7 +57,7 @@ class AddonController extends Controller
 
         return redirect()
             ->route('addons.index')
-            ->with('success', 'Addon berhasil ditambahkan');
+            ->with('success', 'Layanan tambahan berhasil ditambahkan');
     }
 
     public function edit(Addon $addon)
@@ -97,7 +97,7 @@ class AddonController extends Controller
 
         return redirect()
             ->route('addons.index')
-            ->with('success', 'Addon berhasil diperbarui');
+            ->with('success', 'Layanan tambahan berhasil diperbarui');
     }
 
     public function destroy(Addon $addon)
@@ -106,6 +106,6 @@ class AddonController extends Controller
 
         return redirect()
             ->route('addons.index')
-            ->with('success', 'Addon berhasil dihapus');
+            ->with('success', 'Layanan tambahan berhasil dihapus');
     }
 }

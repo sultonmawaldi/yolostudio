@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Gallery')
+@section('title', 'Galeri')
 
 @section('content')
     <section
@@ -37,12 +37,12 @@
         tracking-tight sm:tracking-widest
         title-glow scroll-fade"
                         style="font-size: clamp(1.3rem, 4.8vw, 3.2rem);">
-                        ✦ Gallery Yolo Studio ✦
+                        ✦ Galeri Yolo Studio ✦
                     </h2>
 
                     <p
                         class="mt-3 text-center text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed scroll-fade">
-                        Abadikan momen terbaikmu di Gallery YOLO Studio sekarang!
+                        Abadikan momen terbaikmu di Galeri YOLO Studio sekarang!
                     </p>
 
                     <div
@@ -169,7 +169,7 @@
                     </div>
                 @else
                     <p class="text-center text-gray-500 dark:text-gray-400 mt-8">
-                        Gallery masih kosong.
+                        Galeri masih kosong.
                     </p>
                 @endif
             </div>

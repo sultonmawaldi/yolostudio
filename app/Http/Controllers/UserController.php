@@ -649,7 +649,7 @@ class UserController extends Controller
     {
         // 1. VALIDASI AMAN (hanya jika file dikirim)
         $request->validate([
-            'image' => 'nullable|image|mimes:png,jpg,jpeg,webp|max:2048',
+            'image' => 'nullable|image|mimes:png,jpg,jpeg,webp',
         ]);
 
         // 2. CEK apakah ada file upload

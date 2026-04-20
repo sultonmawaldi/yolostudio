@@ -49,7 +49,7 @@
                             <div class="detail-row"><span>Karyawan</span><strong id="modalEmployee">-</strong></div>
                             <div class="detail-row"><span>Layanan</span><strong id="modalService">-</strong></div>
                             <div class="detail-row" id="backgroundRow" style="display:none;">
-                                <span>Background</span><strong id="modalBackground">-</strong>
+                                <span>Latar Belakang</span><strong id="modalBackground">-</strong>
                             </div>
                             <div class="detail-row"><span>Jumlah Orang</span><strong id="modalPeopleCount">-</strong></div>
                             <div class="detail-row"><span>Tanggal</span><strong id="modalDate">-</strong></div>
@@ -341,8 +341,8 @@
 
                         <div class="card-body p-0">
                             <div class="table-responsive table-scroll">
-                                <table id="myTable" class="table">
-                                    <thead class="bg-light">
+                                <table id="myTable" class="table table-dark-mode">
+                                    <thead>
                                         <tr>
                                             <th>#</th>
                                             <th>Pengguna</th>
@@ -395,7 +395,7 @@
                                                 data-employee-id="{{ $appointment->employee_id }}">
                                                 <td data-label="#"> {{ $loop->iteration }} </td>
                                                 <td data-label="Pengguna">
-                                                    <div class="font-weight-semibold text-dark">{{ $appointment->name }}
+                                                    <div class="font-weight-semibold">{{ $appointment->name }}
                                                     </div>
                                                 </td>
                                                 <td data-label="Layanan">{{ $appointment->service->title ?? 'N/A' }}</td>
@@ -681,7 +681,7 @@
 
         /* Tombol aktif */
         .date-filter-btn.active {
-            background: linear-gradient(90deg, #6abfe3, #7873f5);
+            background: linear-gradient(135deg, #3b82f6, #06b6d4);
             color: #fff;
             border-color: #6abfe3;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
@@ -768,8 +768,8 @@
 
 
         /* ===============================
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           DETAIL MODAL FINAL CLEAN
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ================================= */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           DETAIL MODAL FINAL CLEAN
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ================================= */
 
         .detail-section {
             background: #f8fafc;
@@ -833,6 +833,11 @@
             padding: 16px 18px;
             border-top: 2px solid #e5e7eb;
             border-radius: 10px;
+        }
+
+
+        #remainingRow {
+            border-bottom: 1px dashed #e5e7eb !important;
         }
 
         /* Label Total */
@@ -1295,6 +1300,433 @@
             filter: invert(1) grayscale(100%) !important;
             opacity: 1 !important;
         }
+
+        /* ===============================
+                                                                                                                                                                                                                                                                       🌙 DARK MODE FULL OVERRIDE
+                                                                                                                                                                                                                                                                    ================================= */
+
+
+        /* ===== FILTER INPUT ===== */
+        body.dark-mode #filterDate,
+        body.dark-mode #filterEmployee,
+        body.dark-mode #filterService,
+        body.dark-mode #dateRangePicker,
+        body.dark-mode .filter-select {
+            background: #0f172a !important;
+            border: 1px solid #334155 !important;
+            color: #e5e7eb !important;
+        }
+
+        body.dark-mode #filterDate:focus,
+        body.dark-mode #filterEmployee:focus,
+        body.dark-mode #filterService:focus,
+        body.dark-mode #dateRangePicker:focus {
+            background: #0f172a !important;
+            border-color: #3b82f6 !important;
+            box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25) !important;
+        }
+
+        /* ===== PAGE TITLE ===== */
+        body.dark-mode .page-title {
+            color: #e5e7eb !important;
+        }
+
+        body.dark-mode .date-title {
+            color: #e5e7eb !important;
+        }
+
+        /* ===== CARD ===== */
+        body.dark-mode .card {
+            background: #1e293b !important;
+            color: #e5e7eb !important;
+        }
+
+        /* ===== TABLE ===== */
+        body.dark-mode #myTable {
+            color: #e5e7eb !important;
+            background: #0f172a;
+        }
+
+        body.dark-mode #myTable thead {
+            background: linear-gradient(90deg, #1e293b, #0f172a) !important;
+        }
+
+        body.dark-mode #myTable thead th {
+            color: #e5e7eb !important;
+            border-color: #1f2937 !important;
+        }
+
+        body.dark-mode #myTable tbody tr {
+            background: #0f172a;
+            color: #e5e7eb;
+        }
+
+        body.dark-mode #myTable tbody tr:hover {
+            background: rgba(59, 130, 246, 0.08) !important;
+        }
+
+        /* ===== MODAL ===== */
+        body.dark-mode .modal-content {
+            background: #1e293b !important;
+            color: #e5e7eb !important;
+        }
+
+        body.dark-mode .modal-body {
+            background: #0f172a !important;
+            color: #e5e7eb !important;
+        }
+
+        body.dark-mode .modal-footer {
+            background: #1e293b !important;
+        }
+
+        body.dark-mode .modal-header {
+            background: linear-gradient(135deg, #1e293b, #0f172a) !important;
+        }
+
+        /* CLOSE BUTTON FIX */
+        body.dark-mode .modal-header .btn-close {
+            filter: invert(1) !important;
+        }
+
+        /* ===== NOTES & DETAIL BOX ===== */
+        body.dark-mode .notes-box,
+        body.dark-mode .detail-section,
+        body.dark-mode .status-section {
+            background: #1e293b !important;
+            border: 1px solid #334155 !important;
+            color: #e5e7eb !important;
+        }
+
+        /* LABEL TEXT */
+        body.dark-mode .section-title,
+        body.dark-mode .filter-label,
+        body.dark-mode .change-status-label,
+        body.dark-mode .small.fw-semibold {
+            color: #e5e7eb !important;
+        }
+
+        /* DETAIL ROW */
+        body.dark-mode .detail-row strong {
+            color: #e5e7eb !important;
+        }
+
+        body.dark-mode .detail-row>span:first-child {
+            color: #cbd5e1 !important;
+        }
+
+        /* ===== STATUS BOX ===== */
+        body.dark-mode .current-status-box {
+            background: #0f172a !important;
+            border: 1px dashed #334155 !important;
+            color: #e5e7eb !important;
+        }
+
+        /* SELECT STATUS */
+        body.dark-mode #modalStatusSelect {
+            background: #0f172a !important;
+            color: #e5e7eb !important;
+            border: 1px solid #334155 !important;
+        }
+
+        /* ===== BUTTON ===== */
+        body.dark-mode .btn-gradient-success {
+            box-shadow: 0 3px 10px rgba(59, 130, 246, 0.3);
+        }
+
+        /* ===== TIME SLOT ===== */
+        body.dark-mode #reschedule-time-slots .time-slot {
+            background: #0f172a;
+            border: 1px solid #334155;
+            color: #e5e7eb;
+        }
+
+        body.dark-mode #reschedule-time-slots .time-slot:hover {
+            background: #1e293b;
+        }
+
+        /* selected slot */
+        body.dark-mode #reschedule-time-slots .time-slot.selected {
+            background: #3b82f6 !important;
+            color: #fff !important;
+        }
+
+        /* ===== TABLE CALENDAR ===== */
+        body.dark-mode .table-calendar td {
+            background: #0f172a;
+            color: #e5e7eb;
+            border-color: #1f2937;
+        }
+
+        body.dark-mode .table-calendar td.disabled {
+            color: #64748b;
+        }
+
+        /* ===== BADGE STATUS ===== */
+        body.dark-mode .status-badge {
+            filter: brightness(0.9);
+        }
+
+        /* ===== DIVIDER ===== */
+        body.dark-mode .divider-status {
+            background: #334155;
+        }
+
+        /* ===== MODERN CARD ===== */
+        body.dark-mode .modern-card {
+            background: #1e293b;
+        }
+
+        /* ===== TEXT GENERAL ===== */
+        body.dark-mode .filter-label,
+        body.dark-mode .section-label {
+            color: #e5e7eb !important;
+        }
+
+        /* ===============================
+                                                                                                                                                                                                                                   💀 NUCLEAR DARK MODE TABLE FIX
+                                                                                                                                                                                                                                ================================= */
+
+        body.dark-mode table,
+        body.dark-mode .table,
+        body.dark-mode table.table,
+        body.dark-mode table.dataTable {
+            background-color: transparent !important;
+            color: #e5e7eb !important;
+        }
+
+        /* HEADER */
+        body.dark-mode table thead th {
+            background: #1e293b !important;
+            color: #f8fafc !important;
+            border-color: #334155 !important;
+        }
+
+        /* FORCE SEMUA ROW (INI YANG KAMU KURANG) */
+        body.dark-mode table tbody tr,
+        body.dark-mode table tbody tr.odd,
+        body.dark-mode table tbody tr.even {
+            background-color: #0f172a !important;
+            color: #f8fafc !important;
+        }
+
+        /* CELL FULL FORCE */
+        body.dark-mode table tbody td {
+            background-color: transparent !important;
+            color: #f8fafc !important;
+            border-color: #1f2937 !important;
+            opacity: 1 !important;
+        }
+
+        /* HAPUS STRIPE PUTIH DATA TABLES */
+        body.dark-mode table.dataTable.stripe tbody tr.odd,
+        body.dark-mode table.dataTable.display tbody tr.odd,
+        body.dark-mode table.dataTable.hover tbody tr:hover {
+            background-color: transparent !important;
+        }
+
+        /* HOVER */
+        body.dark-mode table tbody tr:hover {
+            background-color: rgba(59, 130, 246, 0.10) !important;
+        }
+
+        /* HAPUS TEXT MUTED / DARK BOOTSTRAP */
+        body.dark-mode .text-dark,
+        body.dark-mode .text-muted {
+            color: #e5e7eb !important;
+        }
+
+        /* DATA TABLE WRAPPER (kadang ini masih putih) */
+        body.dark-mode .dataTables_wrapper {
+            background-color: transparent !important;
+            color: #e5e7eb !important;
+        }
+
+        /* PAGINATION FIX */
+        body.dark-mode .dataTables_paginate {
+            color: #e5e7eb !important;
+        }
+
+        body.dark-mode .paginate_button {
+            background: #0f172a !important;
+            color: #e5e7eb !important;
+            border: 1px solid #334155 !important;
+        }
+
+        body.dark-mode .paginate_button.current {
+            background: #3b82f6 !important;
+            color: #fff !important;
+        }
+
+        /* ===============================
+                                                                                                                                                                                                                           💀 DARK MODE MODAL FIX TOTAL (FULL UPGRADE)
+                                                                                                                                                                                                                        ================================= */
+
+        body.dark-mode .modal-content {
+            background: #0f172a !important;
+            color: #e5e7eb !important;
+            border: 1px solid #1f2937;
+        }
+
+        body.dark-mode .modal-header,
+        body.dark-mode .modal-footer {
+            background: #1e293b !important;
+            border-color: #334155 !important;
+        }
+
+        body.dark-mode .modal-body {
+            background: #0f172a !important;
+            color: #e5e7eb !important;
+        }
+
+        /* ================= TEXT ================= */
+        body.dark-mode .text-muted {
+            color: #94a3b8 !important;
+        }
+
+        body.dark-mode .text-secondary {
+            color: #94a3b8 !important;
+        }
+
+        /* ================= LIST GROUP (ADDON FIX UTAMA) ================= */
+        body.dark-mode .list-group-item {
+            background: #0f172a !important;
+            color: #e5e7eb !important;
+            border-color: #1f2937 !important;
+        }
+
+        body.dark-mode .list-group-flush .list-group-item {
+            border-bottom: 1px solid #1f2937 !important;
+        }
+
+        /* ================= SECTION (INI YANG KAMU KELUPA) ================= */
+        body.dark-mode #paymentSection,
+        body.dark-mode #remainingRow,
+        body.dark-mode #modalAddons,
+        body.dark-mode .detail-row {
+            background: #0f172a !important;
+            color: #e5e7eb !important;
+        }
+
+        /* ================= LABEL / STRONG ================= */
+        body.dark-mode .modal label,
+        body.dark-mode .modal strong {
+            color: #e5e7eb !important;
+        }
+
+        /* ================= EM / EMPTY TEXT ================= */
+        body.dark-mode em {
+            color: #94a3b8 !important;
+        }
+
+        /* ================= BADGE / STATUS ================= */
+        body.dark-mode .badge {
+            opacity: 0.9;
+        }
+
+        /* ================= DIVIDER FIX ================= */
+        body.dark-mode hr {
+            border-color: #1f2937 !important;
+        }
+
+        /* ================= TABLE (kalau ada di modal) ================= */
+        body.dark-mode .table {
+            color: #e5e7eb !important;
+        }
+
+        body.dark-mode .table td,
+        body.dark-mode .table th {
+            background: #0f172a !important;
+            border-color: #1f2937 !important;
+        }
+
+        /* ================= FLATPICKR PREMIUM ================= */
+        .flatpickr-calendar {
+            border-radius: 14px !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12) !important;
+            border: none !important;
+            font-family: inherit;
+        }
+
+        /* selected range background */
+        .flatpickr-day.selected,
+        .flatpickr-day.startRange,
+        .flatpickr-day.endRange {
+            background: #2563eb !important;
+            border-color: #2563eb !important;
+            color: #fff !important;
+        }
+
+        /* range tengah */
+        .flatpickr-day.inRange {
+            background: #dbeafe !important;
+            color: #1e3a8a !important;
+        }
+
+        /* hover */
+        .flatpickr-day:hover {
+            background: #eff6ff !important;
+        }
+
+        /* disabled */
+        .flatpickr-day.flatpickr-disabled {
+            color: #cbd5e1 !important;
+        }
+
+        /* DARK MODE */
+        body.dark-mode .flatpickr-calendar {
+            background: #0f172a !important;
+            color: #e5e7eb !important;
+        }
+
+        body.dark-mode .flatpickr-day {
+            color: #e5e7eb !important;
+        }
+
+        body.dark-mode .flatpickr-day.inRange {
+            background: #1e3a8a !important;
+            color: #fff !important;
+        }
+
+        /* DARK MODE CLEAN CARD */
+        body.dark-mode .detail-section {
+            background: transparent !important;
+        }
+
+        /* =========================
+                                       DARK MODE - COLOR ONLY FIX (NO LAYOUT CHANGE)
+                                    ========================= */
+
+        /* HEADER TABLE - SAMAKAN DENGAN TRANSACTION GLASS */
+        body.dark-mode #myTable thead,
+        body.dark-mode #myTable thead tr {
+            background: linear-gradient(90deg,
+                    rgba(59, 130, 246, 0.5),
+                    rgba(14, 165, 233, 0.4)) !important;
+        }
+
+        /* TH - hanya warna */
+        body.dark-mode #myTable thead th {
+            color: #f8fafc !important;
+            background: transparent !important;
+            border-color: rgba(148, 163, 184, 0.12) !important;
+        }
+
+        /* ROW - hanya warna */
+        body.dark-mode #myTable tbody tr {
+            color: #e5e7eb !important;
+        }
+
+        /* CELL - hanya warna */
+        body.dark-mode #myTable td {
+            color: #e5e7eb !important;
+            border-color: rgba(148, 163, 184, 0.12) !important;
+        }
+
+        /* HOVER - hanya warna */
+        body.dark-mode #myTable tbody tr:hover {
+            background: rgba(59, 130, 246, 0.08) !important;
+        }
     </style>
 @stop
 
@@ -1388,21 +1820,97 @@
             flatpickr("#dateRangePicker", {
                 mode: "range",
                 dateFormat: "Y-m-d",
+
                 locale: {
-                    firstDayOfWeek: 1
+                    firstDayOfWeek: 1,
+                    weekdays: {
+                        shorthand: ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"],
+                        longhand: ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"]
+                    },
+                    months: {
+                        shorthand: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt",
+                            "Nov", "Des"
+                        ],
+                        longhand: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli",
+                            "Agustus", "September", "Oktober", "November", "Desember"
+                        ]
+                    },
+                    rangeSeparator: " – "
                 },
-                onChange: function(selectedDates) {
+
+                onChange: function(selectedDates, dateStr, instance) {
+
+                    dateRange = selectedDates;
+
+                    // ================= RESET =================
+                    if (selectedDates.length === 0) {
+                        instance.input.value = "";
+                        dateFilterType = '';
+                        applyFilters();
+                        return;
+                    }
+
+                    // ================= SINGLE DATE =================
+                    if (selectedDates.length === 1) {
+
+                        const d = selectedDates[0];
+
+                        instance.input.value =
+                            `${formatSingleDate(d)} ${d.getFullYear()}`;
+
+                        return;
+                    }
+
+                    // ================= RANGE DATE =================
                     if (selectedDates.length === 2) {
-                        dateRange = selectedDates;
+
                         dateFilterType = 'range';
                         applyFilters();
+
+                        instance.input.value = formatRangeInput(selectedDates);
                     }
                 }
             });
 
-            $('#filterEmployee, #filterService').on('change', function() {
-                applyFilters();
-            });
+
+            function formatSingleDate(date) {
+
+                const months = [
+                    "Jan", "Feb", "Mar", "Apr", "Mei", "Jun",
+                    "Jul", "Agu", "Sep", "Okt", "Nov", "Des"
+                ];
+
+                return `${date.getDate()} ${months[date.getMonth()]}`;
+            }
+
+            function formatRangeInput(dates) {
+
+                const months = [
+                    "Jan", "Feb", "Mar", "Apr", "Mei", "Jun",
+                    "Jul", "Agu", "Sep", "Okt", "Nov", "Des"
+                ];
+
+                const d1 = dates[0];
+                const d2 = dates[1];
+
+                const sameMonth = d1.getMonth() === d2.getMonth();
+                const sameYear = d1.getFullYear() === d2.getFullYear();
+
+                // ================= SAME MONTH =================
+                if (sameMonth && sameYear) {
+                    return `${d1.getDate()}–${d2.getDate()} ${months[d1.getMonth()]} ${d1.getFullYear()}`;
+                }
+
+                // ================= DIFFERENT MONTH SAME YEAR =================
+                if (!sameMonth && sameYear) {
+                    return `${d1.getDate()} ${months[d1.getMonth()]} – ${d2.getDate()} ${months[d2.getMonth()]} ${d1.getFullYear()}`;
+                }
+
+                // ================= DIFFERENT YEAR =================
+                return `${d1.getDate()} ${months[d1.getMonth()]} ${d1.getFullYear()} – ${d2.getDate()} ${months[d2.getMonth()]} ${d2.getFullYear()}`;
+            }
+
+
 
             function applyFilters() {
                 $.fn.dataTable.ext.search = [];

@@ -85,7 +85,7 @@
                                 </div>
 
                                 <div class="mb-3" id="backgroundWrapper" style="display:none;">
-                                    <small class="text-muted d-block">Background Dipilih</small>
+                                    <small class="text-muted d-block">Latar Belakang Dipilih</small>
                                     <div id="modalBackground">-</div>
                                 </div>
 
@@ -612,8 +612,8 @@
         }
 
         /* ============================================
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       📱 MODERN MOBILE / iOS CALENDAR STYLE
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       ============================================ */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       📱 MODERN MOBILE / iOS CALENDAR STYLE
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       ============================================ */
 
         /* ---- GLOBAL CALENDAR CARD ---- */
         #calendar {
@@ -898,6 +898,297 @@
 
         .modal-footer .btn-outline-secondary {
             border-radius: 10px;
+        }
+
+
+        /* =========================
+                                                                                                                                                                                       🌙 GLOBAL DARK MODE
+                                                                                                                                                                                    ========================= */
+        body.dark-mode {
+            background: #0f172a;
+            color: #e5e7eb;
+        }
+
+        /* =========================
+                                                                                                                                                                                       CALENDAR CARD
+                                                                                                                                                                                    ========================= */
+        body.dark-mode #calendar {
+            background: #111827;
+            border: 1px solid #1f2937;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* =========================
+                                                                                                                                                                                       TOOLBAR
+                                                                                                                                                                                    ========================= */
+        body.dark-mode .fc-header-toolbar {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            color: #fff;
+        }
+
+        /* title */
+        body.dark-mode .fc-toolbar-title {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff !important;
+        }
+
+        /* button */
+        body.dark-mode .fc-button {
+            background: rgba(255, 255, 255, 0.08) !important;
+            color: #e5e7eb !important;
+        }
+
+        body.dark-mode .fc-button:hover {
+            background: rgba(255, 255, 255, 0.18) !important;
+        }
+
+        /* active */
+        body.dark-mode .fc-button-primary {
+            background: #ffffff !important;
+            color: #000 !important;
+        }
+
+        /* =========================
+                                                                                                                                                                                       GRID CALENDAR
+                                                                                                                                                                                    ========================= */
+        body.dark-mode .fc-daygrid-day {
+            background: #111827;
+            border-color: #1f2937 !important;
+        }
+
+        body.dark-mode .fc-daygrid-day:hover {
+            background: rgba(59, 130, 246, 0.15);
+        }
+
+        /* tanggal */
+        body.dark-mode .fc-daygrid-day-number {
+            color: #cbd5f5;
+        }
+
+        /* header hari */
+        body.dark-mode .fc-col-header {
+            background: #1f2937;
+        }
+
+        body.dark-mode .fc-col-header-cell-cushion {
+            color: #e5e7eb !important;
+        }
+
+        /* =========================
+                                                                                                                                                                                       TIME GRID
+                                                                                                                                                                                    ========================= */
+        body.dark-mode .fc-timegrid-slot {
+            border-color: #1f2937 !important;
+        }
+
+        body.dark-mode .fc-timegrid-axis {
+            color: #9ca3af;
+        }
+
+        /* =========================
+                                                                                                                                                                                       MODAL DARK
+                                                                                                                                                                                    ========================= */
+        body.dark-mode .modal-content {
+            background: #111827;
+            color: #e5e7eb;
+        }
+
+        body.dark-mode .modal-body {
+            background: #0f172a;
+            color: #d1d5db;
+        }
+
+        body.dark-mode .modal-header {
+            background: linear-gradient(135deg, #1e293b, #020617);
+        }
+
+        body.dark-mode .notes-box {
+            background: #1f2937;
+            border: 1px solid #374151;
+            color: #e5e7eb;
+        }
+
+        /* =========================
+                                                                                                                                                                                       SELECT & INPUT
+                                                                                                                                                                                    ========================= */
+        body.dark-mode #modalStatusSelect {
+            background-color: #1f2937;
+            border: 1px solid #374151;
+            color: #e5e7eb;
+        }
+
+        body.dark-mode #modalStatusSelect:hover {
+            background-color: #111827;
+        }
+
+        body.dark-mode #modalStatusSelect:focus {
+            border-color: #22c55e;
+        }
+
+        /* =========================
+                                                                                                                                                                                       TOOLTIP
+                                                                                                                                                                                    ========================= */
+        body.dark-mode .custom-tooltip {
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        /* =========================
+                                                                                                                                                                                       PAGE TITLE
+                                                                                                                                                                                    ========================= */
+        body.dark-mode .page-title {
+            color: #e5e7eb;
+        }
+
+        /* =========================
+                                                                                                                                                                       DARK MODE - JAM KIRI (TIMEGRID)
+                                                                                                                                                                    ========================= */
+        body.dark-mode .fc-timegrid-axis,
+        body.dark-mode .fc-timegrid-slot-label {
+            color: #000000 !important;
+            font-weight: 600;
+        }
+
+
+
+
+        /* =========================
+                                                                                                           FULL DARK MODE - LIST VIEW (FINAL SAFE VERSION)
+                                                                                                        ========================= */
+
+        /* =========================
+       🌙 FULLCALENDAR LIST DARK MODE FIX (SAFE)
+       ========================= */
+
+        /* HEADER */
+        body.dark-mode .fc-list-day {
+            background: #1f2937 !important;
+            border-left: 4px solid #374151 !important;
+        }
+
+        /* IMPORTANT: cover semua layer header tanpa ganggu layout */
+        body.dark-mode .fc-list-day td,
+        body.dark-mode .fc-list-day th {
+            background: #1f2937 !important;
+        }
+
+        /* teks hari + tanggal */
+        body.dark-mode .fc .fc-list-day-cushion {
+            background: transparent !important;
+            color: #f9fafb !important;
+        }
+
+        /* kalau ada link di header */
+        body.dark-mode .fc .fc-list-day-cushion a {
+            color: #f9fafb !important;
+            text-decoration: none !important;
+        }
+
+        /* =========================
+       EVENT CARD
+       ========================= */
+        body.dark-mode .fc-list-event {
+            background: #111827 !important;
+            border-radius: 14px !important;
+            margin-bottom: 10px !important;
+        }
+
+        /* =========================
+       CELL (NO LAYOUT CHANGE)
+       ========================= */
+        body.dark-mode .fc-list-event td {
+            background: transparent !important;
+            border: none !important;
+            padding: 0.9rem 1rem !important;
+            vertical-align: middle !important;
+        }
+
+        /* =========================
+       TIME (NO SIZE CHANGE)
+       ========================= */
+        body.dark-mode .fc-list-event-time {
+            color: #9ca3af !important;
+        }
+
+        /* =========================
+       TITLE (ONLY COLOR)
+       ========================= */
+        body.dark-mode .fc-list-event-title {
+            color: #f9fafb !important;
+        }
+
+        /* =========================
+       LINK (NO LAYOUT CHANGE)
+       ========================= */
+        body.dark-mode .fc-list-event a {
+            color: #f9fafb !important;
+            text-decoration: none !important;
+            font-family: 'Poppins', 'Inter', sans-serif;
+        }
+
+        /* =========================
+       DOT (KEEP POSITION)
+       ========================= */
+        body.dark-mode .fc-list-event-dot {
+            margin: 0 auto;
+        }
+
+        /* =========================
+       HOVER (COLOR ONLY, NO SHIFT)
+       ========================= */
+        body.dark-mode .fc-list-event:hover .fc-list-event-title {
+            color: #e0f2fe !important;
+        }
+
+        body.dark-mode .fc-list-event:hover .fc-list-event-time {
+            color: #60a5fa !important;
+        }
+
+        /* ===============================
+                                                                                                   🌙 DARK MODE NOTES & STATUS FIX
+                                                                                                ================================= */
+
+        body.dark-mode .section-label {
+            color: #e5e7eb !important;
+            /* putih soft */
+        }
+
+        body.dark-mode .notes-box {
+            background: #1e293b !important;
+            border: 1px solid #334155 !important;
+            color: #e5e7eb !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        /* status label */
+        body.dark-mode .status-label {
+            color: #e5e7eb !important;
+        }
+
+        /* dropdown select */
+        body.dark-mode #modalStatusSelect {
+            background-color: transparent !important;
+            border: 1px solid #334155 !important;
+            color: #e5e7eb !important;
+        }
+
+        /* option dropdown (biar gak hitam di hitam) */
+        body.dark-mode #modalStatusSelect option {
+            background: #0f172a;
+            color: #e5e7eb;
+        }
+
+        /* mobile tetap aman */
+        body.dark-mode .status-section {
+            color: #e5e7eb;
+        }
+
+        /* WRAPPER HARUS TRANSPARENT */
+        body.dark-mode .fc {
+            background: transparent !important;
+        }
+
+        body.dark-mode .fc-header-toolbar {
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.5), rgba(14, 165, 233, 0.4)) !important;
         }
     </style>
 @stop

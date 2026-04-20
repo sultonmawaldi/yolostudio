@@ -1,12 +1,12 @@
 @extends('adminlte::page')
 
-@section('title', 'Gallery')
+@section('title', 'Galeri')
 
 @section('content_header')
     <div class="page-title-wrapper text-center mb-4">
         <h1 class="page-title">
             <i class="fas fa-images me-2"></i>
-            Gallery
+            Galeri
         </h1>
         <div class="title-divider"></div>
     </div>
@@ -16,7 +16,7 @@
 
     <div class="mb-3 text-end">
         <a href="{{ route('gallery.create') }}" class="btn btn-gradient-primary shadow-sm">
-            <i class="fas fa-plus me-1"></i> Tambah Gallery
+            <i class="fas fa-plus me-1"></i> Tambah Galeri
         </a>
     </div>
     <div class="card border-0 shadow-lg rounded-4">
@@ -95,7 +95,7 @@
                     @empty
                         <tr>
                             <td colspan="8" class="text-center text-muted py-5">
-                                Belum ada data gallery.
+                                Belum ada data galeri.
                             </td>
                         </tr>
                     @endforelse
@@ -133,8 +133,8 @@
         }
 
         /* ================================
-                                                                                                                   TABLE HEADER GRADIENT (PROPER)
-                                                                                                                ================================ */
+                                                                                                                                       TABLE HEADER GRADIENT (PROPER)
+                                                                                                                                    ================================ */
         .table-header-gradient {
             background: linear-gradient(90deg, #007bff, #00b4d8) !important;
         }
@@ -329,14 +329,14 @@
                 dom: "<'row mb-3'<'col-12 d-flex justify-content-end pe-3'f>>rtip",
                 language: {
                     search: "",
-                    searchPlaceholder: "Cari gallery...",
+                    searchPlaceholder: "Cari galeri...",
                     paginate: {
                         next: "Berikutnya",
                         previous: "Sebelumnya"
                     },
-                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ gallery",
-                    infoEmpty: "Menampilkan 0 sampai 0 dari 0 gallery",
-                    zeroRecords: "Tidak ada gallery ditemukan"
+                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ galeri",
+                    infoEmpty: "Menampilkan 0 sampai 0 dari 0 galeri",
+                    zeroRecords: "Tidak ada galeri ditemukan"
                 }
             });
 
@@ -355,7 +355,7 @@
                 let form = this;
 
                 Swal.fire({
-                    title: 'Hapus Gallery?',
+                    title: 'Hapus Galeri?',
                     text: 'Data yang dihapus tidak dapat dikembalikan!',
                     icon: 'warning',
                     showCancelButton: true,

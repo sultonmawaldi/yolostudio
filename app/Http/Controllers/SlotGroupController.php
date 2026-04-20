@@ -53,7 +53,7 @@ class SlotGroupController extends Controller
         ]);
 
         return redirect()->route('slot-group.index')
-            ->with('success', 'Grup Waktu berhasil dibuat');
+            ->with('success', 'Grup Slot berhasil dibuat');
     }
 
     public function edit($id)
@@ -94,7 +94,7 @@ class SlotGroupController extends Controller
         ]);
 
         return redirect()->route('slot-group.index')
-            ->with('success', 'Grup Waktu berhasil diperbarui');
+            ->with('success', 'Grup Slot berhasil diperbarui');
     }
 
     public function destroy($id)
@@ -103,6 +103,6 @@ class SlotGroupController extends Controller
         $slotGroup->delete();
 
         return redirect()->route('slot-group.index')
-            ->with('success', 'Grup Waktu berhasil dihapus');
+            ->with('success', 'Grup Slot berhasil dihapus');
     }
 }

@@ -87,7 +87,13 @@
                 <input type="text" name="search" class="search-input"
                     placeholder="Cari kode transaksi atau nama pengguna..." value="{{ request('search') }}">
 
+                <!-- clear button -->
+                <button type="button" class="clear-btn" id="clearSearch">
+                    <i class="fa fa-times"></i>
+                </button>
+
                 <button type="submit" class="search-btn">
+                    <i class="fa fa-search me-1"></i>
                     Cari
                 </button>
 
@@ -112,7 +118,7 @@
                     <div class="d-flex flex-column text-end">
 
                         <!-- BADGE NAMA -->
-                        <span class="badge bg-warning text-dark d-flex align-items-center gap-1 px-3 py-1 mb-1">
+                        <span class="badge bg-warning d-flex align-items-center gap-1 px-3 py-1 mb-1">
                             <i class="fa fa-user"></i>
                             {{ $transaction->user->name ?? ($transaction->appointment->name ?? 'Tanpa Nama') }}
                         </span>
@@ -158,15 +164,22 @@
                     <input type="hidden" name="transaction_id" value="{{ $transaction->id }}">
 
                     <div id="dropZone" class="drop-zone text-center p-4 rounded">
+
                         <i class="fa fa-cloud-upload fa-2x mb-2"></i>
-                        <p class="mb-1">Seret & lepas foto di sini</p>
-                        <small class="text-muted">atau klik untuk memilih file (PNG, JPG, JPEG)</small>
+
+                        <p class="mb-1" id="uploadText">
+                            Seret & lepas foto di sini
+                        </p>
+
+                        <small class="text-muted" id="uploadInfo">
+                            atau klik untuk memilih file (PNG, JPG, JPEG)
+                        </small>
 
                         <input type="file" name="photos[]" id="fileInput" multiple hidden>
                     </div>
 
                     <div class="mt-2 text-end upload-action">
-                        <button class="btn btn-upload">
+                        <button type="submit" class="btn btn-upload" id="submitBtn">
                             <i class="fa fa-cloud-upload-alt me-1"></i>
                             Upload Foto
                         </button>
@@ -177,30 +190,40 @@
                 {{-- ⭐ PREMIUM GALLERY --}}
                 @if ($transaction->photoResults->count())
                     <div class="premium-gallery mt-3">
+
                         @foreach ($transaction->photoResults as $photo)
                             <div class="gallery-item-wrapper">
 
                                 <div class="gallery-item" data-full="{{ Storage::url($photo->file_path) }}">
+
+                                    {{-- ❌ DELETE BUTTON --}}
+                                    <form action="{{ route('photo-results.destroy', $photo->id) }}" method="POST"
+                                        class="delete-photo-form">
+                                        @csrf
+                                        @method('DELETE')
+
+                                        <button type="submit" class="btn-delete-x" title="Hapus Foto"
+                                            onclick="event.preventDefault(); event.stopPropagation(); this.closest('form').submit();">
+                                            &times;
+                                        </button>
+
+                                    </form>
+
+                                    {{-- IMAGE --}}
                                     <img src="{{ Storage::url($photo->file_path) }}" alt="Result Photo">
+
+                                    {{-- VIEW BUTTON (JANGAN DI STOP PROPAGATION) --}}
                                     <div class="gallery-hover">
-                                        <button class="btn btn-sm btn-primary view-btn">
+                                        <button type="button" class="btn btn-sm btn-primary view-btn">
                                             <i class="fa fa-eye"></i>
                                         </button>
                                     </div>
-                                </div>
 
-                                {{-- Tombol Hapus --}}
-                                <form action="{{ route('photo-results.destroy', $photo->id) }}" method="POST"
-                                    class="delete-photo-form">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm w-100 mt-2">
-                                        <i class="fa fa-trash me-1"></i> Hapus Foto
-                                    </button>
-                                </form>
+                                </div>
 
                             </div>
                         @endforeach
+
                     </div>
 
                     {{-- ⭐ MODAL PREMIUM --}}
@@ -433,54 +456,81 @@
             flex-direction: column;
         }
 
-        .delete-photo-form button {
-            border-radius: 10px;
-            font-weight: 600;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-            transition: .2s;
+        /* =========================
+                       ❌ DELETE BUTTON (X ICON)
+                    ========================= */
+
+        .btn-delete-x {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+
+            width: 28px;
+            height: 28px;
+
+            border-radius: 50%;
+            border: none;
+
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+
+            font-size: 18px;
+            line-height: 28px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            cursor: pointer;
+
+            transition: all 0.2s ease;
+            z-index: 5;
         }
 
-        .delete-photo-form button:hover {
-            transform: scale(1.03);
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+        /* hover X */
+        .btn-delete-x:hover {
+            background: rgba(255, 0, 0, 0.85);
+            transform: scale(1.1);
         }
 
-        .badge i {
-            margin-right: 6px !important;
-            /* jarak seragam */
+        /* optional: hide form style spacing */
+        .delete-photo-form {
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin: 0;
         }
 
         .search-card {
-            background: #fff;
-            border-radius: 16px;
-            padding: 14px;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+            background: linear-gradient(145deg, #ffffff, #f9fbff);
+            border-radius: 18px;
+            padding: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
         }
 
-        /* wrapper utama */
+        /* wrapper */
         .search-input-wrapper {
             display: flex;
             align-items: center;
             gap: 10px;
-            background: #f8f9fa;
-            padding: 8px 12px;
-            border-radius: 12px;
-            border: 1px solid #e9ecef;
-            transition: 0.2s ease;
+            background: #f8fafc;
+            padding: 10px 14px;
+            border-radius: 14px;
+            border: 1px solid #e5e7eb;
+            transition: all 0.25s ease;
         }
 
-        /* focus effect */
+        /* focus effect premium */
         .search-input-wrapper:focus-within {
             border-color: #0d6efd;
             background: #fff;
-            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.12);
         }
 
         /* icon */
         .search-icon {
-            color: #6c757d;
-            font-size: 14px;
-            margin-left: 4px;
+            color: #9ca3af;
+            font-size: 15px;
         }
 
         /* input */
@@ -492,104 +542,152 @@
             font-size: 14px;
         }
 
-        /* button */
+        /* CLEAR BUTTON */
+        .clear-btn {
+            background: transparent;
+            border: none;
+            color: #adb5bd;
+            font-size: 13px;
+            display: none;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .clear-btn:hover {
+            color: #dc3545;
+            transform: scale(1.1);
+        }
+
+        /* BUTTON PREMIUM */
         .search-btn {
-            background: linear-gradient(135deg, #0d6efd, #3b82f6);
+            background: linear-gradient(135deg, #0d6efd, #2563eb);
             border: none;
             color: #fff;
-            padding: 8px 16px;
-            border-radius: 10px;
+            padding: 9px 18px;
+            border-radius: 12px;
             font-weight: 600;
             font-size: 13px;
-            transition: 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.25s ease;
         }
 
+        /* glow effect */
+        .search-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            opacity: 0;
+            transition: 0.4s;
+        }
+
+        .search-btn:hover::before {
+            opacity: 1;
+            transform: translateX(100%);
+        }
+
+        /* hover */
         .search-btn:hover {
             transform: translateY(-1px);
-            filter: brightness(1.05);
+            box-shadow: 0 6px 16px rgba(13, 110, 253, 0.25);
         }
 
+        /* click */
         .search-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* ===============================
+                               ✨ PREMIUM BUTTON STYLE (CLEAN SAAS LOOK)
+                            ================================= */
+
+        .btn-whatsapp-super,
+        .btn-danger-super {
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 12px 24px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+
+            position: relative;
+            overflow: hidden;
+
+            color: #fff;
+            min-width: 200px;
+
+            transition: all 0.25s ease;
+            border: none;
+            cursor: pointer;
+
+            letter-spacing: 0.3px;
+        }
+
+        /* ===============================
+                               💚 WHATSAPP BUTTON
+                            ================================= */
+        .btn-whatsapp-super {
+            background: linear-gradient(135deg, #25D366, #1aa34a);
+            box-shadow: 0 6px 16px rgba(37, 211, 102, 0.25);
+        }
+
+        .btn-whatsapp-super .whatsapp-icon {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        /* hover */
+        .btn-whatsapp-super:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 22px rgba(37, 211, 102, 0.35);
+        }
+
+        .btn-whatsapp-super:hover .whatsapp-icon {
+            transform: rotate(-8deg) scale(1.1);
+        }
+
+        /* active */
+        .btn-whatsapp-super:active {
             transform: scale(0.98);
         }
 
         /* ===============================
-                                                                                                                                                                                                                                                                                                   ✨ Tombol Super Premium (WhatsApp & Hapus) ✨
-                                                                                                                                                                                                                                                                                                ================================= */
-
-        .btn-whatsapp-super,
+                               🔴 DANGER BUTTON
+                            ================================= */
         .btn-danger-super {
-            font-weight: 700;
-            font-size: 1.05rem;
-            padding: 14px 28px;
-            /* padding sama */
-            border-radius: 50px;
-            /* pill shape */
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-            color: #fff;
-            transition: all 0.3s ease, box-shadow 0.3s ease;
-            min-width: 220px;
-            /* lebar minimum agar seragam */
-        }
-
-        /* ===============================
-                                                                                                                                                                                                                                                                                                   Tombol WhatsApp
-                                                                                                                                                                                                                                                                                                ================================= */
-        .btn-whatsapp-super {
-            background: linear-gradient(135deg, #25D366, #1ebe5d);
-            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35);
-        }
-
-        .btn-whatsapp-super .whatsapp-icon {
-            font-size: 1.3rem;
-            margin-right: 14px;
-            /* jarak icon ke teks */
-            transition: all 0.3s ease;
-        }
-
-        /* Hover Effects */
-        .btn-whatsapp-super:hover {
-            transform: translateY(-2px) scale(1.05);
-            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.6), 0 0 12px rgba(37, 211, 102, 0.5) inset;
-        }
-
-        .btn-whatsapp-super:hover .whatsapp-icon {
-            text-shadow: 0 0 8px #25D366, 0 0 12px #25D366, 0 0 16px #1ebe5d;
-        }
-
-        /* ===============================
-                                                                                                                                                                                                                                                                                                   Tombol Hapus Semua Foto
-                                                                                                                                                                                                                                                                                                ================================= */
-        .btn-danger-super {
-            background: linear-gradient(135deg, #ff5e57, #ff2a2a);
-            box-shadow: 0 6px 20px rgba(255, 94, 87, 0.35);
+            background: linear-gradient(135deg, #ff4d4d, #e60000);
+            box-shadow: 0 6px 16px rgba(255, 77, 77, 0.25);
         }
 
         .btn-danger-super .fa-trash {
-            margin-right: 14px;
-            /* samakan dengan WhatsApp */
-            font-size: 1.3rem;
-            /* samakan ukuran icon */
-            transition: all 0.3s ease;
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
         }
 
-        /* Hover Effects */
+        /* hover */
         .btn-danger-super:hover {
-            transform: translateY(-2px) scale(1.05);
-            box-shadow: 0 8px 25px rgba(255, 94, 87, 0.6), 0 0 12px rgba(255, 42, 42, 0.5) inset;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 22px rgba(255, 77, 77, 0.35);
         }
 
         .btn-danger-super:hover .fa-trash {
-            text-shadow: 0 0 8px #ff5e57, 0 0 12px #ff2a2a, 0 0 16px #ff2a2a;
+            transform: rotate(-10deg) scale(1.1);
+        }
+
+        /* active */
+        .btn-danger-super:active {
+            transform: scale(0.98);
         }
 
         /* ===============================
-                                                                                                                                                                                                                                                                                                   Flex container (tengah & responsif)
-                                                                                                                                                                                                                                                                                                ================================= */
+                                                                                                                                                                                                                                                                                                                                                                                       Flex container (tengah & responsif)
+                                                                                                                                                                                                                                                                                                                                                                                    ================================= */
         .d-flex.gap-3 {
             justify-content: center;
             /* selalu di tengah */
@@ -970,40 +1068,94 @@
 
             const dropZone = document.getElementById('dropZone');
             const fileInput = document.getElementById('fileInput');
+            const uploadText = document.getElementById('uploadText');
+            const uploadInfo = document.getElementById('uploadInfo');
+            const submitBtn = document.getElementById('submitBtn');
 
-            // 🔴 safety check WAJIB
             if (!dropZone || !fileInput) return;
 
-            // klik untuk pilih file
+            const updateUI = (files) => {
+                if (files.length === 0) return;
+
+                uploadText.innerText = `${files.length} file siap diupload`;
+
+                const names = Array.from(files)
+                    .slice(0, 3)
+                    .map(f => f.name)
+                    .join(', ');
+
+                uploadInfo.innerText =
+                    names + (files.length > 3 ? ' ...' : '');
+            };
+
+            // klik area
             dropZone.addEventListener('click', () => fileInput.click());
 
-            // drag over
+            // pilih file manual
+            fileInput.addEventListener('change', () => {
+                updateUI(fileInput.files);
+            });
+
+            // drag
             dropZone.addEventListener('dragover', (e) => {
                 e.preventDefault();
                 dropZone.classList.add('dragover');
             });
 
-            // drag leave
             dropZone.addEventListener('dragleave', () => {
                 dropZone.classList.remove('dragover');
             });
 
-            // drop
             dropZone.addEventListener('drop', (e) => {
                 e.preventDefault();
                 dropZone.classList.remove('dragover');
 
                 const files = e.dataTransfer.files;
-
-                // penting: assign file
                 fileInput.files = files;
 
-                // update teks kalau ada <p>
-                const text = dropZone.querySelector('p');
-                if (text) {
-                    text.innerText = `${files.length} file siap diupload`;
+                updateUI(files);
+            });
+
+            // 🔴 VALIDASI sebelum submit (FIXED)
+            submitBtn.addEventListener('click', function(e) {
+                if (fileInput.files.length === 0) {
+                    e.preventDefault();
+
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'File belum dipilih',
+                        text: 'Silakan pilih file terlebih dahulu!',
+                        confirmButtonColor: '#3085d6'
+                    });
+
+                    return false;
                 }
             });
+
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const input = document.querySelector('.search-input');
+            const clearBtn = document.getElementById('clearSearch');
+
+            const toggleClear = () => {
+                clearBtn.style.display = input.value ? 'inline-block' : 'none';
+            };
+
+            // saat ketik
+            input.addEventListener('input', toggleClear);
+
+            // clear klik
+            clearBtn.addEventListener('click', () => {
+                input.value = '';
+                input.focus();
+                toggleClear();
+            });
+
+            // init
+            toggleClear();
 
         });
     </script>

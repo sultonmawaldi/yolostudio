@@ -191,8 +191,8 @@
         }
 
         /* ================================
-                           TABLE HEADER GRADIENT (PROPER)
-                        ================================ */
+                                                                   TABLE HEADER GRADIENT (PROPER)
+                                                                ================================ */
         .table-header-gradient {
             background: linear-gradient(90deg, #007bff, #00b4d8) !important;
         }

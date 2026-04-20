@@ -1,12 +1,12 @@
 @extends('adminlte::page')
 
-@section('title', 'Grup Waktu')
+@section('title', 'Grup Slot')
 
 @section('content_header')
     <div class="page-title-wrapper text-center mb-4">
         <h1 class="page-title">
             <i class="fas fa-clock me-2"></i>
-            Daftar Grup Waktu
+            Daftar Grup Slot
         </h1>
         <div class="title-divider"></div>
     </div>
@@ -17,7 +17,7 @@
 
     <div class="mb-3 text-end">
         <a href="{{ route('slot-group.create') }}" class="btn btn-gradient-primary shadow-sm">
-            <i class="fas fa-plus me-1"></i> Tambah Grup Waktu
+            <i class="fas fa-plus me-1"></i> Tambah Grup Slot
         </a>
     </div>
 
@@ -135,8 +135,8 @@
         }
 
         /* ================================
-                                                   TABLE HEADER GRADIENT (PROPER)
-                                                ================================ */
+                                                                               TABLE HEADER GRADIENT (PROPER)
+                                                                            ================================ */
         .table-header-gradient {
             background: linear-gradient(90deg, #007bff, #00b4d8) !important;
         }
@@ -381,17 +381,17 @@
 
                 language: {
                     search: "",
-                    searchPlaceholder: "Cari grup waktu...",
+                    searchPlaceholder: "Cari grup slot...",
                     paginate: {
                         first: "Pertama",
                         last: "Terakhir",
                         next: "Berikutnya",
                         previous: "Sebelumnya"
                     },
-                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ grup waktu",
-                    infoEmpty: "Menampilkan 0 sampai 0 dari 0 grup waktu",
-                    infoFiltered: "(difilter dari _MAX_ total grup waktu)",
-                    zeroRecords: "Tidak ada grup waktu ditemukan",
+                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ grup slot",
+                    infoEmpty: "Menampilkan 0 sampai 0 dari 0 grup slot",
+                    infoFiltered: "(difilter dari _MAX_ total grup slot)",
+                    zeroRecords: "Tidak ada grup slot ditemukan",
                     lengthMenu: "Tampilkan _MENU_ baris"
                 }
             });
@@ -415,7 +415,7 @@
                 let form = this;
 
                 Swal.fire({
-                    title: 'Hapus grup waktu?',
+                    title: 'Hapus grup slot?',
                     text: 'Data yang dihapus tidak dapat dikembalikan!',
                     icon: 'warning',
                     showCancelButton: true,

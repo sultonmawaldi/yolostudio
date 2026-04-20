@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Tambah Gallery')
+@section('title', 'Tambah Galeri')
 
 @section('content_header')
     <div class="container-fluid">
@@ -9,7 +9,7 @@
             {{-- Judul --}}
             <div class="col-sm-6">
                 <h1 class="m-0 font-weight-bold">
-                    <i class="fas fa-images text-primary me-2"></i> Tambah Gallery
+                    <i class="fas fa-images text-primary me-2"></i> Tambah Galeri
                 </h1>
             </div>
 
@@ -22,9 +22,9 @@
                         </a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{ route('gallery.index') }}">Gallery</a>
+                        <a href="{{ route('gallery.index') }}">Galeri</a>
                     </li>
-                    <li class="breadcrumb-item active">Tambah Gallery</li>
+                    <li class="breadcrumb-item active">Tambah Galeri</li>
                 </ol>
             </div>
 
@@ -45,7 +45,7 @@
                     {{-- INFORMASI GALLERY --}}
                     <div class="card card-light">
                         <div class="card-header">
-                            <h3 class="card-title">Informasi Gallery</h3>
+                            <h3 class="card-title">Informasi Galeri</h3>
                             <div class="card-tools">
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                     <i class="fas fa-minus"></i>
@@ -60,7 +60,7 @@
                                 <label>Judul</label>
                                 <input type="text" name="title"
                                     class="form-control @error('title') is-invalid @enderror" value="{{ old('title') }}"
-                                    placeholder="Masukkan judul gallery">
+                                    placeholder="Masukkan judul galeri">
 
                                 @error('title')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -149,7 +149,7 @@
 
                         <div class="card card-primary">
                             <div class="card-header">
-                                <h3 class="card-title">Detail Gallery</h3>
+                                <h3 class="card-title">Detail Galeri</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                         <i class="fas fa-minus"></i>

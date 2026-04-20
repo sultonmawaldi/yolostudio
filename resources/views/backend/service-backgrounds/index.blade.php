@@ -1,12 +1,12 @@
 @extends('adminlte::page')
 
-@section('title', 'Background Layanan')
+@section('title', 'Latar Belakang Layanan')
 
 @section('content_header')
     <div class="page-title-wrapper text-center mb-4">
         <h1 class="page-title">
             <i class="fas fa-palette me-2"></i>
-            Background Layanan
+            Latar Belakang Layanan
         </h1>
         <div class="title-divider"></div>
     </div>
@@ -16,7 +16,7 @@
 
     <div class="mb-3 text-end">
         <a href="{{ route('service-backgrounds.create') }}" class="btn btn-gradient-primary shadow-sm">
-            <i class="fas fa-plus me-1"></i> Tambah Background
+            <i class="fas fa-plus me-1"></i> Tambah Latar Belakang
         </a>
     </div>
     <div class="card border-0 shadow-lg rounded-4">
@@ -27,7 +27,7 @@
                         <th>#</th>
                         <th>Layanan</th>
                         <th>Nama</th>
-                        <th>Value</th>
+                        <th>Kode Warna</th>
                         <th>Preview</th>
                         <th>Status</th>
                         <th class="text-center">Aksi</th>
@@ -121,8 +121,8 @@
         }
 
         /* ================================
-                                                                                                       TABLE HEADER GRADIENT (PROPER)
-                                                                                                    ================================ */
+                                                                                                                                               TABLE HEADER GRADIENT (PROPER)
+                                                                                                                                            ================================ */
         .table-header-gradient {
             background: linear-gradient(90deg, #007bff, #00b4d8) !important;
         }
@@ -318,14 +318,14 @@
                 dom: "<'row mb-3'<'col-12 d-flex justify-content-end pe-3'f>>rtip",
                 language: {
                     search: "",
-                    searchPlaceholder: "Cari background...",
+                    searchPlaceholder: "Cari latar belakang...",
                     paginate: {
                         next: "Berikutnya",
                         previous: "Sebelumnya"
                     },
-                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ background",
-                    infoEmpty: "Menampilkan 0 sampai 0 dari 0 background",
-                    zeroRecords: "Tidak ada background ditemukan"
+                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ latar belakang",
+                    infoEmpty: "Menampilkan 0 sampai 0 dari 0 latar belakang",
+                    zeroRecords: "Tidak ada latar belakang ditemukan"
                 }
             });
 
@@ -346,7 +346,7 @@
                 let form = this;
 
                 Swal.fire({
-                    title: 'Hapus Background?',
+                    title: 'Hapus Latar Belakang?',
                     text: 'Data yang dihapus tidak dapat dikembalikan!',
                     icon: 'warning',
                     showCancelButton: true,

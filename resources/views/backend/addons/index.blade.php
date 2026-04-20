@@ -1,12 +1,12 @@
 @extends('adminlte::page')
 
-@section('title', 'Daftar Addon')
+@section('title', 'Daftar Layanan Tambahan')
 
 @section('content_header')
     <div class="page-title-wrapper text-center mb-4">
         <h1 class="page-title">
             <i class="fas fa-puzzle-piece me-2"></i>
-            Daftar Addon
+            Daftar Layanan Tambahan
         </h1>
         <div class="title-divider"></div>
     </div>
@@ -17,7 +17,7 @@
 
     <div class="mb-3 text-end">
         <a href="{{ route('addons.create') }}" class="btn btn-gradient-primary shadow-sm">
-            <i class="fas fa-plus me-1"></i> Tambah Addon
+            <i class="fas fa-plus me-1"></i> Tambah Layanan Tambahan
         </a>
     </div>
     <div class="card border-0 shadow-lg rounded-4">
@@ -28,7 +28,7 @@
                     <tr>
                         <th>#</th>
                         <th>Kode</th>
-                        <th>Nama Addon</th>
+                        <th>Nama Layanan Tambahan</th>
                         <th>Harga</th>
                         <th>Satuan</th>
                         <th>Jumlah Maksimal</th>
@@ -104,8 +104,8 @@
         }
 
         /* ================================
-                                                                                           TABLE HEADER GRADIENT (PROPER)
-                                                                                        ================================ */
+                                                                                                       TABLE HEADER GRADIENT (PROPER)
+                                                                                                    ================================ */
         .table-header-gradient {
             background: linear-gradient(90deg, #007bff, #00b4d8) !important;
         }
