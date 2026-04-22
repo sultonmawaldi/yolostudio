@@ -338,7 +338,7 @@
                     <div class="card shadow-sm border-0 mb-4 d-none" id="background-card">
                         <div class="card-header bg-grey border-bottom">
                             <h5 class="mb-0 fw-semibold text-center">
-                                <i class="fa-solid fa-palette me-2"></i> Pilih Background
+                                <i class="fa-solid fa-palette me-2"></i> Pilih Latar Belakang
                             </h5>
                         </div>
                         <div class="card-body">
@@ -1044,19 +1044,20 @@
                                 a.unit === 'person' &&
                                 a.name.toLowerCase().includes('photobox')
                             ) {
-                                maxQty = serviceMaxPeople;
+                                // jangan freeze saat render, cukup flag saja
+                                maxQty = "dynamic_people";
                             }
 
                             let unitText = '';
                             let extraInfo = '';
 
                             if (a.unit === 'minute') {
-                                extraInfo = `<small class="ms-2 text-secondary">(+5 menit)</small>`;
+                                extraInfo = `<small class="ms-2">(+5 menit)</small>`;
                             } else if (a.unit === 'person') {
                                 unitText = 'orang';
                                 if (maxQty) {
                                     extraInfo =
-                                        `<small class="ms-2 text-secondary">(maks. ${maxQty} orang)</small>`;
+                                        `<small class="ms-2">(maks. ${maxQty} orang)</small>`;
                                 }
                             } else {
                                 unitText = a.unit ?? '';
@@ -2299,7 +2300,13 @@
             const name = card.dataset.addonName;
             const price = Number(card.dataset.addonPrice);
             const unit = card.dataset.addonUnit;
-            const max = card.dataset.addonMax ? Number(card.dataset.addonMax) : null;
+            let max = card.dataset.addonMax;
+
+            if (max === "dynamic_people") {
+                max = Number(window.peopleCount || serviceMaxPeopleFallback());
+            } else {
+                max = max ? Number(max) : null;
+            }
 
             const qtyEl = card.querySelector(".addon-qty");
             const inputEl = card.querySelector(".addon-input");
@@ -2352,7 +2359,9 @@
             updatePaymentSummary();
         });
 
-
+        function serviceMaxPeopleFallback() {
+            return bookingState?.selectedService?.max_people ?? 0;
+        }
 
         function updatePaymentSummary(dynamicTotal = null) {
             if (!window.selectedServicePrice) return;
@@ -2720,6 +2729,10 @@
                 updatePaymentSummary();
             });
         }
+        // refresh max addon photobox secara real-time
+        document.querySelectorAll('[data-addon-max="dynamic_people"]').forEach(el => {
+            el.dataset.addonMax = window.peopleCount || serviceMaxPeopleFallback();
+        });
     </script>
 
 

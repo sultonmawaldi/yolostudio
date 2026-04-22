@@ -70,10 +70,17 @@
                                         class="rounded-circle shadow-sm">
                                 </td>
 
+                                @php
+                                    $roleLabels = [
+                                        'employee' => 'Karyawan',
+                                        'moderator' => 'Moderator',
+                                        'member' => 'Anggota',
+                                    ];
+                                @endphp
                                 <td>
                                     @forelse ($user->getRoleNames() as $role)
                                         <span class="badge bg-gradient-info text-white px-3 py-1">
-                                            {{ ucfirst($role) }}
+                                            {{ $roleLabels[$role] ?? ucfirst($role) }}
                                         </span>
                                     @empty
                                         <span class="badge bg-gradient-secondary">Tanpa Peran</span>
@@ -147,8 +154,8 @@
         }
 
         /* ================================
-                                   TABLE HEADER GRADIENT (PROPER)
-                                ================================ */
+                                           TABLE HEADER GRADIENT (PROPER)
+                                        ================================ */
         .table-header-gradient {
             background: linear-gradient(90deg, #007bff, #00b4d8) !important;
         }

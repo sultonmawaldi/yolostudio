@@ -652,9 +652,9 @@
 
                     <div class="text-sm font-semibold">
                         © {{ date('Y') }}
-                        <span class="font-bold">
+                        <a href="{{ route('home') }}" class="font-bold footer-link">
                             {{ $setting->bname ?? 'Nama Website' }}
-                        </span>
+                        </a>
                     </div>
 
                     <div class="text-xs text-gray-400">

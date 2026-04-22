@@ -60,7 +60,7 @@
                                 </td>
 
                                 <td>
-                                    <span class="badge bg-warning text-dark px-3 py-2 rounded-pill shadow-sm">
+                                    <span class="badge bg-warning px-3 py-2 rounded-pill shadow-sm">
                                         {{ $slotGroup->break_duration }} menit
                                     </span>
                                 </td>
@@ -135,8 +135,8 @@
         }
 
         /* ================================
-                                                                               TABLE HEADER GRADIENT (PROPER)
-                                                                            ================================ */
+                                                                                   TABLE HEADER GRADIENT (PROPER)
+                                                                                ================================ */
         .table-header-gradient {
             background: linear-gradient(90deg, #007bff, #00b4d8) !important;
         }

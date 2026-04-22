@@ -1407,6 +1407,15 @@ h3:hover i.fa {
     font-size: 0.95rem;
 }
 
+.footer-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.footer-link:hover {
+    opacity: 0.8;
+}
+
 /* ================= Dark Mode Ikon ================= */
 html.dark h3 i.fa {
     color: #6a11cb !important; /* ikon judul putih di dark mode */

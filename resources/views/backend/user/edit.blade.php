@@ -168,9 +168,19 @@
                                         <select name="service[]" id="services" class="form-control select2" multiple
                                             style="width:100%">
                                             @foreach ($services as $service)
+                                                @php
+                                                    $roleLabels = [
+                                                        'employee' => 'Karyawan',
+                                                        'moderator' => 'Moderator',
+                                                        'member' => 'Anggota',
+                                                    ];
+                                                @endphp
+
                                                 <option value="{{ $service->id }}"
                                                     {{ in_array($service->id, old('service', $userServices)) ? 'selected' : '' }}>
-                                                    {{ $service->title }}
+
+                                                    {{ $roleLabels[$service->title] ?? $service->title }}
+
                                                 </option>
                                             @endforeach
                                         </select>

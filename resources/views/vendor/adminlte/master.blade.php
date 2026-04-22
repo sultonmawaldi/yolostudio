@@ -271,51 +271,135 @@
             overflow-x: hidden;
         }
 
-
-
-        /* ===============================
-       🌙 DARK MODE (OPTIONAL CLASS)
-       Tambahkan class: dark-mode ke <body>
-    ================================= */
-
-        body.dark-mode .main-sidebar {
-            background: linear-gradient(180deg, #020617, #020617);
+        /* navbar jangan turun */
+        .navbar-nav {
+            flex-wrap: nowrap !important;
         }
 
-        body.dark-mode .nav-sidebar .nav-link {
-            color: #94a3b8;
+        /* link jangan pecah */
+        .navbar-nav .nav-link {
+            white-space: nowrap;
         }
 
-        body.dark-mode .nav-sidebar .nav-link:hover {
-            background: rgba(255, 255, 255, 0.05);
+        /* mobile: sembunyikan text */
+        @media (max-width: 576px) {
+            .nav-text {
+                display: none;
+            }
         }
 
-        body.dark-mode .nav-sidebar .nav-link.active {
-            background: linear-gradient(135deg, #6366f1, #22d3ee);
+        /* navbar tetap satu baris */
+        .navbar-nav {
+            flex-wrap: nowrap !important;
         }
 
-        body.dark-mode .nav-sidebar .nav-icon {
-            color: #64748b;
+        /* text tidak turun */
+        .navbar-nav .nav-link {
+            white-space: nowrap;
         }
 
-        body.dark-mode .nav-sidebar .nav-link:hover .nav-icon {
-            color: #22d3ee;
+        /* MOBILE */
+        @media (max-width: 576px) {
+
+            /* sembunyikan tulisan logout */
+            .nav-text {
+                display: none;
+            }
+
+            /* rapihin icon */
+            .navbar-nav .nav-link {
+                padding: 6px 8px;
+            }
         }
+
+        /* =========================
+   GLOBAL FIX (FINAL)
+========================= */
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            /* 🔥 WAJIB */
+        }
+
+        /* layout utama */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* wrapper ikut full */
+        .wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* content dorong footer */
+        .content-wrapper {
+            flex: 1;
+        }
+
+        /* footer nempel bawah */
+        .custom-footer {
+            margin-top: auto;
+            /* 🔥 KUNCI UTAMA */
+            background: #ffffff;
+            color: #1e293b;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .footer-link {
+            color: #1e293b;
+        }
+
+
+        /* =========================
+   DARK MODE FIX TOTAL
+========================= */
+        /* wrapper & content harus sama warna */
+        body.dark-mode .wrapper,
+        body.dark-mode .content-wrapper {
+            background: #020617 !important;
+        }
+
+
+        /* =========================
+   📦 CUSTOM FOOTER DARK MODE (MATCH SIDEBAR)
+========================= */
+
+        body.dark-mode .custom-footer {
+            background: linear-gradient(180deg, #1f2937, #111827);
+            color: #d1d5db;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 20px 0;
+        }
+
+        /* brand (copyright) */
+        body.dark-mode .custom-footer .footer-brand {
+            color: #e5e7eb;
+        }
+
+
+
+        body.dark-mode .custom-footer .footer-link:hover {
+            color: #38bdf8;
+        }
+
+        /* teks "all rights reserved" */
+        body.dark-mode .custom-footer .footer-text {
+            color: #9ca3af;
+        }
+
+
+
 
         /* ===============================
    🌙 GLOBAL DARK MODE
 ================================= */
 
-        /* BODY */
-        body.dark-mode {
-            background-color: #0f172a;
-            color: #e2e8f0;
-        }
-
-        /* CONTENT WRAPPER */
-        body.dark-mode .content-wrapper {
-            background: #0f172a;
-        }
 
         /* NAVBAR */
         body.dark-mode .main-header {
@@ -588,13 +672,6 @@
         /* =========================
                                        🌙 DARK MODE - PREMIUM GLASS TABLE UI
                                     ========================= */
-
-        body.dark-mode .card {
-            background: rgba(17, 24, 39, 0.65) !important;
-            border: 1px solid rgba(148, 163, 184, 0.15);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 6px 22px rgba(0, 0, 0, 0.25);
-        }
 
         /* ================= TABLE ================= */
 
@@ -1062,6 +1139,71 @@
         body.dark-mode .list-group-item .text-muted {
             color: #94a3b8 !important;
         }
+
+        /* =========================
+   🔍 SIDEBAR SEARCH DARK MODE FIX
+========================= */
+
+        body.dark-mode .sidebar-search-results {
+            background: #111827;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        body.dark-mode .sidebar-search-results .list-group {
+            background: transparent;
+        }
+
+        body.dark-mode .sidebar-search-results .list-group-item {
+            background: #1e293b !important;
+            color: #e2e8f0 !important;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        body.dark-mode .sidebar-search-results .list-group-item:hover {
+            background: #334155 !important;
+        }
+
+        /* teks "Tidak ada hasil ditemukan" */
+        body.dark-mode .sidebar-search-results .search-title,
+        body.dark-mode .sidebar-search-results .search-path {
+            color: #cbd5e1 !important;
+        }
+
+        /* =========================
+   📂 SIDEBAR DARK MODE (LEBIH CERAH)
+========================= */
+
+        body.dark-mode .main-sidebar {
+            background: linear-gradient(180deg, #1f2937, #111827);
+            box-shadow: 0 0 18px rgba(0, 0, 0, 0.25);
+        }
+
+        /* nav item */
+        body.dark-mode .nav-sidebar .nav-link {
+            color: #d1d5db;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+        }
+
+        /* =========================
+   🧭 HEADER DARK MODE (SAMA DENGAN SIDEBAR)
+========================= */
+
+        body.dark-mode .main-header {
+            background: linear-gradient(180deg, #1f2937, #111827);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+        }
+
+        /* navbar text/icon */
+        body.dark-mode .main-header .nav-link,
+        body.dark-mode .main-header .navbar-nav .nav-link {
+            color: #d1d5db !important;
+        }
+
+        body.dark-mode .main-header .nav-link:hover {
+            color: #ffffff !important;
+        }
     </style>
 
     {{-- Favicon --}}
@@ -1094,19 +1236,19 @@
     {{-- Body Content --}}
     @yield('body')
 
-    <footer>
+    <footer class="custom-footer">
         <div class="container text-center">
 
             <!-- BRAND + COPYRIGHT -->
-            <div class="text-dark text-sm font-weight-bold h5 mb-1 mt-4">
+            <div class="footer-brand text-sm font-weight-bold h5 mb-1 mt-4">
                 © {{ date('Y') }}
-                <a href="/" class="text-dark font-weight-bold text-decoration-none">
+                <a href="{{ route('home') }}" class="footer-link">
                     {{ $setting->bname ?? 'Nama Website' }}
                 </a>
             </div>
 
             <!-- ALL RIGHTS RESERVED -->
-            <div class="small text-dark mt-1 mb-3">
+            <div class="footer-text small mt-1 mb-3">
                 All rights reserved.
             </div>
 

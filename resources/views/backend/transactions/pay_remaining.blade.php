@@ -36,7 +36,7 @@
                             class="badge px-3 py-2
                             @if ($transaction->payment_status == 'Paid') bg-success
                             @elseif($transaction->payment_status == 'DP')
-                                bg-warning text-dark
+                                bg-warning
                             @else
                                 bg-secondary @endif
                         ">

@@ -9,7 +9,7 @@
 </li>
 <li class="nav-item">
     <a class="nav-link" target="_blank" href="{{ route('home') }}">
-        <i class="fas fa-external-link-alt"></i> Ke Halaman Website
-        <span class="sr-only">{{ __('adminlte::adminlte.toggle_navigation') }}</span>
+        <i class="fas fa-external-link-alt"></i>
+        <span class="nav-text">Ke Halaman Website</span>
     </a>
 </li>
