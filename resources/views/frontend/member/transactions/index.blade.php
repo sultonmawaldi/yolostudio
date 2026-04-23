@@ -237,7 +237,7 @@
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content rounded-2xl">
                 <div class="modal-header">
-                    <h5 class="modal-title fw-bold">Jadwal ulang janji temu</h5>
+                    <h5 class="modal-title fw-bold">Jadwal ulang pemesanan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 

@@ -1008,7 +1008,7 @@
                 if (!serviceId) return;
 
                 const container = $("#addon-container");
-                const serviceMaxPeople = bookingState.selectedService?.max_people ?? null;
+                const serviceMaxPeople = bookingState.selectedService?.peopleCount ?? null;
 
                 container.html(`
         <div class="d-flex justify-content-center align-items-center" style="height:100px">

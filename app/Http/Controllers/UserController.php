@@ -79,15 +79,15 @@ class UserController extends Controller
             'holidays.to_time.*' => 'nullable',
         ], [
             // 🔥 CUSTOM MESSAGE
-            'phone.unique' => 'Nomor HP sudah digunakan, silakan pakai nomor lain.',
-            'email.unique' => 'Email sudah terdaftar, silakan gunakan email lain.',
+            'phone.unique' => 'Nomor HP sudah digunakan, silakan pakai nomor lain',
+            'email.unique' => 'Email sudah terdaftar, silakan gunakan email lain',
         ]);
 
         $normalizedPhone = $this->normalizePhone($data['phone']);
 
         if (User::where('phone', $normalizedPhone)->exists()) {
             return back()
-                ->withErrors(['phone' => 'Nomor HP sudah digunakan, silakan pakai nomor lain.'])
+                ->withErrors(['phone' => 'Nomor HP sudah digunakan, silakan pakai nomor lain'])
                 ->withInput();
         }
 
@@ -592,12 +592,12 @@ class UserController extends Controller
 
         // ✅ Cek apakah user memiliki employee dan employee memiliki appointment aktif
         if ($user->employee && $user->employee->appointments()->count() > 0) {
-            return back()->withErrors('Pengguna tidak dapat dihapus permanen karena masih memiliki booking aktif');
+            return back()->withErrors('Pengguna tidak dapat dihapus permanen karena masih memiliki pemesanan aktif');
         }
 
         // ✅ Cek apakah user (member) memiliki appointment aktif
         if ($user->appointments()->count() > 0) {
-            return back()->withErrors('Pengguna tidak dapat dihapus permanen karena masih memiliki booking aktif');
+            return back()->withErrors('Pengguna tidak dapat dihapus permanen karena masih memiliki pemesanan aktif');
         }
 
         // ✅ Hapus holidays employee jika ada
@@ -622,7 +622,7 @@ class UserController extends Controller
         // ✅ Hapus user permanen
         $user->forceDelete();
 
-        return back()->withSuccess('Pengguna beserta seluruh data terkait (karyawan, hari libur, janji temu, dan pemesanan) berhasil dihapus secara permanen');
+        return back()->withSuccess('Pengguna beserta seluruh data terkait (karyawan, hari libur dan pemesanan) berhasil dihapus secara permanen');
     }
 
 

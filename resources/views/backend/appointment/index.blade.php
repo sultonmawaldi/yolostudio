@@ -1,13 +1,13 @@
 @extends('adminlte::page')
 
-@section('title', 'Daftar Janji Temu')
+@section('title', 'Daftar Pemesanan')
 
 @section('content_header')
 
     <div class="page-title-wrapper text-center mb-4">
         <h1 class="page-title">
             <i class="fa fa-list-ul me-2"></i>
-            Daftar Janji Temu
+            Daftar Pemesanan
         </h1>
         <div class="title-divider"></div>
     </div>
@@ -16,7 +16,7 @@
 
 
 @section('content')
-    <!-- Modal Detail Janji Temu -->
+    <!-- Modal Detail Pemesanan -->
     <form id="appointmentStatusForm" method="POST" action="{{ route('appointments.update.status') }}">
         @csrf
         <input type="hidden" name="appointment_id" id="modalAppointmentId">
@@ -28,7 +28,7 @@
                     <!-- Header -->
                     <div class="modal-header">
                         <h5 class="modal-title">
-                            <i class="fas fa-calendar-check me-2"></i> Detail Janji Temu
+                            <i class="fas fa-calendar-check me-2"></i> Detail Pemesanan
                         </h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
@@ -159,7 +159,7 @@
                 <div class="modal-header">
                     <h5 class="modal-title d-flex align-items-center">
                         <i class="fas fa-calendar-alt mr-2"></i>
-                        <span class="fw-semibold">Jadwal Ulang Janji Temu</span>
+                        <span class="fw-semibold">Jadwal Ulang Pemesanan</span>
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
@@ -768,8 +768,8 @@
 
 
         /* ===============================
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           DETAIL MODAL FINAL CLEAN
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ================================= */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           DETAIL MODAL FINAL CLEAN
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ================================= */
 
         .detail-section {
             background: #f8fafc;
@@ -935,53 +935,110 @@
             border-top: 1px solid #dee2e6;
         }
 
-        /* ================= SLOT WAKTU STYLE ================= */
+        /* ================= SLOT WAKTU STYLE (BACKEND DISAMAKAN FRONTEND) ================= */
         #reschedule-time-slots {
-            max-height: 250px;
+            max-height: 350px;
             overflow-y: auto;
+
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+
+            justify-content: flex-start;
+            align-content: flex-start;
+
+            gap: 42px 36px;
+            /* 🔥 DIPERBESAR JARAK ANTAR SLOT */
+            padding: 6px;
         }
 
-        /* SLOT BASE */
+        /* SCROLLBAR */
+        #reschedule-time-slots::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #reschedule-time-slots::-webkit-scrollbar-thumb {
+            background: #c7c7c7;
+            border-radius: 6px;
+        }
+
+        /* ================= SLOT BASE ================= */
         #reschedule-time-slots .time-slot {
-            min-width: 95px;
-            text-align: center;
-            cursor: pointer;
-            padding: 8px 12px;
-            border-radius: 10px;
-            border: 1px solid #e5e7eb;
-            background-color: #ffffff;
-            font-size: 0.9rem;
-            font-weight: 500;
             position: relative;
+            cursor: pointer;
 
-            /* IMPORTANT: jangan pakai transition all */
-            transition: background-color 0.2s ease,
-                color 0.2s ease,
-                box-shadow 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 8px;
+
+            padding: 6px 10px;
+
+            border-radius: 999px;
+
+            font-size: 1.1rem;
+            font-weight: 400;
+
+            flex: 0 0 calc(50% - 30px);
+            max-width: calc(50% - 30px);
+
+            box-sizing: border-box;
+
+            /* 🔥 Gradient border trick */
+            background: linear-gradient(#fff, #fff) padding-box,
+                linear-gradient(135deg, #007bff, #00b4d8) border-box;
+
+            border: 1.2px solid transparent;
+
+            color: #007bff;
         }
 
-        /* HOVER */
-        #reschedule-time-slots .time-slot:hover:not(.disabled):not(.selected) {
-            background-color: #eff6ff;
-            border-color: #3b82f6;
-            color: #2563eb;
+        /* ICON DALAM SLOT */
+        #reschedule-time-slots .time-slot i {
+            font-size: 1rem;
+            /* 🔥 ICON LEBIH BESAR */
         }
 
-        /* SELECTED (TIDAK UBAH SIZE SAMA SEKALI) */
+        /* ================= SELECTED ================= */
         #reschedule-time-slots .time-slot.selected {
-            background-color: #0d6efd !important;
-            color: #fff !important;
-            border-color: #0d6efd !important;
+            background: linear-gradient(135deg, #007bff, #00b4d8);
+            color: #fff;
 
-            /* pakai inner shadow supaya tidak geser */
-            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3),
-                0 4px 10px rgba(13, 110, 253, 0.25);
+            border: 1.2px solid transparent;
+
+            box-shadow: 0 6px 16px rgba(0, 123, 255, 0.35);
         }
 
-        /* OLD SLOT (KUNING) */
+
+        /* CHECK ICON */
+        #reschedule-time-slots .time-slot.selected::after {
+            content: "\f00c";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+
+            position: absolute;
+            top: -8px;
+            right: -8px;
+
+            width: 20px;
+            height: 20px;
+
+            border-radius: 50%;
+
+            background-color: #22c55e;
+            color: #fff;
+
+            font-size: 12px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            box-shadow: none;
+            border: none;
+        }
+
+        /* ================= WARNING SLOT ================= */
         #reschedule-time-slots .time-slot.btn-warning {
             background-color: #fef3c7 !important;
             color: #92400e !important;
@@ -989,34 +1046,34 @@
             cursor: not-allowed;
         }
 
-        /* ICON JAM */
+        /* ICON JAM WARNING */
         #reschedule-time-slots .time-slot.btn-warning::after {
             content: "\f017";
             font-family: "Font Awesome 6 Free";
             font-weight: 900;
+
             position: absolute;
             top: 4px;
             right: 6px;
+
             font-size: 10px;
             opacity: 0.8;
         }
 
-        /* DISABLED */
+        /* ================= DISABLED ================= */
         #reschedule-time-slots .time-slot.disabled {
-            background-color: #f3f4f6;
-            color: #9ca3af;
+            opacity: 0.5;
             cursor: not-allowed;
+            background-color: #f3f4f6;
+            color: #999;
             border-color: #e5e7eb;
         }
 
-        /* SCROLLBAR CLEAN */
-        #reschedule-time-slots::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        #reschedule-time-slots::-webkit-scrollbar-thumb {
-            background: #d1d5db;
-            border-radius: 6px;
+        @media (max-width: 576px) {
+            #reschedule-time-slots .time-slot {
+                flex: 0 0 100%;
+                max-width: 85%;
+            }
         }
 
         /* ================= MODERN CARD STYLE ================= */
@@ -1302,8 +1359,8 @@
         }
 
         /* ===============================
-                                                                                                                                                                                                                                                                       🌙 DARK MODE FULL OVERRIDE
-                                                                                                                                                                                                                                                                    ================================= */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       🌙 DARK MODE FULL OVERRIDE
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ================================= */
 
 
         /* ===== FILTER INPUT ===== */
@@ -1462,9 +1519,10 @@
             color: #64748b;
         }
 
-        /* ===== BADGE STATUS ===== */
         body.dark-mode .status-badge {
-            filter: brightness(0.9);
+            color: #ffffff !important;
+            opacity: 1 !important;
+            filter: none !important;
         }
 
         /* ===== DIVIDER ===== */
@@ -1484,8 +1542,8 @@
         }
 
         /* ===============================
-                                                                                                                                                                                                                                   💀 NUCLEAR DARK MODE TABLE FIX
-                                                                                                                                                                                                                                ================================= */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   💀 NUCLEAR DARK MODE TABLE FIX
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ================================= */
 
         body.dark-mode table,
         body.dark-mode .table,
@@ -1559,8 +1617,8 @@
         }
 
         /* ===============================
-                                                                                                                                                                                                                           💀 DARK MODE MODAL FIX TOTAL (FULL UPGRADE)
-                                                                                                                                                                                                                        ================================= */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           💀 DARK MODE MODAL FIX TOTAL (FULL UPGRADE)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ================================= */
 
         body.dark-mode .modal-content {
             background: #0f172a !important;
@@ -1694,8 +1752,8 @@
         }
 
         /* =========================
-                                       DARK MODE - COLOR ONLY FIX (NO LAYOUT CHANGE)
-                                    ========================= */
+                                                                                                                                                                                                                                                                                                                                                       DARK MODE - COLOR ONLY FIX (NO LAYOUT CHANGE)
+                                                                                                                                                                                                                                                                                                                                                    ========================= */
 
         /* HEADER TABLE - SAMAKAN DENGAN TRANSACTION GLASS */
         body.dark-mode #myTable thead,
@@ -1769,16 +1827,16 @@
                 ],
                 language: {
                     search: "",
-                    searchPlaceholder: "Cari janji temu...",
+                    searchPlaceholder: "Cari pemesanan...",
                     paginate: {
                         first: "Pertama",
                         last: "Terakhir",
                         next: "Berikutnya",
                         previous: "Sebelumnya"
                     },
-                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ janji temu",
-                    infoEmpty: "Menampilkan 0 sampai 0 dari 0 janji temu",
-                    infoFiltered: "(difilter dari _MAX_ total janji temu)",
+                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ pemesanan",
+                    infoEmpty: "Menampilkan 0 sampai 0 dari 0 pemesanan",
+                    infoFiltered: "(difilter dari _MAX_ total pemesanan)",
                     zeroRecords: "Data tidak ditemukan",
                     lengthMenu: "Tampilkan _MENU_ baris",
                 }
@@ -2187,7 +2245,7 @@
                     const appointmentId = document.getElementById('modalAppointmentId')?.value;
 
                     if (!appointmentId) {
-                        Swal.fire('Error', 'Janji temu tidak ditemukan', 'error');
+                        Swal.fire('Error', 'Pemesanan tidak ditemukan', 'error');
                         return;
                     }
 
@@ -2350,8 +2408,8 @@
 
                             const btn = document.createElement('button');
                             btn.type = 'button';
-                            btn.className = 'time-slot btn m-1';
-                            btn.textContent = slot.display;
+                            btn.className = 'time-slot btn mt-2';
+                            btn.innerHTML = `<i class="bi bi-clock"></i> ${slot.display}`;
                             btn.dataset.start = slot.start;
                             btn.dataset.end = slot.end;
 

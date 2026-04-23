@@ -98,7 +98,7 @@
             </div>
         @else
             <p class="text-center text-muted fs-5 mt-5">
-                Belum ada hasil foto yang diunggah.
+                Belum ada hasil foto yang diunggah
             </p>
         @endif
 

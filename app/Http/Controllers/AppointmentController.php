@@ -31,7 +31,7 @@ class AppointmentController extends Controller
         if ($user->hasRole('employee')) {
 
             if (!$user->employee) {
-                abort(403, 'Employee profile not found.');
+                abort(403, 'Profil karyawan tidak ditemukan');
             }
 
             $query->where('employee_id', $user->employee->id);
@@ -130,7 +130,7 @@ class AppointmentController extends Controller
         if (!$employee->studio) {
             return response()->json([
                 'success' => false,
-                'message' => 'Employee belum terhubung dengan studio'
+                'message' => 'Karyawan belum terhubung dengan studio'
             ], 422);
         }
 
@@ -180,7 +180,7 @@ class AppointmentController extends Controller
             $employee = \App\Models\Employee::with('studio')->find($appointment->employee_id);
 
             if (!$employee || !$employee->studio) {
-                throw new \Exception('Employee atau Studio tidak ditemukan');
+                throw new \Exception('Karyawan atau Studio tidak ditemukan');
             }
 
             $studio = $employee->studio;
@@ -288,7 +288,7 @@ class AppointmentController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Pemesanan janji temu berhasil',
+            'message' => 'Pemesanan berhasil',
             'booking_id' => $appointment->booking_id,
             'qr_url' => $transaction->qr_url ?? null,
             'transaction_code' => $transactionCode,
@@ -399,7 +399,7 @@ class AppointmentController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Janji temu berhasil diperbarui',
+            'message' => 'Pemesanan berhasil diperbarui',
             'appointment' => $appointment
         ]);
     }
@@ -418,7 +418,7 @@ class AppointmentController extends Controller
 
         event(new StatusUpdated($appointment));
 
-        return redirect()->back()->with('success', 'Status janji temu berhasil diperbarui');
+        return redirect()->back()->with('success', 'Status pemesanan berhasil diperbarui');
     }
 
 
@@ -438,7 +438,7 @@ class AppointmentController extends Controller
         if (now()->startOfDay()->gte($bookingDate)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Jadwal ulang hanya dapat dilakukan maksimal H-1 sebelum jadwal booking'
+                'message' => 'Jadwal ulang hanya dapat dilakukan maksimal H-1 sebelum jadwal pemesanan'
             ], 403);
         }
 
@@ -489,7 +489,7 @@ class AppointmentController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Janji temu berhasil di jadwal ulang'
+            'message' => 'Pemesanan berhasil di jadwal ulang'
         ]);
     }
 
@@ -503,7 +503,7 @@ class AppointmentController extends Controller
         if (!$employee || !$service || !$slotGroupId) {
             return response()->json([
                 'success' => false,
-                'message' => 'Data janji temu tidak lengkap'
+                'message' => 'Data pemesanan tidak lengkap'
             ], 422);
         }
 
@@ -565,7 +565,7 @@ class AppointmentController extends Controller
                 $slots[] = [
                     'start' => $current->format('H:i'),
                     'end' => $slotEnd->format('H:i'),
-                    'display' => $current->format('H:i') . ' - ' . $slotEnd->format('H:i') . ' WIB',
+                    'display' => $current->format('H:i'),
                     'is_booked' => $isBooked || $isOld, // disable jika bentrok atau slot lama
                     'is_old' => $isOld,                 // tanda slot lama
                 ];

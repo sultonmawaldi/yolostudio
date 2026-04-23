@@ -20,7 +20,7 @@
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item">
                         <a href="{{ route('dashboard') }}">
-                            <i class="fas fa-home"></i> Beranda
+                            <i class="fas fa-home"></i> Dashboard
                         </a>
                     </li>
                     <li class="breadcrumb-item">
@@ -518,8 +518,8 @@
         }
 
         /* =========================
-                                   FIX PANAH TANPA UBAH POSISI
-                                ========================== */
+                                       FIX PANAH TANPA UBAH POSISI
+                                    ========================== */
 
         .select2-container--default .select2-selection--single .select2-selection__arrow b {
             margin: 0 !important;

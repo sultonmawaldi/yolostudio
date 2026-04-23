@@ -18,7 +18,7 @@
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item">
                         <a href="{{ route('dashboard') }}">
-                            <i class="fas fa-home"></i> Beranda
+                            <i class="fas fa-home"></i> Dashboard
                         </a>
                     </li>
                     <li class="breadcrumb-item">

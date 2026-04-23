@@ -332,7 +332,7 @@ return [
             'icon' => 'fas fa-fw fa-home',
         ],
         [
-            'text' => 'Semua Janji Temu',
+            'text' => 'Semua Pemesanan',
             'route' => 'appointments.index',
             'icon' => 'fas fa-calendar-check',
             'can'  => 'appointments.view',
