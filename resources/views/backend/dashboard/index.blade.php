@@ -612,8 +612,8 @@
         }
 
         /* ============================================
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       📱 MODERN MOBILE / iOS CALENDAR STYLE
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       ============================================ */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               📱 MODERN MOBILE / iOS CALENDAR STYLE
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ============================================ */
 
         /* ---- GLOBAL CALENDAR CARD ---- */
         #calendar {
@@ -913,16 +913,16 @@
 
 
         /* =========================
-                                                                                                                                                                                                                                                                                                       🌙 GLOBAL DARK MODE
-                                                                                                                                                                                                                                                                                                    ========================= */
+                                                                                                                                                                                                                                                                                                                               🌙 GLOBAL DARK MODE
+                                                                                                                                                                                                                                                                                                                            ========================= */
         body.dark-mode {
             background: #0f172a;
             color: #e5e7eb;
         }
 
         /* =========================
-                                                                                                                                                                                                                                                                                                       CALENDAR CARD
-                                                                                                                                                                                                                                                                                                    ========================= */
+                                                                                                                                                                                                                                                                                                                               CALENDAR CARD
+                                                                                                                                                                                                                                                                                                                            ========================= */
         body.dark-mode #calendar {
             background: #111827;
             border: 1px solid #1f2937;
@@ -930,8 +930,8 @@
         }
 
         /* =========================
-                                                                                                                                                                                                                                                                                                       TOOLBAR
-                                                                                                                                                                                                                                                                                                    ========================= */
+                                                                                                                                                                                                                                                                                                                               TOOLBAR
+                                                                                                                                                                                                                                                                                                                            ========================= */
         body.dark-mode .fc-header-toolbar {
             background: linear-gradient(135deg, #1e293b, #0f172a);
             color: #fff;
@@ -960,8 +960,8 @@
         }
 
         /* =========================
-                                                                                                                                                                                                                                                                                                       GRID CALENDAR
-                                                                                                                                                                                                                                                                                                    ========================= */
+                                                                                                                                                                                                                                                                                                                               GRID CALENDAR
+                                                                                                                                                                                                                                                                                                                            ========================= */
         body.dark-mode .fc-daygrid-day {
             background: #111827;
             border-color: #1f2937 !important;
@@ -986,8 +986,8 @@
         }
 
         /* =========================
-                                                                                                                                                                                                                                                                                                       TIME GRID
-                                                                                                                                                                                                                                                                                                    ========================= */
+                                                                                                                                                                                                                                                                                                                               TIME GRID
+                                                                                                                                                                                                                                                                                                                            ========================= */
         body.dark-mode .fc-timegrid-slot {
             border-color: #1f2937 !important;
         }
@@ -997,8 +997,8 @@
         }
 
         /* =========================
-                                                                                                                                                                                                                                                                                                       MODAL DARK
-                                                                                                                                                                                                                                                                                                    ========================= */
+                                                                                                                                                                                                                                                                                                                               MODAL DARK
+                                                                                                                                                                                                                                                                                                                            ========================= */
         body.dark-mode .modal-content {
             background: #111827;
             color: #e5e7eb;
@@ -1020,8 +1020,8 @@
         }
 
         /* =========================
-                                                                                                                                                                                                                                                                                                       SELECT & INPUT
-                                                                                                                                                                                                                                                                                                    ========================= */
+                                                                                                                                                                                                                                                                                                                               SELECT & INPUT
+                                                                                                                                                                                                                                                                                                                            ========================= */
         body.dark-mode #modalStatusSelect {
             background-color: #1f2937;
             border: 1px solid #374151;
@@ -1037,22 +1037,22 @@
         }
 
         /* =========================
-                                                                                                                                                                                                                                                                                                       TOOLTIP
-                                                                                                                                                                                                                                                                                                    ========================= */
+                                                                                                                                                                                                                                                                                                                               TOOLTIP
+                                                                                                                                                                                                                                                                                                                            ========================= */
         body.dark-mode .custom-tooltip {
             background: rgba(0, 0, 0, 0.9);
         }
 
         /* =========================
-                                                                                                                                                                                                                                                                                                       PAGE TITLE
-                                                                                                                                                                                                                                                                                                    ========================= */
+                                                                                                                                                                                                                                                                                                                               PAGE TITLE
+                                                                                                                                                                                                                                                                                                                            ========================= */
         body.dark-mode .page-title {
             color: #e5e7eb;
         }
 
         /* =========================
-                                                                                                                                                                                                                                                                                       DARK MODE - JAM KIRI (TIMEGRID)
-                                                                                                                                                                                                                                                                                    ========================= */
+                                                                                                                                                                                                                                                                                                               DARK MODE - JAM KIRI (TIMEGRID)
+                                                                                                                                                                                                                                                                                                            ========================= */
         body.dark-mode .fc-timegrid-axis,
         body.dark-mode .fc-timegrid-slot-label {
             color: #000000 !important;
@@ -1063,12 +1063,12 @@
 
 
         /* =========================
-                                                                                                                                                                                                                           FULL DARK MODE - LIST VIEW (FINAL SAFE VERSION)
-                                                                                                                                                                                                                        ========================= */
+                                                                                                                                                                                                                                                   FULL DARK MODE - LIST VIEW (FINAL SAFE VERSION)
+                                                                                                                                                                                                                                                ========================= */
 
         /* =========================
-                                                                                                                       🌙 FULLCALENDAR LIST DARK MODE FIX (SAFE)
-                                                                                                                       ========================= */
+                                                                                                                                               🌙 FULLCALENDAR LIST DARK MODE FIX (SAFE)
+                                                                                                                                               ========================= */
 
         /* HEADER */
         body.dark-mode .fc-list-day {
@@ -1095,8 +1095,8 @@
         }
 
         /* =========================
-                                                                                                                       EVENT CARD
-                                                                                                                       ========================= */
+                                                                                                                                               EVENT CARD
+                                                                                                                                               ========================= */
         body.dark-mode .fc-list-event {
             background: #111827 !important;
             border-radius: 14px !important;
@@ -1104,8 +1104,8 @@
         }
 
         /* =========================
-                                                                                                                       CELL (NO LAYOUT CHANGE)
-                                                                                                                       ========================= */
+                                                                                                                                               CELL (NO LAYOUT CHANGE)
+                                                                                                                                               ========================= */
         body.dark-mode .fc-list-event td {
             background: transparent !important;
             border: none !important;
@@ -1114,22 +1114,22 @@
         }
 
         /* =========================
-                                                                                                                       TIME (NO SIZE CHANGE)
-                                                                                                                       ========================= */
+                                                                                                                                               TIME (NO SIZE CHANGE)
+                                                                                                                                               ========================= */
         body.dark-mode .fc-list-event-time {
             color: #9ca3af !important;
         }
 
         /* =========================
-                                                                                                                       TITLE (ONLY COLOR)
-                                                                                                                       ========================= */
+                                                                                                                                               TITLE (ONLY COLOR)
+                                                                                                                                               ========================= */
         body.dark-mode .fc-list-event-title {
             color: #f9fafb !important;
         }
 
         /* =========================
-                                                                                                                       LINK (NO LAYOUT CHANGE)
-                                                                                                                       ========================= */
+                                                                                                                                               LINK (NO LAYOUT CHANGE)
+                                                                                                                                               ========================= */
         body.dark-mode .fc-list-event a {
             color: #f9fafb !important;
             text-decoration: none !important;
@@ -1137,15 +1137,15 @@
         }
 
         /* =========================
-                                                                                                                       DOT (KEEP POSITION)
-                                                                                                                       ========================= */
+                                                                                                                                               DOT (KEEP POSITION)
+                                                                                                                                               ========================= */
         body.dark-mode .fc-list-event-dot {
             margin: 0 auto;
         }
 
         /* =========================
-                                                                                                                       HOVER (COLOR ONLY, NO SHIFT)
-                                                                                                                       ========================= */
+                                                                                                                                               HOVER (COLOR ONLY, NO SHIFT)
+                                                                                                                                               ========================= */
         body.dark-mode .fc-list-event:hover .fc-list-event-title {
             color: #e0f2fe !important;
         }
@@ -1155,8 +1155,8 @@
         }
 
         /* ===============================
-                                                                                                                                                                                                                   🌙 DARK MODE NOTES & STATUS FIX
-                                                                                                                                                                                                                ================================= */
+                                                                                                                                                                                                                                           🌙 DARK MODE NOTES & STATUS FIX
+                                                                                                                                                                                                                                        ================================= */
 
         body.dark-mode .section-label {
             color: #e5e7eb !important;
@@ -1261,6 +1261,64 @@
                     week: 'Minggu',
                     day: 'Hari',
                     list: 'Daftar'
+                },
+                buttonHints: {
+                    prev: 'Bulan sebelumnya',
+                    next: 'Bulan berikutnya',
+                    today: 'Bulan ini',
+                    month: 'Tampilan bulan',
+                    week: 'Tampilan minggu',
+                    day: 'Tampilan hari',
+                    list: 'Daftar jadwal'
+                },
+                datesSet: function(info) {
+                    const view = info.view.type;
+
+                    let prevText = '';
+                    let nextText = '';
+                    let todayText = '';
+                    let todayLabel = '';
+
+                    // 🔥 Mapping sesuai view
+                    if (view === 'dayGridMonth') {
+                        prevText = 'Bulan sebelumnya';
+                        nextText = 'Bulan berikutnya';
+                        todayText = 'Bulan ini';
+                        todayLabel = 'Bulan Ini';
+
+                    } else if (view === 'timeGridWeek') {
+                        prevText = 'Minggu sebelumnya';
+                        nextText = 'Minggu berikutnya';
+                        todayText = 'Minggu ini';
+                        todayLabel = 'Minggu Ini';
+
+                    } else if (view === 'timeGridDay') {
+                        prevText = 'Hari sebelumnya';
+                        nextText = 'Hari berikutnya';
+                        todayText = 'Hari ini';
+                        todayLabel = 'Hari Ini';
+
+                    } else if (view === 'listWeek') {
+                        prevText = 'Minggu sebelumnya';
+                        nextText = 'Minggu berikutnya';
+                        todayText = 'Minggu ini';
+                        todayLabel = 'Minggu Ini';
+                    }
+
+                    // 🔥 Ambil tombol
+                    const prevBtn = document.querySelector('.fc-prev-button');
+                    const nextBtn = document.querySelector('.fc-next-button');
+                    const todayBtn = document.querySelector('.fc-today-button');
+
+                    // 🔥 Apply tooltip
+                    if (prevBtn) prevBtn.setAttribute('title', prevText);
+                    if (nextBtn) nextBtn.setAttribute('title', nextText);
+
+                    // 🔥 Apply label + tooltip tombol today
+                    if (todayBtn) {
+                        todayBtn.setAttribute('title', todayText);
+                        todayBtn.innerText = todayLabel;
+                    }
                 },
                 events: @json($appointments ?? []),
                 eventTimeFormat: {

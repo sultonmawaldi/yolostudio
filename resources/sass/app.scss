@@ -550,7 +550,10 @@ body {
 
 /* TANDA CEKLIS */
 .time-slot.selected::after {
-    content: "✓";
+    content: "\f00c"; /* ✔ Font Awesome check */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+
     position: absolute;
     top: -6px;
     right: -6px;
@@ -560,10 +563,9 @@ body {
     border-radius: 50%;
 
     background-color: #22c55e;
-    color: white;
+    color: #fff;
 
-    font-size: 12px;
-    font-weight: 700;
+    font-size: 11px;
 
     display: flex;
     align-items: center;
@@ -899,22 +901,30 @@ body {
         0 0 0 4px rgba(37, 99, 235, 0.15);
 }
 
-/* Check icon (visual confirmation) */
 .background-item.selected::after {
-    content: "✓";
+    content: "\f00c"; /* Font Awesome check */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+
     position: absolute;
     top: -6px;
     right: -6px;
+
     width: 22px;
     height: 22px;
+
     background: var(--primary-color);
     color: #ffffff;
-    font-size: 13px;
-    font-weight: 700;
+
+    font-size: 12px; /* disesuaikan biar center lebih clean */
+    line-height: 1;
+
     border-radius: 50%;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     box-shadow: 0 4px 10px rgba(37, 99, 235, 0.45);
 }
 

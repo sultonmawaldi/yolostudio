@@ -220,7 +220,7 @@
                     <!-- Legend -->
                     <div class="mt-3 text-center small">
                         <span class="badge bg-primary">Tersedia</span>
-                        <span class="badge bg-warning text-dark">Slot Saat Ini</span>
+                        <span class="badge bg-warning">Slot Saat Ini</span>
                         <span class="badge bg-secondary">Sudah Dibooking</span>
                     </div>
                 </div>
@@ -768,8 +768,8 @@
 
 
         /* ===============================
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           DETAIL MODAL FINAL CLEAN
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ================================= */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               DETAIL MODAL FINAL CLEAN
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ================================= */
 
         .detail-section {
             background: #f8fafc;
@@ -1077,20 +1077,18 @@
         }
 
         /* ================= MODERN CARD STYLE ================= */
-        .modern-card {
-            background-color: #fff;
-            border-radius: 1rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        }
-
+        /* Modern Arrows */
         .modern-arrow {
-            font-size: 1.2rem;
-            color: #3b82f6;
-            transition: transform 0.2s;
+            font-size: 1.8rem;
+            color: #00b4d8;
+            transition: all 0.25s ease;
+            cursor: pointer;
         }
 
         .modern-arrow:hover {
-            transform: scale(1.1);
+            transform: scale(1.15) rotate(3deg);
+            color: #128c7e;
+            /* hijau gelap */
         }
 
         /* Kalender table */
@@ -1119,6 +1117,8 @@
         .table-calendar td.disabled {
             color: #9ca3af;
             cursor: not-allowed;
+            pointer-events: none;
+            /* 🔥 INI KUNCI */
         }
 
         .calendar-header-grid {
@@ -1178,6 +1178,23 @@
         /* Pastikan parent tidak kasih ruang */
         .table-calendar {
             margin: 0 !important;
+        }
+
+        /* ================= RESCHEDULE SELECTED (GRADIENT ONLY) ================= */
+
+        /* untuk cell td langsung */
+        .table-calendar td.selected {
+            background: linear-gradient(135deg, #007bff, #00b4d8);
+            color: #fff !important;
+            font-weight: 600;
+            box-shadow: 0 3px 8px rgba(37, 211, 102, 0.3);
+        }
+
+        /* kalau pakai inner div .calendar-day */
+        .table-calendar td.selected .calendar-day,
+        .calendar-day.selected {
+            background: linear-gradient(135deg, #007bff, #00b4d8);
+            color: #fff !important;
         }
 
         /* Label kecil */
@@ -1289,18 +1306,27 @@
 
         .custom-footer {
             display: flex;
-            gap: 10px;
+            gap: 8px;
+            /* 🔥 dari 10 → lebih rapat */
         }
 
         .custom-footer .btn {
             border-radius: 50px !important;
-            min-height: 44px;
-            padding: 8px 18px;
+
+            min-height: 36px;
+            /* 🔥 dari 44 → lebih pendek */
+            padding: 6px 14px;
+            /* 🔥 dari 8x18 → lebih kecil */
+
+            font-size: 0.85rem;
+            /* 🔥 biar proporsional */
+
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            /* 🔥 ini yang bikin icon ada jarak */
+            gap: 5px;
+            /* 🔥 sedikit diperkecil */
+
             white-space: nowrap;
         }
 
@@ -1308,10 +1334,16 @@
         @media (max-width: 576px) {
             .custom-footer {
                 flex-direction: column;
+                gap: 6px;
+                /* 🔥 lebih rapat di mobile */
             }
 
             .custom-footer .btn {
                 width: 100%;
+                min-height: 34px;
+                /* 🔥 lebih kecil lagi */
+                padding: 6px 12px;
+                font-size: 0.8rem;
             }
         }
 
@@ -1359,8 +1391,8 @@
         }
 
         /* ===============================
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       🌙 DARK MODE FULL OVERRIDE
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ================================= */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           🌙 DARK MODE FULL OVERRIDE
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ================================= */
 
 
         /* ===== FILTER INPUT ===== */
@@ -1542,8 +1574,8 @@
         }
 
         /* ===============================
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   💀 NUCLEAR DARK MODE TABLE FIX
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ================================= */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       💀 NUCLEAR DARK MODE TABLE FIX
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ================================= */
 
         body.dark-mode table,
         body.dark-mode .table,
@@ -1583,11 +1615,6 @@
             background-color: transparent !important;
         }
 
-        /* HOVER */
-        body.dark-mode table tbody tr:hover {
-            background-color: rgba(59, 130, 246, 0.10) !important;
-        }
-
         /* HAPUS TEXT MUTED / DARK BOOTSTRAP */
         body.dark-mode .text-dark,
         body.dark-mode .text-muted {
@@ -1617,8 +1644,8 @@
         }
 
         /* ===============================
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           💀 DARK MODE MODAL FIX TOTAL (FULL UPGRADE)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ================================= */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               💀 DARK MODE MODAL FIX TOTAL (FULL UPGRADE)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ================================= */
 
         body.dark-mode .modal-content {
             background: #0f172a !important;
@@ -1752,8 +1779,8 @@
         }
 
         /* =========================
-                                                                                                                                                                                                                                                                                                                                                       DARK MODE - COLOR ONLY FIX (NO LAYOUT CHANGE)
-                                                                                                                                                                                                                                                                                                                                                    ========================= */
+                                                                                                                                                                                                                                                                                                                                                                                                                           DARK MODE - COLOR ONLY FIX (NO LAYOUT CHANGE)
+                                                                                                                                                                                                                                                                                                                                                                                                                        ========================= */
 
         /* HEADER TABLE - SAMAKAN DENGAN TRANSACTION GLASS */
         body.dark-mode #myTable thead,
@@ -1784,6 +1811,68 @@
         /* HOVER - hanya warna */
         body.dark-mode #myTable tbody tr:hover {
             background: rgba(59, 130, 246, 0.08) !important;
+        }
+
+        /* ================= DARK MODE ================= */
+        /* Table dasar */
+        body.dark-mode .table-calendar {
+            background-color: #111827;
+        }
+
+        /* Header hari (Sen, Sel, dll) */
+        body.dark-mode .table-calendar thead th {
+            color: #9ca3af !important;
+        }
+
+        /* Cell default */
+        body.dark-mode .table-calendar td {
+            color: #e5e7eb;
+        }
+
+        /* Hover available (biar tetap hidup di dark) */
+        body.dark-mode .table-calendar td.available:hover {
+            background-color: #2563eb;
+            color: #fff;
+        }
+
+        /* Disabled */
+        body.dark-mode .table-calendar td.disabled {
+            color: #6b7280;
+            background-color: #1f2933;
+        }
+
+        /* ================= SELECTED (GRADIENT DARK) ================= */
+
+        body.dark-mode .table-calendar td.selected {
+            background: linear-gradient(135deg, #2563eb, #00b4d8) !important;
+            color: #fff !important;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0, 180, 216, 0.35);
+        }
+
+        /* Inner calendar-day kalau ada */
+        body.dark-mode .table-calendar td.selected .calendar-day,
+        body.dark-mode .calendar-day.selected {
+            background: linear-gradient(135deg, #2563eb, #00b4d8) !important;
+            color: #fff !important;
+        }
+
+        /* ================= HOVER MODERN ================= */
+
+        body.dark-mode .calendar-day:hover:not(.disabled) {
+            background-color: rgba(37, 211, 102, 0.18);
+            color: #25d366 !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        /* ================= ARROW ================= */
+
+        body.dark-mode .modern-arrow {
+            color: #38bdf8;
+        }
+
+        body.dark-mode .modern-arrow:hover {
+            color: #22c55e;
         }
     </style>
 @stop

@@ -558,14 +558,6 @@
    SELECT & SELECT2 DARK
 ================================= */
 
-        /* native select */
-        body.dark-mode select.form-control,
-        body.dark-mode select.form-select {
-            background: #020617;
-            color: #e2e8f0;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
         /* ===============================
    SELECT2 SINGLE
 ================================= */
@@ -705,10 +697,7 @@
             border-color: rgba(148, 163, 184, 0.12) !important;
         }
 
-        /* HOVER */
-        body.dark-mode .table tbody tr:hover {
-            background: rgba(59, 130, 246, 0.08) !important;
-        }
+
 
         /* ================= DATA TABLE WRAPPER ================= */
 

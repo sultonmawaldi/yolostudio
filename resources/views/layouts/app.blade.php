@@ -281,22 +281,30 @@
                             <!-- Dropdown -->
                             <div x-show="openLang" x-transition.opacity.duration.200ms x-cloak
                                 class="absolute right-0 mt-1 bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-xl shadow-lg z-50 w-auto overflow-hidden">
-                                <ul class="flex flex-col gap-1 p-1">
-                                    <!-- Indonesia -->
-                                    <li>
-                                        <button @click="lang='id'; changeLang(); openLang=false;"
-                                            class="flex items-center gap-2 px-3 py-2 hover:bg-blue-100/50 dark:hover:bg-gray-700 rounded-md whitespace-nowrap">
-                                            <span class="fi fi-id w-5 h-4"></span> ID
-                                        </button>
-                                    </li>
-                                    <!-- Inggris -->
-                                    <li>
-                                        <button @click="lang='en'; changeLang(); openLang=false;"
-                                            class="flex items-center gap-2 px-3 py-2 hover:bg-blue-100/50 dark:hover:bg-gray-700 rounded-md whitespace-nowrap">
-                                            <span class="fi fi-gb w-5 h-4"></span> EN
-                                        </button>
-                                    </li>
-                                </ul>
+                                <!-- Indonesia -->
+                                <li>
+                                    <button @click="lang='id'; changeLang(); openLang=false;"
+                                        class="flex items-center justify-between w-full px-[15px] py-2
+               hover:bg-blue-100/50 dark:hover:bg-gray-700
+               text-sm rounded-md">
+                                        <div class="flex items-center gap-2">
+                                            <span class="fi fi-id w-5 h-4"></span>
+                                            <span>ID</span>
+                                        </div>
+                                    </button>
+                                </li>
+
+                                <li>
+                                    <button @click="lang='en'; changeLang(); openLang=false;"
+                                        class="flex items-center justify-between w-full px-[15px] py-2
+               hover:bg-blue-100/50 dark:hover:bg-gray-700
+               text-sm rounded-md">
+                                        <div class="flex items-center gap-2">
+                                            <span class="fi fi-gb w-5 h-4"></span>
+                                            <span>EN</span>
+                                        </div>
+                                    </button>
+                                </li>
                             </div>
                         </div>
 
@@ -344,6 +352,7 @@
                                         </p>
                                         <div class="mt-2 border-b border-blue-300/60 dark:border-gray-700/60"></div>
                                     </div>
+
                                     <a href="{{ route('member.profile') }}"
                                         class="flex items-center px-4 py-2 text-sm font-medium rounded-md transition-all duration-150
                                         {{ request()->routeIs('member.profile')
@@ -402,41 +411,52 @@
                             </div>
                         </div>-->
 
-                        <!-- Language Mobile Compact -->
-                        <div class="relative" x-data="{ openLangMobile: false, lang: 'id' }" @click.away="openLangMobile = false">
+                        <!-- Language Mobile Compact (FIXED) -->
+                        <div class="relative" x-data="{ openLangMobile: false }" @click.away="openLangMobile = false">
+
                             <!-- Tombol utama -->
                             <button @click="openLangMobile = !openLangMobile"
-                                class="inline-flex items-center gap-2 bg-white/70 dark:bg-gray-800/70 rounded px-3 py-2 text-sm font-semibold uppercase backdrop-blur-md focus:ring-2 focus:ring-blue-400 hover:ring-blue-500 transition">
-                                <!-- Bendera -->
+                                class="flex items-center gap-2 bg-white/70 dark:bg-gray-800/70 rounded-md px-3 py-2 backdrop-blur-md focus:ring-2 focus:ring-blue-400 hover:ring-blue-500 transition">
+
+                                <!-- 🔥 Flag ikut state global -->
                                 <span class="fi fi-id w-5 h-4" x-show="lang==='id'"></span>
                                 <span class="fi fi-gb w-5 h-4" x-show="lang==='en'"></span>
+
                                 <!-- Chevron -->
-                                <i class="fa fa-chevron-down text-sm ml-1 transition-transform duration-200"
+                                <i class="fa fa-chevron-down text-sm transition-transform duration-200"
                                     :class="{ 'rotate-180': openLangMobile }"></i>
                             </button>
 
                             <!-- Dropdown -->
-                            <div x-show="openLangMobile" x-transition.opacity.duration.150ms x-cloak
-                                class="absolute right-0 mt-1 bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded shadow-lg z-50 w-max min-w-[60px] overflow-hidden">
-                                <ul class="flex flex-col gap-1 p-1">
-                                    <!-- Indonesia -->
-                                    <li>
-                                        <button @click="lang='id'; changeLang(); openLangMobile=false;"
-                                            class="flex items-center gap-2 px-3 py-2 hover:bg-blue-100/50 dark:hover:bg-gray-700 rounded text-sm font-semibold uppercase whitespace-nowrap">
-                                            <span class="fi fi-id w-5 h-4"></span> ID
-                                        </button>
-                                    </li>
-                                    <!-- Inggris -->
-                                    <li>
-                                        <button @click="lang='en'; changeLang(); openLangMobile=false;"
-                                            class="flex items-center gap-2 px-3 py-2 hover:bg-blue-100/50 dark:hover:bg-gray-700 rounded text-sm font-semibold uppercase whitespace-nowrap">
-                                            <span class="fi fi-gb w-5 h-4"></span> EN
-                                        </button>
-                                    </li>
-                                </ul>
+                            <div x-show="openLangMobile" x-transition.opacity.duration.200ms x-cloak
+                                class="absolute right-0 mt-1 bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-xl shadow-lg z-50 w-auto overflow-hidden">
+
+                                <!-- Indonesia -->
+                                <li>
+                                    <button @click="lang='id'; changeLang(); openLang=false;"
+                                        class="flex items-center justify-between w-full px-[15px] py-2
+               hover:bg-blue-100/50 dark:hover:bg-gray-700
+               text-sm rounded-md">
+                                        <div class="flex items-center gap-2">
+                                            <span class="fi fi-id w-5 h-4"></span>
+                                            <span>ID</span>
+                                        </div>
+                                    </button>
+                                </li>
+
+                                <li>
+                                    <button @click="lang='en'; changeLang(); openLang=false;"
+                                        class="flex items-center justify-between w-full px-[15px] py-2
+               hover:bg-blue-100/50 dark:hover:bg-gray-700
+               text-sm rounded-md">
+                                        <div class="flex items-center gap-2">
+                                            <span class="fi fi-gb w-5 h-4"></span>
+                                            <span>EN</span>
+                                        </div>
+                                    </button>
+                                </li>
                             </div>
                         </div>
-
 
 
 
