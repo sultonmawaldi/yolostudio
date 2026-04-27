@@ -14,7 +14,9 @@
                    font-[Playfair_Display]
                    title-glow scroll-fade"
                 style="font-size: clamp(1.5rem, 5vw, 3.5rem); letter-spacing: 0.03em; line-height: 1.2;">
-                ✦ Hasil Foto Anda ✦
+                <i class="fa-solid fa-star me-2"></i>
+                Hasil Foto Anda
+                <i class="fa-solid fa-star ms-2"></i>
             </h2>
             <!-- Garis -->
             <div class="mt-0 w-24 sm:w-32 md:w-44 h-[3px] mx-auto rounded-full 

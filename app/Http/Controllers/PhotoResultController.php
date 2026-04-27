@@ -148,7 +148,7 @@ class PhotoResultController extends Controller
 
         $photo->delete();
 
-        return back()->with('success', 'Foto berhasil dihapus!');
+        return back()->with('success', 'Foto berhasil dihapus');
     }
 
     /**
@@ -159,7 +159,7 @@ class PhotoResultController extends Controller
         $transaction = Transaction::with('photoResults')->findOrFail($transactionId);
 
         if ($transaction->photoResults->isEmpty()) {
-            return back()->with('error', 'Tidak ada foto untuk dihapus.');
+            return back()->with('error', 'Tidak ada foto untuk dihapus');
         }
 
         // Hapus file dari storage
@@ -172,7 +172,7 @@ class PhotoResultController extends Controller
         // Hapus record dari database
         $transaction->photoResults()->delete();
 
-        return back()->with('success', 'Semua foto berhasil dihapus!');
+        return back()->with('success', 'Semua foto berhasil dihapus');
     }
 
 
@@ -202,7 +202,7 @@ class PhotoResultController extends Controller
         $transaction->public_token_expires_at = now()->addDays(7);
         $transaction->save();
 
-        return back()->with('success', 'Link publik berhasil diperbarui!');
+        return back()->with('success', 'Link publik berhasil diperbarui');
     }
 
     public function download($photoResult, $token)
@@ -211,7 +211,7 @@ class PhotoResultController extends Controller
         $transaction = $photo->transaction;
 
         if (!$transaction) {
-            abort(404, 'Transaksi tidak ditemukan.');
+            abort(404, 'Transaksi tidak ditemukan');
         }
 
         if (
@@ -219,11 +219,11 @@ class PhotoResultController extends Controller
             !$transaction->public_token_expires_at ||
             now()->gt($transaction->public_token_expires_at)
         ) {
-            abort(403, 'Link tidak valid atau sudah kedaluwarsa.');
+            abort(403, 'Link tidak valid atau sudah kedaluwarsa');
         }
 
         if (!Storage::disk('public')->exists($photo->file_path)) {
-            abort(404, 'File tidak ditemukan di storage.');
+            abort(404, 'File tidak ditemukan di penyimpanan');
         }
 
         // Gunakan nama asli file
@@ -241,7 +241,7 @@ class PhotoResultController extends Controller
         $transaction = \App\Models\Transaction::where('public_token', $token)->firstOrFail();
 
         if (! $transaction->photoResults || $transaction->photoResults->isEmpty()) {
-            return back()->with('error', 'Tidak ada foto untuk diunduh.');
+            return back()->with('error', 'Tidak ada foto untuk diunduh');
         }
 
         $zip = new ZipArchive;
@@ -263,7 +263,7 @@ class PhotoResultController extends Controller
             }
             $zip->close();
         } else {
-            return back()->with('error', 'Gagal membuat arsip zip.');
+            return back()->with('error', 'Gagal membuat arsip zip');
         }
 
         return response()->download($zipPath)->deleteFileAfterSend(true);
@@ -285,14 +285,14 @@ class PhotoResultController extends Controller
             }
 
             if (!$transaction->public_token) {
-                return back()->with('error', 'Link hasil foto belum tersedia.');
+                return back()->with('error', 'Link hasil foto belum tersedia');
             }
 
             // Ambil token dari .env
             $token = env('FONNTE_TOKEN');
             if (!$token) {
                 \Log::warning('FONNTE_TOKEN not found in .env');
-                return back()->with('error', 'Token Fonnte tidak ditemukan.');
+                return back()->with('error', 'Token Fonnte tidak ditemukan');
             }
 
             // Normalisasi nomor ke format 62xxxx
@@ -304,11 +304,22 @@ class PhotoResultController extends Controller
             }
 
             // Buat pesan WhatsApp
-            $message = "Halo, berikut link hasil foto Anda 📸:\n\n" .
+            $message = "Hai kak! terima kasih ya sudah berfoto di Yolo Studio 📸\n\n" .
+                "Berikut link hasil foto kakak:\n\n" .
                 route('photo-result.public', $transaction->public_token) . "\n\n" .
-                "Link ini berlaku hingga " .
+                "⚠️ Link ini berlaku hingga " .
                 $transaction->public_token_expires_at->translatedFormat('d F Y - H:i') .
-                " WIB\n\nTerima kasih telah berfoto bersama kami 🤝";
+                " WIB\n\n" .
+                "Mohon segera diunduh atau dipindahkan ke penyimpanan pribadi ya kak, karena file hanya tersedia selama masa aktif link.\n\n" .
+                "📌 Catatan:\n" .
+                "🙏 Kami sangat menghargai feedback kakak\n" .
+                "⭐ Mohon bantu review kami di Google:\n" .
+                "https://search.google.com/local/writereview?placeid=ChIJfUgRs9aNQS4RjZdkHVDCHCHrc\n\n" .
+                "📲 Jangan lupa tag Instagram kami ya kalau upload hasil foto:\n" .
+                "@yolostudio_id\n\n" .
+                "💬 Ada kendala dengan hasil foto atau layanan?\n" .
+                "Hubungi Customer Service YOLO Studio: 082124247060\n\n" .
+                "Terima kasih kak! Sehat selalu dan sampai jumpa lagi 👋😁";
 
             // Kirim melalui Fonnte API
             $response = Http::withHeaders([
@@ -325,13 +336,13 @@ class PhotoResultController extends Controller
             ]);
 
             if ($response->successful()) {
-                return back()->with('success', 'Pesan WhatsApp berhasil dikirim!');
+                return back()->with('success', 'Pesan WhatsApp berhasil dikirim');
             } else {
-                return back()->with('error', 'Gagal mengirim pesan WhatsApp. Cek log untuk detail.');
+                return back()->with('error', 'Gagal mengirim pesan WhatsApp. Cek log untuk detail');
             }
         } catch (\Exception $e) {
             \Log::error('Gagal kirim WhatsApp via Fonnte: ' . $e->getMessage());
-            return back()->with('error', 'Terjadi kesalahan saat mengirim pesan WhatsApp.');
+            return back()->with('error', 'Terjadi kesalahan saat mengirim pesan WhatsApp');
         }
     }
 }

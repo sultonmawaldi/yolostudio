@@ -99,7 +99,7 @@ class FrontendController extends Controller
         if ($employees->isEmpty()) {
             return response()->json([
                 'success' => false,
-                'message' => 'No employees available for this service',
+                'message' => 'Tidak ada karyawan yang tersedia untuk layanan ini',
             ]);
         }
 
@@ -134,7 +134,7 @@ class FrontendController extends Controller
         $serviceId = request()->get('service_id');
 
         if (!$serviceId) {
-            return response()->json(['error' => 'Service ID is required'], 422);
+            return response()->json(['error' => 'ID Layanan diperlukan'], 422);
         }
 
         try {
@@ -147,7 +147,7 @@ class FrontendController extends Controller
                 return response()->json([
                     'employee_id' => $employee->id,
                     'available_slots' => [],
-                    'message' => 'Employee not assigned to this service'
+                    'message' => 'Karyawan tidak ditugaskan ke layanan ini'
                 ]);
             }
 
@@ -160,7 +160,7 @@ class FrontendController extends Controller
                 return response()->json([
                     'employee_id' => $employee->id,
                     'available_slots' => [],
-                    'message' => 'No slot group assigned for this service'
+                    'message' => 'Tidak ada grup slot yang ditetapkan untuk layanan ini'
                 ]);
             }
 
@@ -169,7 +169,7 @@ class FrontendController extends Controller
                 return response()->json([
                     'employee_id' => $employee->id,
                     'available_slots' => [],
-                    'message' => 'Slot group not found'
+                    'message' => 'Grup slot tidak ditemukan'
                 ]);
             }
 
@@ -311,7 +311,7 @@ class FrontendController extends Controller
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'error' => 'Error processing availability',
+                'error' => 'Kesalahan saat memproses ketersediaan',
                 'message' => $e->getMessage()
             ], 500);
         }

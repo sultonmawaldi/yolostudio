@@ -1337,6 +1337,29 @@
         });
     </script>
 
+    {{-- GLOBAL TOAST --}}
+    @if (session('login_success') || session('success') || session('error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+
+                let message = @json(session('login_success') ?? (session('success') ?? session('error')));
+                let type = @json(session('error') ? 'error' : 'success');
+
+                console.log("Toast ADMIN jalan:", message);
+
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: type,
+                    title: message,
+                    showConfirmButton: false,
+                    timer: 4000,
+                    timerProgressBar: true,
+                });
+
+            });
+        </script>
+    @endif
 </body>
 
 </html>

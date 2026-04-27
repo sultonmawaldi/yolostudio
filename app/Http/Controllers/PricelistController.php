@@ -65,13 +65,13 @@ class PricelistController extends Controller
         $pricelist->update($data);
 
         return redirect()->route('admin.pricelists.index')
-            ->with('success', 'Pricelist berhasil diupdate');
+            ->with('success', 'List harga berhasil diperbarui');
     }
 
     public function destroy(Pricelist $pricelist)
     {
         $pricelist->delete();
 
-        return back()->with('success', 'Pricelist berhasil dihapus');
+        return back()->with('success', 'List harga berhasil dihapus');
     }
 }

@@ -264,73 +264,71 @@
 
 
                     <!-- Ringkasan Pemesanan -->
-                    <div class="card shadow-sm border-0 mb-4">
+                    <div class="card shadow-sm border-0 mb-4 summary-card">
                         <div class="card-header bg-grey border-bottom">
                             <h5 class="mb-0 fw-semibold text-center">
                                 <i class="fa-solid fa-clipboard-check me-2"></i> Ringkasan Pemesanan
                             </h5>
                         </div>
+
                         <div class="card-body">
-                            <div class="mb-3">
-                                <!-- ITEM REUSABLE COMPONENT -->
 
-                                <div class="row mb-3 align-items-center summary-row">
-                                    <div class="col-4 text-muted d-flex align-items-center">
-                                        <i class="fa fa-map-marker-alt me-2 summary-icon"></i>
-                                        <span class="summary-label">Studio :</span>
-                                    </div>
-                                    <div class="col-8 fw-medium" id="summary-employee">-</div>
+                            <div class="summary-row">
+                                <div class="summary-label">
+                                    <i class="fa fa-map-marker-alt summary-icon"></i>
+                                    Studio
                                 </div>
-
-                                <div class="row mb-3 align-items-center summary-row">
-                                    <div class="col-4 text-muted d-flex align-items-center">
-                                        <i class="fa fa-table-cells-large me-2 summary-icon"></i>
-                                        <span class="summary-label">Kategori :</span>
-                                    </div>
-                                    <div class="col-8 fw-medium" id="summary-category">-</div>
-                                </div>
-
-                                <div class="row mb-3 align-items-center summary-row">
-                                    <div class="col-4 text-muted d-flex align-items-center">
-                                        <i class="fa fa-concierge-bell me-2 summary-icon"></i>
-                                        <span class="summary-label">Layanan :</span>
-                                    </div>
-                                    <div class="col-8 fw-medium" id="summary-service">-</div>
-                                </div>
-
-                                <div class="row mb-3 align-items-center">
-                                    <div class="col-4 text-muted d-flex align-items-center">
-                                        <i class="fa-solid fa-user-group me-2 summary-icon"></i>
-                                        <span class="summary-label">Jumlah Orang :</span>
-                                    </div>
-                                    <div class="col-8 fw-medium" id="summary-people">-</div>
-                                </div>
-
-                                <div class="row mb-3 align-items-center summary-row">
-                                    <div class="col-4 text-muted d-flex align-items-center">
-                                        <i class="fa fa-calendar-alt me-2 summary-icon"></i>
-                                        <span class="summary-label">Tanggal :</span>
-                                    </div>
-                                    <div class="col-8 fw-medium" id="summary-date">-</div>
-                                </div>
-
-                                <div class="row mb-3 align-items-center summary-row">
-                                    <div class="col-4 text-muted d-flex align-items-center">
-                                        <i class="fa fa-clock me-2 summary-icon"></i>
-                                        <span class="summary-label">Waktu :</span>
-                                    </div>
-                                    <div class="col-8 fw-medium" id="summary-time">-</div>
-                                </div>
-
-                                <div class="row mb-3 align-items-center summary-row">
-                                    <div class="col-4 text-muted d-flex align-items-center">
-                                        <i class="fa fa-hourglass-half me-2 summary-icon"></i>
-                                        <span class="summary-label">Durasi :</span>
-                                    </div>
-                                    <div class="col-8 fw-medium" id="summary-duration">-</div>
-                                </div>
-
+                                <div class="summary-value" id="summary-employee">-</div>
                             </div>
+
+                            <div class="summary-row">
+                                <div class="summary-label">
+                                    <i class="fa fa-table-cells-large summary-icon"></i>
+                                    Kategori
+                                </div>
+                                <div class="summary-value" id="summary-category">-</div>
+                            </div>
+
+                            <div class="summary-row">
+                                <div class="summary-label">
+                                    <i class="fa fa-concierge-bell summary-icon"></i>
+                                    Layanan
+                                </div>
+                                <div class="summary-value" id="summary-service">-</div>
+                            </div>
+
+                            <div class="summary-row">
+                                <div class="summary-label">
+                                    <i class="fa-solid fa-user-group summary-icon"></i>
+                                    Jumlah Orang
+                                </div>
+                                <div class="summary-value" id="summary-people">-</div>
+                            </div>
+
+                            <div class="summary-row">
+                                <div class="summary-label">
+                                    <i class="fa fa-calendar-alt summary-icon"></i>
+                                    Tanggal
+                                </div>
+                                <div class="summary-value" id="summary-date">-</div>
+                            </div>
+
+                            <div class="summary-row">
+                                <div class="summary-label">
+                                    <i class="fa fa-clock summary-icon"></i>
+                                    Waktu
+                                </div>
+                                <div class="summary-value" id="summary-time">-</div>
+                            </div>
+
+                            <div class="summary-row">
+                                <div class="summary-label">
+                                    <i class="fa fa-hourglass-half summary-icon"></i>
+                                    Durasi
+                                </div>
+                                <div class="summary-value" id="summary-duration">-</div>
+                            </div>
+
                         </div>
                     </div>
 
@@ -364,8 +362,8 @@
                             <div class="mb-4">
                                 <label for="payment-method" class="form-label fw-semibold">Metode Pembayaran :</label>
                                 <select id="payment-method" class="form-select">
-                                    <option value="cash">Bayar Cash</option>
-                                    <option value="dp">Bayar DP</option>
+                                    <option value="cash">Bayar Lunas (Cash)</option>
+                                    <option value="dp">Bayar Uang Muka (DP)</option>
                                 </select>
                             </div>
 
@@ -644,78 +642,6 @@
     </div>
 
 
-    <style>
-        body.modal-open {
-            overflow: hidden !important;
-            /* cegah double scrollbar */
-            padding-right: 0 !important;
-        }
-
-
-        /* Dark mode support */
-        @media (prefers-color-scheme: dark) {
-            #bookingSuccessModal .modal-content {
-                background-color: #1e293b;
-                color: #e2e8f0;
-            }
-
-            #bookingSuccessModal .booking-details {
-                background-color: #0f172a;
-            }
-
-            #bookingSuccessModal .alert-info {
-                background-color: #334155;
-                color: #cbd5e1;
-            }
-        }
-
-        .booking-details {
-            max-height: 45vh;
-            overflow-y: auto;
-            padding-right: 4px;
-            box-sizing: border-box;
-        }
-
-        .booking-details::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .booking-details::-webkit-scrollbar-thumb {
-            background-color: rgba(0, 0, 0, 0.2);
-            border-radius: 3px;
-        }
-
-        .booking-details::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        /* Dark mode untuk modal booking */
-        @media (prefers-color-scheme: dark) {
-            #bookingSuccessModal .modal-content {
-                background-color: #1e293b;
-                /* dark modal background */
-                color: #e2e8f0;
-                /* text warna terang */
-            }
-
-            #bookingSuccessModal table {
-                background-color: #1e293b;
-                color: #e2e8f0;
-            }
-
-            #bookingSuccessModal table.table-bordered th,
-            #bookingSuccessModal table.table-bordered td {
-                border-color: rgba(255, 255, 255, 0.2);
-            }
-
-            #bookingSuccessModal .alert {
-                background-color: #334155;
-                color: #e2e8f0;
-                border-color: rgba(255, 255, 255, 0.1);
-            }
-        }
-    </style>
-
 
 
 
@@ -850,53 +776,58 @@
                         // Ambil data employees dari response
                         employees = res.employees || [];
 
-                        // Filter hanya employee (backend sudah menambahkan field role)
-                        const employeeOnly = employees.filter(emp => emp.role === 'employee');
+                        // Filter hanya employee (dipakai sebagai studio di frontend)
+                        const studioList = employees.filter(emp => emp.role === 'employee');
 
-                        // Jika tidak ada employee, tampilkan pesan
-                        if (employeeOnly.length === 0) {
+                        // Jika tidak ada studio
+                        if (studioList.length === 0) {
                             $("#employees-container").html(`
-                    <p class="text-center text-muted w-100 mt-3">Tidak ada employee tersedia.</p>
+                    <p class="text-center text-muted w-100 mt-3">
+                        Tidak ada studio tersedia.
+                    </p>
                 `);
                             return;
                         }
 
-                        employeeOnly.forEach(employee => {
+                        studioList.forEach(employee => {
 
                             const user = employee.user || {};
                             const studioName = user.name || 'Studio';
                             const imageUrl = user.image_url || '/assets/img/studio.png';
 
                             $("#employees-container").append(`
-                            <div class="col animate-slide-in">
-                                <div class="card border h-100 employee-card text-center p-3"
-                                    data-employee="${employee.id}">
-                                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                                        
-                                        <img src="${imageUrl}"
-                                            class="rounded-circle mb-3 shadow-sm"
-                                            style="width:120px;height:120px;object-fit:cover">
+                    <div class="col animate-slide-in">
+                        <div class="card border h-100 employee-card text-center p-3"
+                            data-employee="${employee.id}">
+                            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                                
+                                <img src="${imageUrl}"
+                                    class="rounded-circle mb-3 shadow-sm"
+                                    style="width:120px;height:120px;object-fit:cover">
 
-                                        <h5 class="mb-1">${studioName}</h5>
-                                        <p class="text-muted small mb-0">Studio</p>
+                                <h5 class="mb-1">${studioName}</h5>
+                                <p class="text-muted small mb-0">Studio</p>
 
-                                    </div>
-                                </div>
                             </div>
-                        `);
+                        </div>
+                    </div>
+                `);
                         });
 
                     },
                     error: function(err) {
-                        console.error('Gagal load employee:', err);
+                        console.error('Gagal load studio:', err);
                         $("#employees-container").html(`
-                <p class="text-center text-danger w-100 mt-3">Gagal memuat employee.</p>
+                <p class="text-center text-danger w-100 mt-3">
+                    Gagal memuat studio.
+                </p>
             `);
                     }
                 });
             }
 
-            // Event klik untuk pilih employee
+
+            // Event klik untuk pilih studio
             $(document).on("click", ".employee-card", function() {
                 $(".employee-card").removeClass("selected");
                 $(this).addClass("selected");
@@ -1039,13 +970,17 @@
                                 Number(a.max_qty) :
                                 null;
 
-                            // Photobox ikut max_people
+                            // =========================
+                            // PHOTOBOX DYNAMIC MAX PEOPLE
+                            // =========================
+                            let isDynamicPeople = false;
+
                             if (
                                 a.unit === 'person' &&
                                 a.name.toLowerCase().includes('photobox')
                             ) {
-                                // jangan freeze saat render, cukup flag saja
-                                maxQty = "dynamic_people";
+                                isDynamicPeople = true;
+                                maxQty = window.peopleCount || serviceMaxPeopleFallback() || 1;
                             }
 
                             let unitText = '';
@@ -1053,65 +988,71 @@
 
                             if (a.unit === 'minute') {
                                 extraInfo = `<small class="ms-2">(+5 menit)</small>`;
+
                             } else if (a.unit === 'person') {
+
                                 unitText = 'orang';
-                                if (maxQty) {
-                                    extraInfo =
-                                        `<small class="ms-2">(maks. ${maxQty} orang)</small>`;
+
+                                if (maxQty && !isDynamicPeople) {
+                                    extraInfo = `<small class="ms-2">(maks. ${maxQty} orang)</small>`;
                                 }
+
+                                // kalau dynamic → jangan tampilkan angka mentah
+                                if (isDynamicPeople) {
+                                    extraInfo =
+                                        `<small class="ms-2">(maks. mengikuti jumlah orang)</small>`;
+                                }
+
                             } else {
                                 unitText = a.unit ?? '';
                             }
 
                             container.append(`
-                    <div class="card shadow-sm border-0 mb-3 addon-item"
-                        data-addon-id="${a.id}"
-                        data-addon-name="${a.name}"
-                        data-addon-price="${a.price}"
-                        data-addon-unit="${a.unit}"
-                        data-addon-max="${maxQty ?? ''}">
+        <div class="card shadow-sm border-0 mb-3 addon-item"
+            data-addon-id="${a.id}"
+            data-addon-name="${a.name}"
+            data-addon-price="${a.price}"
+            data-addon-unit="${a.unit}"
+            data-addon-max="${isDynamicPeople ? 'dynamic_people' : (maxQty ?? '')}">
 
-                        <!-- Image dihapus -->
+            <div class="card-header bg-grey border-bottom">
+                <h6 class="mb-0 fw-semibold">
+                    <i class="fa-solid fa-plus me-2"></i>
+                    ${a.name}
+                </h6>
+            </div>
 
-                        <div class="card-header bg-grey border-bottom">
-                            <h6 class="mb-0 fw-semibold">
-                                <i class="fa-solid fa-plus me-2"></i>
-                                ${a.name}
-                            </h6>
-                        </div>
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
 
-                        <div class="card-body">
-                            <div class="d-flex align-items-center justify-content-between">
+                    <span class="fs-6">
+                        ${formatRupiah(a.price)}
+                        ${unitText ? `/ ${unitText}` : ''}
+                        ${extraInfo}
+                    </span>
 
-                                <span class="fs-6">
-                                    ${formatRupiah(a.price)}
-                                    ${unitText ? `/ ${unitText}` : ''}
-                                    ${extraInfo}
-                                </span>
+                    <div class="d-flex align-items-center gap-2">
+                        <button type="button" class="btn-modern addon-decrease">
+                            <i class="bi bi-dash-lg"></i>
+                        </button>
 
-                                <!-- Semua unit pakai tombol plus/minus, termasuk 'minute' -->
-                                <div class="d-flex align-items-center gap-2">
-                                    <button type="button" class="btn-modern addon-decrease">
-                                        <i class="bi bi-dash-lg"></i>
-                                    </button>
+                        <span class="addon-qty fw-semibold fs-5 text-center"
+                              style="min-width:30px">0</span>
 
-                                    <span class="addon-qty fw-semibold fs-5 text-center"
-                                          style="min-width:30px">0</span>
-
-                                    <button type="button" class="btn-modern addon-increase">
-                                        <i class="bi bi-plus-lg"></i>
-                                    </button>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <input type="hidden"
-                               name="addons[${a.id}]"
-                               class="addon-input"
-                               value="0">
+                        <button type="button" class="btn-modern addon-increase">
+                            <i class="bi bi-plus-lg"></i>
+                        </button>
                     </div>
-                `);
+
+                </div>
+            </div>
+
+            <input type="hidden"
+                   name="addons[${a.id}]"
+                   class="addon-input"
+                   value="0">
+        </div>
+    `);
                         });
 
                     })
@@ -1293,7 +1234,7 @@
 
                 // safety check
                 if (!bookingState.selectedEmployee || !bookingState.selectedEmployee.id) {
-                    console.error('Employee belum dipilih');
+                    console.error('Karyawan belum dipilih');
                     return;
                 }
 
@@ -1930,7 +1871,7 @@
                     (!bookingState.selectedBackground || !bookingState.selectedBackground.id)) {
                     Swal.fire({
                         icon: 'warning',
-                        title: 'Background belum dipilih',
+                        title: 'Latar belakang belum dipilih',
                         confirmButtonColor: '#f59e0b',
                         allowOutsideClick: false,
                         didClose: () => $('#background-container').get(0)?.scrollIntoView({
@@ -2092,14 +2033,15 @@
                 // 1️⃣1️⃣ Midtrans
                 bookingData.status = 'Confirmed';
 
+                // 🔥 DEFAULT: anggap belum bayar
+                bookingData.payment_status = 'Pending';
+
                 if (paymentMethod === 'dp') {
                     bookingData.dp_method = 'Midtrans';
                     bookingData.pelunasan_method = null;
-                    bookingData.payment_status = 'DP';
                 } else {
                     bookingData.dp_method = null;
                     bookingData.pelunasan_method = 'Midtrans';
-                    bookingData.payment_status = 'Paid';
                 }
 
                 $.post('/midtrans/token', bookingData)
@@ -2112,38 +2054,88 @@
                                 confirmButtonColor: '#dc2626',
                                 allowOutsideClick: false
                             });
+
+                            // 🔥 SAVE sebagai FAILED biar ga hilang
+                            bookingData.payment_status = 'Failed';
+                            saveBooking(bookingData);
+
                             nextBtn.prop('disabled', false).text('Konfirmasi & Bayar');
                             return;
                         }
 
                         snap.pay(res.token, {
+
+                            // ✅ BERHASIL BAYAR
                             onSuccess: r => {
                                 bookingData.payment_result = JSON.stringify(r);
                                 bookingData.midtrans_order_id = r.order_id || r.transaction_id;
+
+                                bookingData.payment_status = 'Paid';
+
                                 saveBooking(bookingData);
                             },
+
+                            // ⏳ PENDING (QRIS / VA)
                             onPending: r => {
                                 bookingData.payment_result = JSON.stringify(r);
                                 bookingData.midtrans_order_id = r.order_id || r.transaction_id;
-                                bookingData.status = 'Processing';
+
+                                bookingData.status = 'Pending';
                                 bookingData.payment_status = 'Pending';
+
                                 saveBooking(bookingData);
+
+                                Swal.fire({
+                                    icon: 'info',
+                                    title: 'Menunggu Pembayaran',
+                                    text: 'Silakan selesaikan pembayaran Anda.',
+                                    confirmButtonColor: '#2563eb'
+                                });
                             },
+
+                            // ❌ ERROR MIDTRANS
                             onError: err => {
                                 console.error('Snap error:', err);
+
+                                bookingData.payment_status = 'Failed';
+                                saveBooking(bookingData);
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Pembayaran gagal',
+                                    confirmButtonColor: '#dc2626'
+                                });
+
                                 nextBtn.prop('disabled', false).text('Konfirmasi & Bayar');
                             },
-                            onClose: () => nextBtn.prop('disabled', false).text('Konfirmasi & Bayar')
+
+                            // ❌ USER TUTUP POPUP
+                            onClose: () => {
+
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Pembayaran dibatalkan',
+                                    text: 'Booking belum disimpan. Silakan ulangi jika ingin melanjutkan.',
+                                    confirmButtonColor: '#f59e0b'
+                                });
+
+                                nextBtn.prop('disabled', false).text('Konfirmasi & Bayar');
+                            }
                         });
                     })
                     .fail(xhr => {
                         console.error('Token request failed:', xhr.responseJSON || xhr);
+
+                        bookingData.payment_status = 'Failed';
+                        saveBooking(bookingData);
+
                         Swal.fire({
                             icon: 'error',
-                            title: 'Gagal membuat token Midtrans',
+                            title: 'Gagal koneksi ke Midtrans',
                             confirmButtonColor: '#dc2626',
                             allowOutsideClick: false
                         });
+
                         nextBtn.prop('disabled', false).text('Konfirmasi & Bayar');
                     });
             }
@@ -2160,7 +2152,7 @@
                     value: $(this).data('value')
                 };
 
-                console.log('🎨 Background dipilih:', bookingState.selectedBackground);
+                console.log('🎨 Latar belakang dipilih:', bookingState.selectedBackground);
             });
 
 
@@ -2406,15 +2398,42 @@
             finalPriceEl.parentElement.classList.remove("d-none");
 
             // DP logic tetap sama
+            // =========================
+            // DP SAFE LOGIC (FIXED)
+            // =========================
+
             const dpOption = paymentMethodEl?.querySelector('option[value="dp"]');
-            const dpValue = window.dpAmount || Math.round(totalAfterDiscount / 2);
 
-            if (dpOption) dpOption.disabled = totalAfterDiscount <= dpValue;
+            // pastikan dpValue SELALU valid number
+            const dpValue = Number.isFinite(Number(window.dpAmount)) ?
+                Number(window.dpAmount) :
+                Math.round(totalAfterDiscount / 2);
 
-            if (paymentMethodEl?.value === "dp") {
-                const sisa = totalAfterDiscount - dpValue;
+            // validasi DP tersedia atau tidak (lebih aman)
+            const hasDp = dpValue > 0;
+
+            // kalau tidak ada DP → disable option + paksa text
+            if (dpOption) {
+                dpOption.disabled = !hasDp;
+                dpOption.textContent = hasDp ?
+                    "Bayar Uang Muka (DP)" :
+                    "Bayar Uang Muka (Tidak tersedia)";
+            }
+
+            // kalau user sudah pilih dp tapi tidak valid → paksa cash
+            if (!hasDp && paymentMethodEl?.value === "dp") {
+                paymentMethodEl.value = "cash";
+            }
+
+            // render UI DP hanya kalau valid DAN dipilih
+            const isDpSelected = paymentMethodEl?.value === "dp";
+
+            if (hasDp && isDpSelected) {
+                const sisa = Math.max(0, totalAfterDiscount - dpValue);
+
                 dpRow.classList.remove("d-none");
                 sisaRow.classList.remove("d-none");
+
                 dpAmountEl.textContent = formatRupiah(dpValue);
                 sisaPaymentEl.textContent = formatRupiah(sisa);
             } else {
@@ -2727,115 +2746,25 @@
                 couponErrorMsg.classList.add('d-none');
                 updatePeopleSummary();
                 updatePaymentSummary();
+                refreshDynamicAddons();
             });
         }
-        // refresh max addon photobox secara real-time
-        document.querySelectorAll('[data-addon-max="dynamic_people"]').forEach(el => {
-            el.dataset.addonMax = window.peopleCount || serviceMaxPeopleFallback();
-        });
-    </script>
 
-
-
-
-
-
-
-
-
-
-    <script>
-        @if (auth()->check())
-            window.currentAuthUser = {
-                id: {{ auth()->user()->id }},
-                role: "{{ optional(auth()->user()->roles->first())->name ?? 'member' }}",
-                name: "{{ auth()->user()->name }}"
-            };
-        @else
-            window.currentAuthUser = null;
-        @endif
-    </script>
-
-
-
-    @if (session('login_success'))
-        <!-- Toast Container -->
-        <div class="position-fixed top-0 end-0 p-3" style="z-index: 1080; max-width: 95%;">
-            <div id="loginToast" class="toast align-items-center text-white bg-success border-0 shadow-lg" role="alert"
-                aria-live="assertive" aria-atomic="true">
-                <div class="d-flex">
-                    <div class="toast-body fw-semibold">
-                        <i class="bi bi-check-circle-fill me-2"></i>
-                        {{ session('login_success') }}
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                        aria-label="Close"></button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Toast JS with fade in/out -->
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const toastEl = document.getElementById('loginToast');
-
-                // Tambahkan animasi fade
-                toastEl.classList.add('fade', 'show-toast');
-
-                const toast = new bootstrap.Toast(toastEl, {
-                    delay: 5000
-                });
-                toast.show();
-
-                // Bersihkan DOM setelah toast hilang
-                toastEl.addEventListener('hidden.bs.toast', function() {
-                    toastEl.remove();
-                });
+        function refreshDynamicAddons() {
+            document.querySelectorAll('[data-addon-max="dynamic_people"]').forEach(el => {
+                el.dataset.addonMax = window.peopleCount || serviceMaxPeopleFallback();
             });
-        </script>
+        }
+    </script>
 
-        <!-- Custom CSS untuk fade in/out -->
-        <style>
-            @keyframes fadeInOut {
-                0% {
-                    opacity: 0;
-                    transform: translateY(-20%);
-                }
 
-                10% {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
 
-                90% {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
 
-                100% {
-                    opacity: 0;
-                    transform: translateY(-20%);
-                }
-            }
 
-            .toast.show-toast {
-                animation: fadeInOut 5s ease-in-out forwards;
-            }
 
-            /* Responsive untuk mobile */
-            @media (max-width: 576px) {
-                .toast {
-                    width: 100%;
-                    min-width: 0;
-                    border-radius: 0.5rem;
-                }
 
-                .position-fixed {
-                    top: 1rem;
-                    right: 0.5rem;
-                    left: 0.5rem;
-                }
-            }
-        </style>
-    @endif
+
+
+
+
 @endsection

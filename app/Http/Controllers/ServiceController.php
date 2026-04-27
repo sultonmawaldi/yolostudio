@@ -112,8 +112,8 @@ class ServiceController extends Controller
             'max_people'        => 'required|integer|min:1',
             'min_people'        => 'nullable|integer|min:0',
             'extra_price_per_person' => 'nullable|numeric|min:0',
-            'dp_amount'         => 'required|integer|min:0',
-            'reward_points'      => 'nullable|integer|min:0',
+            'dp_amount'         => 'nullable|integer|min:0',
+            'reward_points'     => 'nullable|integer|min:0',
             'featured'          => 'nullable',
             'status'            => 'nullable',
             'other'             => 'nullable',
@@ -147,7 +147,7 @@ class ServiceController extends Controller
     {
 
         $service->delete();
-        return back()->withSuccess('Layanan berhasil dipindahkan ke tempat sampah!');
+        return back()->withSuccess('Layanan berhasil dipindahkan ke tempat sampah');
     }
 
     public function trashView(Request $request)
@@ -186,6 +186,6 @@ class ServiceController extends Controller
             $service->forceDelete();
         }
 
-        return redirect()->back()->with("success", "Data Dihapus Secara Permanen!");
+        return redirect()->back()->with("success", "Data Dihapus Secara Permanen");
     }
 }

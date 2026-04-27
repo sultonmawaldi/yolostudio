@@ -583,6 +583,13 @@ body {
     background-color: #f8f9fa;
 }
 
+@media (max-width: 576px) {
+    #time-slots-container {
+        justify-content: center; /* 🔥 ini kunci biar 1 item di tengah */
+    }
+}
+
+
 /* Calendar Day Modern */
 .calendar-day {
     cursor: pointer;
@@ -1024,7 +1031,149 @@ body {
     box-shadow: none !important;
 }
 
+@media (max-width: 576px) {
 
+    /* extraInfo turun ke bawah */
+    .addon-item .fs-6 {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+    }
+
+    /* hilangkan jarak ms-2 di mobile */
+    .addon-item small.ms-2 {
+        margin-left: 0 !important;
+        display: block;
+    }
+}
+
+
+        body.modal-open {
+            overflow: hidden !important;
+            /* cegah double scrollbar */
+            padding-right: 0 !important;
+        }
+
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            #bookingSuccessModal .modal-content {
+                background-color: #1e293b;
+                color: #e2e8f0;
+            }
+
+            #bookingSuccessModal .booking-details {
+                background-color: #0f172a;
+            }
+
+            #bookingSuccessModal .alert-info {
+                background-color: #334155;
+                color: #cbd5e1;
+            }
+        }
+
+        .booking-details {
+            max-height: 45vh;
+            overflow-y: auto;
+            padding-right: 4px;
+            box-sizing: border-box;
+        }
+
+        .booking-details::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .booking-details::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        .booking-details::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        /* Dark mode untuk modal booking */
+        @media (prefers-color-scheme: dark) {
+            #bookingSuccessModal .modal-content {
+                background-color: #1e293b;
+                /* dark modal background */
+                color: #e2e8f0;
+                /* text warna terang */
+            }
+
+            #bookingSuccessModal table {
+                background-color: #1e293b;
+                color: #e2e8f0;
+            }
+
+            #bookingSuccessModal table.table-bordered th,
+            #bookingSuccessModal table.table-bordered td {
+                border-color: rgba(255, 255, 255, 0.2);
+            }
+
+            #bookingSuccessModal .alert {
+                background-color: #334155;
+                color: #e2e8f0;
+                border-color: rgba(255, 255, 255, 0.1);
+            }
+        }
+/* =========================
+   DARK MODE BOOKING MODAL
+   pakai html.dark
+========================= */
+
+html.dark #bookingSuccessModal .modal-content {
+    background-color: #1e293b;
+    color: #e2e8f0;
+}
+
+/* booking details container */
+html.dark #bookingSuccessModal .booking-details {
+    background: transparent !important;
+}
+
+/* table utama */
+html.dark #bookingSuccessModal table,
+html.dark #bookingSuccessModal .custom-table {
+    background: transparent !important;
+    color: #e2e8f0 !important;
+}
+
+/* th & td */
+html.dark #bookingSuccessModal table th,
+html.dark #bookingSuccessModal table td {
+    background: transparent !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: #e2e8f0 !important;
+}
+
+/* tbody row */
+html.dark #bookingSuccessModal tbody tr {
+    background: transparent !important;
+}
+
+/* hover row */
+html.dark #bookingSuccessModal tbody tr:hover {
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* alert info */
+html.dark #bookingSuccessModal .alert,
+html.dark #bookingSuccessModal .alert-info {
+    background-color: #334155;
+    color: #cbd5e1;
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* scrollbar booking details */
+html.dark #bookingSuccessModal .booking-details::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+html.dark #bookingSuccessModal .booking-details::-webkit-scrollbar-track {
+    background: transparent;
+}
 /* ===================== DARK MODE TOGGLE SUPPORT ===================== */
 html.dark body {
     background-color: #1e1e2f;
@@ -1172,28 +1321,22 @@ html.dark .calendar-day.disabled {
     color: #777;
 }
 
-/* Summary Section */
+html.dark .summary-value,
 html.dark #summary-category,
 html.dark #summary-service,
 html.dark #summary-employee,
 html.dark #summary-datetime,
 html.dark #summary-duration,
-html.dark #summary-price {
-    color: #e0e0e0;
+html.dark #summary-price,
+html.dark #summary-date,
+html.dark #summary-time,
+html.dark #summary-people {
+    color: #e5e7eb !important;
 }
 
 html.dark .summary-label {
-    color: #aaa;
+    color: #e5e7eb !important;;
 }
-html.dark .summary-icon {
-    color: #6a11cb;
-}
-
-/* People Count */
-html.dark #people-count {
-    color: #e0e0e0;
-}
-
 /* Modal */
 html.dark .modal-content {
     background-color: #2b2b3b;
@@ -1405,16 +1548,97 @@ h3:hover i.fa {
     transition: all 0.3s ease;
 }
 
-/* Ikon dan label ringkasan */
-.summary-icon {
-    font-size: 1.3rem;
-    color: var(--primary-color);
-    transition: all 0.3s ease;
+.summary-card .card-body {
+    padding: 20px;
 }
 
+/* ROW */
+.summary-row {
+    display: flex;
+    align-items: center; /* lebih rapi dari flex-start */
+    padding: 12px 0;
+    border-bottom: 1px dashed #e5e7eb;
+}
+
+.summary-row:last-child {
+    border-bottom: none;
+}
+
+/* LABEL KIRI */
 .summary-label {
-    white-space: nowrap; /* titik dua selalu sejajar */
+    width: 180px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
     font-size: 0.95rem;
+    color: #6b7280;
+    white-space: nowrap;
+    padding-right: 14px;
+}
+
+/* TITIK DUA */
+.summary-label::after {
+    content: ":";
+    position: absolute;
+    right: 4px;
+    color: #9ca3af;
+}
+
+/* ICON */
+.summary-icon {
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.summary-value {
+    flex: 1;
+    font-weight: 500;
+    color: #111827;
+
+    display: flex;
+    align-items: center;
+
+    padding-left: 0; /* reset dulu */
+
+    margin-left: 80px; /* 🔥 dorongan utama ke kanan */
+}
+
+/* desktop lebih jauh lagi */
+@media (min-width: 992px) {
+    .summary-value {
+        margin-left: 110px; /* 🔥 lebih ke kanan lagi di desktop */
+    }
+}
+
+@media (max-width: 576px) {
+
+    .summary-row {
+        flex-direction: row; /* 🔥 tetap sejajar */
+        align-items: center;
+    }
+
+    .summary-label {
+        width: 140px; /* 🔥 kecilkan biar muat di mobile */
+        font-size: 0.9rem;
+    }
+
+    .summary-label::after {
+        position: absolute; /* tetap seperti desktop */
+    }
+
+    .summary-value {
+        margin-left: 0 !important;
+        padding-left: 18px; /* jarak dari ":" */
+        font-size: 0.9rem;
+    }
+
+    .summary-icon {
+        font-size: 1.1rem;
+    }
 }
 
 .footer-link {

@@ -68,7 +68,7 @@ class CouponController extends Controller
         }
 
         return redirect()->route('coupons.index')
-            ->with('success', 'Kupon berhasil dibuat.');
+            ->with('success', 'Kupon berhasil dibuat');
     }
 
     /**
@@ -111,7 +111,7 @@ class CouponController extends Controller
         $coupon->services()->sync($serviceIds);
 
         return redirect()->route('coupons.index')
-            ->with('success', 'Kupon berhasil diperbarui.');
+            ->with('success', 'Kupon berhasil diperbarui');
     }
 
     /**
@@ -122,7 +122,7 @@ class CouponController extends Controller
         $coupon->delete();
 
         return redirect()->route('coupons.index')
-            ->with('success', 'Kupon berhasil dihapus.');
+            ->with('success', 'Kupon berhasil dihapus');
     }
 
     // ==========================
@@ -167,7 +167,7 @@ class CouponController extends Controller
 
         if ($user->points < $requiredPoints) {
             return redirect()->back()
-                ->with('error', 'Point Anda tidak cukup untuk menukar kupon.');
+                ->with('error', 'Point Anda tidak cukup untuk menukar kupon');
         }
 
         // Kurangi point
@@ -196,6 +196,6 @@ class CouponController extends Controller
         $coupon->services()->attach([1, 2, 3]);
 
         return redirect()->route('member.coupons.redeem')
-            ->with('success', "Berhasil menukar $requiredPoints point menjadi kupon.");
+            ->with('success', "Berhasil menukar $requiredPoints point menjadi kupon");
     }
 }

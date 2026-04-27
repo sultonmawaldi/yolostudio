@@ -33,7 +33,6 @@ class TransactionController extends Controller
         $usedCoupons = $coupons->where('status', 'used')->count();
         $newCouponMessage = session('new_coupon');
 
-        // ✅ Ganti view dari dashboard ke transactions.index
         return view('frontend.member.transactions.index', compact(
             'transactions',
             'coupons',
@@ -41,7 +40,6 @@ class TransactionController extends Controller
             'newCouponMessage'
         ));
     }
-
 
     public function memberShow(Transaction $transaction)
     {
@@ -74,7 +72,7 @@ class TransactionController extends Controller
 
     /**
      * ============================
-     * STORE TRANSACTION + QR
+     * STORE TRANSACTION
      * ============================
      */
     public function store(Request $request)
@@ -90,8 +88,11 @@ class TransactionController extends Controller
 
         $user = Auth::user();
         $validated['user_id'] = $user->id;
+
         $validated['transaction_code'] =
             'TRX-' . now()->format('Ymd') . '-' . strtoupper(Str::random(8));
+
+        // 🔥 FIX STATUS AWAL
         $validated['payment_status'] = 'Pending';
 
         // ====== DISKON KUPON ======
@@ -106,20 +107,17 @@ class TransactionController extends Controller
 
             if (!$coupon) {
                 return back()->withErrors([
-                    'coupon_id' => 'Kupon tidak valid atau sudah digunakan.'
+                    'coupon_id' => 'Kupon tidak valid atau sudah digunakan'
                 ]);
             }
 
             $validated['total_amount'] -= $coupon->value;
         }
 
-        // =========================
-        // CREATE TRANSACTION
-        // =========================
         Transaction::create($validated);
 
         return redirect()->route('member.dashboard')
-            ->with('success', 'Transaksi berhasil dibuat!');
+            ->with('success', 'Transaksi berhasil dibuat');
     }
 
     /**
@@ -136,24 +134,26 @@ class TransactionController extends Controller
     public function update(Request $request, Transaction $transaction)
     {
         $validated = $request->validate([
-            'dp_method'        => 'nullable|in:Cash,Midtrans',
-            'pelunasan_method' => 'nullable|in:Cash,Midtrans',
-            'payment_status'   => 'required|in:Pending,DP,Paid,Failed',
+            // 🔥 FIX ENUM LENGKAP
+            'dp_method'        => 'nullable|in:Cash,Midtrans,Coupon',
+            'pelunasan_method' => 'nullable|in:Cash,Midtrans,Coupon',
+
+            // 🔥 TAMBAH EXPIRED
+            'payment_status'   => 'required|in:Pending,DP,Paid,Failed,Expired',
         ]);
 
         $transaction->update($validated);
 
         return redirect()->route('transactions.index')
-            ->with('success', 'Status transaksi berhasil diperbarui.');
+            ->with('success', 'Status transaksi berhasil diperbarui');
     }
 
     public function destroy(Transaction $transaction)
     {
         $transaction->delete();
         return redirect()->route('transactions.index')
-            ->with('success', 'Transaksi berhasil dihapus!');
+            ->with('success', 'Transaksi berhasil dihapus');
     }
-
 
     /**
      * ============================
@@ -162,21 +162,18 @@ class TransactionController extends Controller
      */
     public function payRemainingMidtrans(Transaction $transaction)
     {
-        // 🔥 CEK JIKA SUDAH LUNAS
         if ($transaction->payment_status === 'Paid') {
-            return back()->with('info', 'Transaksi sudah lunas.');
+            return back()->with('info', 'Transaksi sudah lunas');
         }
 
         Config::$serverKey = config('midtrans.server_key');
         Config::$isProduction = config('midtrans.is_production');
 
-        // 🔥 HITUNG SISA PEMBAYARAN
         $remainingAmount = $transaction->total_amount - $transaction->amount;
 
-        // 🔥 TAMBAHAN PENTING (ANTI ERROR 400 MIDTRANS)
         if ($remainingAmount <= 0) {
             return redirect()->route('transactions.index')
-                ->with('error', 'Transaksi sudah digunakan sebelumnya dan hanya dapat digunakan 1 kali.');
+                ->with('error', 'Transaksi sudah tidak memiliki sisa pembayaran');
         }
 
         $params = [
@@ -188,22 +185,24 @@ class TransactionController extends Controller
                 'first_name' => $transaction->appointment->name ?? 'Customer',
                 'email' => $transaction->appointment->email ?? 'admin@local.test',
             ],
+            // 🔥 EXPIRY AUTO (WAJIB BIAR QRIS EXPIRE)
+            'expiry' => [
+                'unit' => 'minute',
+                'duration' => 15
+            ],
             'callbacks' => [
-                // route finish diarahkan ke callback controller
                 'finish' => route('transactions.payRemainingMidtrans', $transaction->id),
             ]
         ];
 
-        // Jika ini callback finish Midtrans
+        // 🔥 HANDLE CALLBACK UI
         if (request()->has('result_type') && request()->get('result_type') === 'success') {
 
-            // 🔥 CEK LAGI UNTUK MENCEGAH DOUBLE CALLBACK
             if ($transaction->payment_status === 'Paid') {
                 return redirect()->route('transactions.index')
-                    ->with('info', 'Transaksi sudah lunas.');
+                    ->with('info', 'Transaksi sudah lunas');
             }
 
-            // Load services agar observer bisa hitung points
             $transaction->load('services');
 
             $transaction->update([
@@ -217,10 +216,9 @@ class TransactionController extends Controller
             }
 
             return redirect()->route('transactions.index')
-                ->with('success', 'Pelunasan via Midtrans berhasil.');
+                ->with('success', 'Pelunasan via Midtrans berhasil');
         }
 
-        // Generate Snap Token
         $snapToken = Snap::getSnapToken($params);
 
         return view('backend.transactions.pay_remaining', compact(
@@ -231,18 +229,17 @@ class TransactionController extends Controller
 
     /**
      * ============================
-     * PAY REMAINING (ADMIN)
+     * PAY REMAINING CASH
      * ============================
      */
     public function payRemainingCash(Transaction $transaction)
     {
-        // Load services agar observer bisa hitung points
         $transaction->load('services');
 
         $transaction->update([
             'payment_status' => 'Paid',
             'amount' => $transaction->total_amount,
-            'pelunasan_method' => 'Cash', // 🔥 TAMBAHKAN INI
+            'pelunasan_method' => 'Cash',
         ]);
 
         if ($transaction->appointment) {
@@ -250,12 +247,12 @@ class TransactionController extends Controller
         }
 
         return redirect()->route('transactions.index')
-            ->with('success', 'Pelunasan tunai berhasil.');
+            ->with('success', 'Pelunasan tunai berhasil');
     }
 
     /**
      * ============================
-     * MIDTRANS (member)
+     * MIDTRANS MEMBER
      * ============================
      */
     public function memberPayRemainingMidtrans(Transaction $transaction)
@@ -266,7 +263,7 @@ class TransactionController extends Controller
 
         if ($transaction->payment_status === 'Paid') {
             return redirect()->route('member.transactions.index')
-                ->with('info', 'Transaksi sudah lunas.');
+                ->with('info', 'Transaksi sudah lunas');
         }
 
         Config::$serverKey = config('midtrans.server_key');
@@ -280,6 +277,10 @@ class TransactionController extends Controller
             'customer_details' => [
                 'first_name' => $user->name,
                 'email' => $user->email,
+            ],
+            'expiry' => [
+                'unit' => 'minute',
+                'duration' => 15
             ],
             'callbacks' => [
                 'finish' => route('member.payment.finish', $transaction->id),
@@ -296,48 +297,12 @@ class TransactionController extends Controller
 
     /**
      * ============================
-     * MIDTRANS CALLBACK
+     * CALLBACK UI (Bukan webhook)
      * ============================
      */
     public function paymentFinish(Request $request, Transaction $transaction)
     {
-        $status = $request->get('transaction_status');
-        $orderId = $request->get('order_id');
-
-        if ($transaction->transaction_code !== $orderId) {
-            return redirect()->route('transactions.index')
-                ->with('error', 'Order ID tidak cocok.');
-        }
-
-        if (in_array($status, ['capture', 'settlement'])) {
-            $transaction->update([
-                'payment_status' => 'Paid',
-                'amount' => $transaction->total_amount,
-                'pelunasan_method' => 'Midtrans', // 🔥 TAMBAHKAN INI
-            ]);
-
-            if ($transaction->appointment) {
-                $transaction->appointment->update(['status' => 'Confirmed']);
-            }
-
-            return redirect()->route('transactions.index')
-                ->with('success', 'Pembayaran berhasil dan status lunas.');
-        }
-
-        if ($status === 'pending') {
-            $transaction->update([
-                'payment_status' => 'DP'
-            ]);
-
-            return redirect()->route('transactions.index')
-                ->with('info', 'Pembayaran masih pending.');
-        }
-
-        $transaction->update([
-            'payment_status' => 'Failed'
-        ]);
-
         return redirect()->route('transactions.index')
-            ->with('error', 'Pembayaran gagal.');
+            ->with('info', 'Menunggu konfirmasi pembayaran...');
     }
 }

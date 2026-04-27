@@ -12,6 +12,7 @@ class MidtransController extends Controller
 {
     public function notificationHandler(Request $request)
     {
+        // 🔥 CONFIG MIDTRANS
         Config::$serverKey    = config('midtrans.server_key');
         Config::$isProduction = config('midtrans.is_production');
         Config::$isSanitized  = config('midtrans.is_sanitized');
@@ -23,14 +24,20 @@ class MidtransController extends Controller
         $status  = $notification->transaction_status;
         $gross   = (float) $notification->gross_amount;
 
+        // 🔍 CARI TRANSAKSI
         $transaction = Transaction::where('midtrans_order_id', $orderId)
             ->orWhere('transaction_code', $orderId)
             ->first();
 
-
         if (!$transaction) {
             Log::error("⚠️ Midtrans callback: Transaction not found (Order ID: {$orderId})");
             return response()->json(['message' => 'Transaction not found'], 404);
+        }
+
+        // 🔥 ANTI DOUBLE PROCESS
+        if ($transaction->payment_status === 'Paid') {
+            Log::info("⚠️ Already paid: {$orderId}");
+            return response()->json(['message' => 'Already processed']);
         }
 
         Log::info("📩 Midtrans Notification", [
@@ -39,11 +46,18 @@ class MidtransController extends Controller
             'gross'    => $gross,
         ]);
 
+        /**
+         * =========================================
+         * ✅ SUCCESS PAYMENT (DP / FULL)
+         * =========================================
+         */
         if (in_array($status, ['capture', 'settlement'])) {
 
             $newAmount = $transaction->amount + $gross;
 
+            // 🔥 FULL PAYMENT
             if ($newAmount >= $transaction->total_amount) {
+
                 $transaction->update([
                     'payment_status' => 'Paid',
                     'amount'         => $transaction->total_amount,
@@ -53,8 +67,11 @@ class MidtransController extends Controller
                     $transaction->appointment->update(['status' => 'Confirmed']);
                 }
 
-                Log::info("✅ Transaction {$orderId} fully paid.");
-            } else {
+                Log::info("✅ FULL PAID: {$orderId}");
+            }
+            // 🔥 DP PAYMENT
+            else {
+
                 $transaction->update([
                     'payment_status' => 'DP',
                     'amount'         => $newAmount,
@@ -64,17 +81,60 @@ class MidtransController extends Controller
                     $transaction->appointment->update(['status' => 'Processing']);
                 }
 
-                Log::info("💰 Transaction {$orderId} updated to DP. Current amount: {$newAmount}");
+                Log::info("💰 DP PAYMENT: {$orderId}, amount: {$newAmount}");
             }
-        } elseif (in_array($status, ['deny', 'expire', 'cancel'])) {
+        }
 
-            $transaction->update(['payment_status' => 'Failed']);
+        /**
+         * =========================================
+         * ⏳ PENDING (QRIS / VA BELUM BAYAR)
+         * =========================================
+         */
+        elseif ($status === 'pending') {
+
+            $transaction->update([
+                'payment_status' => 'Pending',
+            ]);
+
+            if ($transaction->appointment) {
+                $transaction->appointment->update(['status' => 'Processing']);
+            }
+
+            Log::info("⏳ PENDING: {$orderId}");
+        }
+
+        /**
+         * =========================================
+         * ⌛ EXPIRED (AUTO DARI MIDTRANS)
+         * =========================================
+         */
+        elseif ($status === 'pending') {
+
+            $transaction->update([
+                'payment_status' => 'Pending',
+            ]);
+
+            if ($transaction->appointment) {
+                $transaction->appointment->update(['status' => 'Pending']);
+            }
+        }
+
+        /**
+         * =========================================
+         * ❌ FAILED / CANCEL
+         * =========================================
+         */
+        elseif (in_array($status, ['deny', 'cancel'])) {
+
+            $transaction->update([
+                'payment_status' => 'Failed',
+            ]);
 
             if ($transaction->appointment) {
                 $transaction->appointment->update(['status' => 'Cancelled']);
             }
 
-            Log::warning("❌ Transaction {$orderId} failed ({$status})");
+            Log::warning("❌ FAILED: {$orderId} ({$status})");
         }
 
         return response()->json(['message' => 'Notification processed']);

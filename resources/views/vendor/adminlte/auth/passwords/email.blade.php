@@ -1,6 +1,8 @@
 {{-- ✅ LUPA KATA SANDI PAGE - SESUAI LOGIN BLADE --}}
 @extends('adminlte::auth.auth-page', ['auth_type' => 'login'])
 
+@section('title', 'Lupa Kata Sandi')
+
 @section('adminlte_css_pre')
     <link rel="stylesheet" href="{{ asset('vendor/icheck-bootstrap/icheck-bootstrap.min.css') }}">
 @stop
@@ -16,7 +18,7 @@
 @section('auth_header')
     <div class="text-center mb-4">
         <h2 class="fw-bold mb-2 text-gradient kalcer-heading">
-            ✦ Lupa Kata Sandi ✦
+            <i class="fas fa-key me-2"></i> Lupa Kata Sandi
         </h2>
 
         <p class="mb-4 fw-light text-muted" style="font-size:1rem; letter-spacing:0.5px; line-height:1.6;">

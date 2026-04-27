@@ -17,6 +17,8 @@ class Transaction extends Model
         'dp_method',
         'pelunasan_method',
 
+        'payment_method',
+
         'amount',
         'total_amount',
         'payment_status',

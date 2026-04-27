@@ -37,7 +37,9 @@
         tracking-tight sm:tracking-widest
         title-glow scroll-fade"
                         style="font-size: clamp(1.3rem, 4.8vw, 3.2rem);">
-                        ✦ Galeri Yolo Studio ✦
+                        <i class="fa-solid fa-star me-2"></i>
+                        Galeri Yolo Studio
+                        <i class="fa-solid fa-star ms-2"></i>
                     </h2>
 
                     <p
@@ -169,7 +171,7 @@
                     </div>
                 @else
                     <p class="text-center text-gray-500 dark:text-gray-400 mt-8">
-                        Galeri masih kosong.
+                        Galeri masih kosong
                     </p>
                 @endif
             </div>

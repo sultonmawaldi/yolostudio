@@ -1,6 +1,8 @@
 {{-- ✅ LOGIN PAGE NO HP --}}
 @extends('adminlte::auth.auth-page', ['auth_type' => 'login'])
 
+@section('title', 'Masuk')
+
 @section('adminlte_css_pre')
     <link rel="stylesheet" href="{{ asset('vendor/icheck-bootstrap/icheck-bootstrap.min.css') }}">
 @stop
@@ -22,7 +24,7 @@
 @section('auth_header')
     <div class="text-center mb-4">
         <h2 class="fw-bold mb-2 text-gradient kalcer-heading">
-            ✦ Selamat Datang! ✦
+            <i class="fas fa-star me-2"></i> Selamat Datang <i class="fas fa-star ms-2"></i>
         </h2>
 
         <p class="mb-4 fw-light text-muted" style="font-size:1rem; letter-spacing:0.5px; line-height:1.6;">

@@ -31,7 +31,9 @@
                 tracking-tight sm:tracking-widest
                 title-glow scroll-fade"
                         style="font-size: clamp(1.3rem, 4.8vw, 3.2rem);">
-                        ✦ Daftar Harga Layanan ✦
+                        <i class="fa-solid fa-star me-2"></i>
+                        Daftar Harga Layanan
+                        <i class="fa-solid fa-star ms-2"></i>
                     </h2>
                     <p
                         class="mt-3 text-center text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed scroll-fade">
@@ -193,7 +195,7 @@
                                                 <div class="pt-6 border-t border-indigo-200 dark:border-indigo-700">
                                                     <h4
                                                         class="text-center font-semibold mb-4 text-gray-900 dark:text-gray-100">
-                                                        Background Tersedia</h4>
+                                                        Latar Belakang Tersedia</h4>
                                                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
                                                         @foreach ($service->backgrounds as $bg)
                                                             <div class="flex flex-col items-center gap-2">

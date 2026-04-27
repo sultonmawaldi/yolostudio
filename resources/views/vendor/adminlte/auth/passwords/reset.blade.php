@@ -15,7 +15,7 @@
 @section('auth_header')
     <div class="text-center mb-4">
         <h2 class="fw-bold mb-2 text-gradient kalcer-heading">
-            ✦ Reset Kata Sandi ✦
+            <i class="fas fa-unlock-alt me-2"></i> Reset Kata Sandi
         </h2>
 
         <p class="mb-4 fw-light text-muted" style="font-size:1rem; letter-spacing:0.5px; line-height:1.6;">

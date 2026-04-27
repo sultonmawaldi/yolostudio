@@ -75,7 +75,7 @@ class GalleryController extends Controller
 
         return redirect()
             ->route('gallery.index')
-            ->with('success', 'Galeri berhasil ditambahkan.');
+            ->with('success', 'Galeri berhasil ditambahkan');
     }
 
     public function edit(Gallery $gallery)
@@ -119,7 +119,7 @@ class GalleryController extends Controller
 
         return redirect()
             ->route('gallery.index')
-            ->with('success', 'Gallery berhasil diperbarui.');
+            ->with('success', 'Gallery berhasil diperbarui');
     }
 
     public function destroy(Gallery $gallery)
@@ -133,6 +133,6 @@ class GalleryController extends Controller
 
         return redirect()
             ->route('gallery.index')
-            ->with('success', 'Gallery berhasil dihapus.');
+            ->with('success', 'Gallery berhasil dihapus');
     }
 }

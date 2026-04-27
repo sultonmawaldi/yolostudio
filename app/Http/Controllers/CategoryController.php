@@ -43,10 +43,10 @@ class CategoryController extends Controller
             'other' => 'nullable',
         ], [
             // 🔥 Tambahan pesan custom di sini
-            'slug.unique' => 'Slug sudah digunakan.',
+            'slug.unique' => 'Slug sudah digunakan',
             'image.image' => 'File harus berupa gambar.',
-            'image.mimes' => 'Format gambar harus jpg, jpeg, png, atau webp.',
-            'image.max' => 'Ukuran gambar terlalu besar. Maksimal 3 MB.',
+            'image.mimes' => 'Format gambar harus jpg, jpeg, png, atau webp',
+            'image.max' => 'Ukuran gambar terlalu besar. Maksimal 3 MB',
         ]);
 
         $data['featured'] = $request->featured ?? 0;

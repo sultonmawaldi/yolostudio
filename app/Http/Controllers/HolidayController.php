@@ -36,7 +36,7 @@ class HolidayController extends Controller
         ]);
 
         Holiday::create($data);
-        return back()->withSuccess('Holiday has been sucesfully updated!');
+        return back()->withSuccess('Liburan telah berhasil diperbarui');
     }
 
     /**

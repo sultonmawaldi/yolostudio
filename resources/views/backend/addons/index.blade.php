@@ -43,7 +43,17 @@
                             <td>{{ $addon->code }}</td>
                             <td>{{ $addon->name }}</td>
                             <td>Rp {{ number_format($addon->price, 0, ',', '.') }}</td>
-                            <td>{{ $addon->unit }}</td>
+                            <td>
+                                @if ($addon->unit == 'person')
+                                    Orang
+                                @elseif($addon->unit == 'minute')
+                                    Menit
+                                @elseif($addon->unit == 'item')
+                                    Item
+                                @else
+                                    {{ $addon->unit }}
+                                @endif
+                            </td>
                             <td>{{ $addon->max_qty ?? '-' }}</td>
                             <td>
                                 <span
@@ -63,7 +73,7 @@
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-outline-danger action-btn"
-                                            title="Hapus Addon">
+                                            title="Hapus Layanan Tambahan">
                                             <i class="fas fa-trash-alt"></i>
                                         </button>
                                     </form>
@@ -104,8 +114,8 @@
         }
 
         /* ================================
-                                                                                                       TABLE HEADER GRADIENT (PROPER)
-                                                                                                    ================================ */
+                                                                                                                   TABLE HEADER GRADIENT (PROPER)
+                                                                                                                ================================ */
         .table-header-gradient {
             background: linear-gradient(90deg, #007bff, #00b4d8) !important;
         }
@@ -328,7 +338,7 @@
                 e.preventDefault();
                 let form = this;
                 Swal.fire({
-                    title: 'Hapus Addon?',
+                    title: 'Hapus Layanan Tambahan?',
                     text: 'Data yang dihapus tidak dapat dikembalikan!',
                     icon: 'warning',
                     showCancelButton: true,

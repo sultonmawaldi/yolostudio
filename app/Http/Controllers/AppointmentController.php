@@ -328,34 +328,33 @@ class AppointmentController extends Controller
             $end   = date('H:i', strtotime($appointment->booking_end_time));
 
             $message =
-                "🌸 *Booking Berhasil – {$studioName}* 🌸\n\n" .
-                "Halo *{$appointment->name}* ✨\n" .
-                "Terima kasih telah melakukan booking di *{$studioName}*.\n\n" .
-                "📅 *Tanggal :* {$tanggal}\n" .
-                "⏰ *Jam :* {$start} – {$end} WIB\n" .
-                "📸 *Layanan :* {$serviceName}\n";
+                "*BOOKING BERHASIL - {$studioName}*\n\n" .
+                "Halo *{$appointment->name}*,\n" .
+                "Terima kasih telah melakukan booking di {$studioName}.\n\n" .
+                "*DETAIL BOOKING*\n" .
+                "Tanggal : {$tanggal}\n" .
+                "Jam     : {$start} - {$end} WIB\n" .
+                "Layanan : {$serviceName}\n";
 
-            // ======================
-            // Tambahkan layanan tambahan jika ada
-            // ======================
-            $addons = $appointment->addons; // relasi many-to-many
+            $addons = $appointment->addons;
             if ($addons->isNotEmpty()) {
-                $message .= "➕ *Layanan Tambahan :*\n";
+                $message .= "\n*Layanan Tambahan*\n";
                 foreach ($addons as $addon) {
                     $qty = $addon->pivot->qty ?? 1;
-                    $price = $addon->pivot->price ?? $addon->price;
-
                     $message .= "- {$addon->name} x {$qty}\n";
                 }
             }
 
-            $message .= "👥 *Jumlah Orang :* {$appointment->people_count}\n" .
-                "💰 *Total Pembayaran :* Rp {$total}\n\n" .
-                "📌 *Catatan :*\n" .
-                "- Silakan datang 10 menit sebelum sesi dimulai untuk melakukan persiapan.\n" .
-                "- Jika ada perubahan jadwal, segera hubungi admin studio.\n\n" .
-                "Sampai jumpa! 💕\n" .
-                "*Tim {$studioName}*";
+            $message .=
+                "\n*DETAIL PELANGGAN*\n" .
+                "Jumlah Orang : {$appointment->people_count}\n\n" .
+                "*TOTAL PEMBAYARAN*\n" .
+                "Rp {$total}\n\n" .
+                "*CATATAN*\n" .
+                "- Harap datang 10 menit sebelum sesi dimulai.\n" .
+                "- Hubungi admin jika ada perubahan jadwal.\n\n" .
+                "Terima kasih.\n" .
+                "{$studioName}";
 
             // Kirim WA
             Http::withHeaders([

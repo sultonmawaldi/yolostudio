@@ -1,11 +1,11 @@
-@extends('adminlte::master')
+@extends('layouts.auth-master')
 
-@php( $dashboard_url = View::getSection('dashboard_url') ?? config('adminlte.dashboard_url', 'home') )
+@php($dashboard_url = View::getSection('dashboard_url') ?? config('adminlte.dashboard_url', 'home'))
 
 @if (config('adminlte.use_route_url', false))
-    @php( $dashboard_url = $dashboard_url ? route($dashboard_url) : '' )
+    @php($dashboard_url = $dashboard_url ? route($dashboard_url) : '')
 @else
-    @php( $dashboard_url = $dashboard_url ? url($dashboard_url) : '' )
+    @php($dashboard_url = $dashboard_url ? url($dashboard_url) : '')
 @endif
 
 @section('adminlte_css')
@@ -19,17 +19,16 @@
     <div class="{{ $auth_type ?? 'login' }}-box">
 
         {{-- Logo --}}
-<div class="{{ $auth_type ?? 'login' }}-logo text-center mb-3">
-    <a href="{{ route('home') }}" title="Kembali ke Halaman Utama">
-        <img src="{{ asset('uploads/images/logohitam.webp') }}" 
-             alt="Logo"
-             style="max-width: 300px; max-height: 120px; width:auto; height:auto; transition: transform 0.2s ease;">
-    </a>
-</div>
+        <div class="{{ $auth_type ?? 'login' }}-logo text-center mb-3">
+            <a href="{{ route('home') }}" title="Kembali ke Halaman Utama">
+                <img src="{{ asset('uploads/images/logo/' . ($setting->logo ?? 'default.png')) }}" alt="Logo"
+                    style="max-width: 300px; max-height: 120px; width:auto; height:auto; transition: transform 0.2s ease;">
+            </a>
+        </div>
 
         {{-- Card Box --}}
         <div class="card {{ config('adminlte.classes_auth_card', 'card-outline card-primary') }}">
-            
+
             {{-- Card Header --}}
             @hasSection('auth_header')
                 <div class="card-header {{ config('adminlte.classes_auth_header', '') }}">

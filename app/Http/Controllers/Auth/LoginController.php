@@ -45,7 +45,9 @@ class LoginController extends Controller
 
         Auth::login($user, $request->boolean('remember'));
 
-        return redirect($this->redirectTo($user));
+        // ✅ INI YANG KURANG
+        return redirect($this->redirectTo($user))
+            ->with('login_success', 'Login berhasil, selamat datang ' . $user->name . '!');
     }
 
 

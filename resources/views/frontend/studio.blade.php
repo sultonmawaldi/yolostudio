@@ -36,7 +36,9 @@
         tracking-tight sm:tracking-widest
         title-glow scroll-fade"
                         style="font-size: clamp(1.3rem, 4.8vw, 3.2rem);">
-                        ✦ Studio Kami ✦
+                        <i class="fa-solid fa-star me-2"></i>
+                        Studio Kami
+                        <i class="fa-solid fa-star ms-2"></i>
                     </h2>
 
                     <p

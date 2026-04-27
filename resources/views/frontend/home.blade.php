@@ -143,7 +143,7 @@
                 <p
                     class="mt-6 max-w-2xl mx-auto text-base sm:text-lg lg:text-xl 
                   text-gray-700 dark:text-gray-300 animate-fadeInUp delay-200">
-                    Pilih jadwal, pilih paket, bayar, dan datang! Nikmati kemudahan reservasi studio dengan sistem online
+                    Pilih jadwal, pilih paket, bayar, dan datang! Nikmati kemudahan booking studio dengan sistem online
                     yang praktis, modern, dan cepat.
                 </p>
 
@@ -199,7 +199,9 @@
              font-[Playfair_Display]
              title-glow scroll-fade"
                             style="font-size: clamp(1rem, 5vw, 3rem); letter-spacing: 0.03em;">
-                            ✦ Layanan Foto Kami ✦
+                            <i class="fas fa-star me-2"></i>
+                            Layanan Foto Kami
+                            <i class="fas fa-star ms-2"></i>
                         </h2>
 
                         <!-- Garis -->
@@ -267,8 +269,8 @@
             }
 
             /* ==========================================================
-                                                                                                                                                                                                                                 ✦ Fade-in smooth ✦
-                                                                                                                                                                                                                              ========================================================== */
+                                                                                                                                                                                                                                                                 ✦ Fade-in smooth ✦
+                                                                                                                                                                                                                                                              ========================================================== */
             @keyframes fade-in {
                 0% {
                     opacity: 0;
@@ -286,9 +288,9 @@
             }
 
             /* ==========================================================
-                                                                                                                                                                                                                                 ✦ Latar Corak Transparan ✦
-                                                                                                                                                                                                                                 (tidak ganggu hover/transform)
-                                                                                                                                                                                                                              ========================================================== */
+                                                                                                                                                                                                                                                                 ✦ Latar Corak Transparan ✦
+                                                                                                                                                                                                                                                                 (tidak ganggu hover/transform)
+                                                                                                                                                                                                                                                              ========================================================== */
             #features {
                 position: relative;
                 overflow: hidden;
@@ -311,8 +313,8 @@
             }
 
             /* ==========================================================
-                                                                                                                                                                                                                                 ✦ Kartu Elegan ✦
-                                                                                                                                                                                                                              ========================================================== */
+                                                                                                                                                                                                                                                                 ✦ Kartu Elegan ✦
+                                                                                                                                                                                                                                                              ========================================================== */
             .card-service {
                 background: rgba(255, 255, 255, 0.75);
                 border-radius: 1.25rem;
@@ -337,8 +339,8 @@
             }
 
             /* ==========================================================
-                                                                                                                                                                                                                                 ✦ Swiper Settings ✦
-                                                                                                                                                                                                                              ========================================================== */
+                                                                                                                                                                                                                                                                 ✦ Swiper Settings ✦
+                                                                                                                                                                                                                                                              ========================================================== */
             .swiper {
                 overflow: hidden;
                 padding: 2rem 0;
@@ -356,8 +358,8 @@
             }
 
             /* ==========================================================
-                                                                                                                                                                                                                                 ✦ Pagination ✦
-                                                                                                                                                                                                                              ========================================================== */
+                                                                                                                                                                                                                                                                 ✦ Pagination ✦
+                                                                                                                                                                                                                                                              ========================================================== */
             .swiper-pagination-bullet {
                 background: rgba(59, 130, 246, 0.4);
                 transition: all 0.4s ease;
@@ -370,8 +372,8 @@
             }
 
             /* ==========================================================
-                                                                                                                                                                                                                                 ✦ Fade-in Saat Scroll ✦
-                                                                                                                                                                                                                              ========================================================== */
+                                                                                                                                                                                                                                                                 ✦ Fade-in Saat Scroll ✦
+                                                                                                                                                                                                                                                              ========================================================== */
             .scroll-fade {
                 opacity: 0;
                 transform: translateY(20px);
@@ -540,7 +542,9 @@
                        font-[Playfair_Display]
                        scroll-fade"
                         style="font-size: clamp(1.2rem, 5vw, 3rem); letter-spacing: 0.03em;">
-                        ✦ Temukan Kami Di Kotamu ✦
+                        <i class="fa-solid fa-star me-2"></i>
+                        Temukan Kami Di Kotamu
+                        <i class="fa-solid fa-star ms-2"></i>
                     </h2>
 
                     <div class="mt-3 w-24 sm:w-32 md:w-44 h-[3px] mx-auto rounded-full

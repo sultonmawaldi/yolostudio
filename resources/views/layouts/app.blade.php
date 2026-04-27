@@ -284,7 +284,7 @@
                                 <!-- Indonesia -->
                                 <li>
                                     <button @click="lang='id'; changeLang(); openLang=false;"
-                                        class="flex items-center justify-between w-full px-[15px] py-2
+                                        class="flex items-center justify-between w-full px-[14px] py-2
                hover:bg-blue-100/50 dark:hover:bg-gray-700
                text-sm rounded-md">
                                         <div class="flex items-center gap-2">
@@ -296,7 +296,7 @@
 
                                 <li>
                                     <button @click="lang='en'; changeLang(); openLang=false;"
-                                        class="flex items-center justify-between w-full px-[15px] py-2
+                                        class="flex items-center justify-between w-full px-[14px] py-2
                hover:bg-blue-100/50 dark:hover:bg-gray-700
                text-sm rounded-md">
                                         <div class="flex items-center gap-2">
@@ -353,11 +353,12 @@
                                         <div class="mt-2 border-b border-blue-300/60 dark:border-gray-700/60"></div>
                                     </div>
 
-                                    <a href="{{ route('member.profile') }}"
+                                    <a href="{{ auth()->user()->hasRole('member') ? route('member.profile') : route('profile') }}"
                                         class="flex items-center px-4 py-2 text-sm font-medium rounded-md transition-all duration-150
-                                        {{ request()->routeIs('member.profile')
-                                            ? 'bg-blue-600/10 dark:bg-gray-700 text-blue-700 dark:text-white'
-                                            : 'text-blue-900 dark:text-gray-100 hover:bg-blue-600/10 dark:hover:bg-gray-700' }}">
+   {{ request()->routeIs('member.profile') || request()->routeIs('profile')
+       ? 'bg-blue-600/10 dark:bg-gray-700 text-blue-700 dark:text-white'
+       : 'text-blue-900 dark:text-gray-100 hover:bg-blue-600/10 dark:hover:bg-gray-700' }}">
+
                                         <i class="fa fa-user mr-2 text-xs opacity-80"></i> Profile
                                     </a>
                                     <form action="{{ route('logout') }}" method="POST" class="mt-1">
@@ -434,7 +435,7 @@
                                 <!-- Indonesia -->
                                 <li>
                                     <button @click="lang='id'; changeLang(); openLang=false;"
-                                        class="flex items-center justify-between w-full px-[15px] py-2
+                                        class="flex items-center justify-between w-full px-[14px] py-2
                hover:bg-blue-100/50 dark:hover:bg-gray-700
                text-sm rounded-md">
                                         <div class="flex items-center gap-2">
@@ -446,7 +447,7 @@
 
                                 <li>
                                     <button @click="lang='en'; changeLang(); openLang=false;"
-                                        class="flex items-center justify-between w-full px-[15px] py-2
+                                        class="flex items-center justify-between w-full px-[14px] py-2
                hover:bg-blue-100/50 dark:hover:bg-gray-700
                text-sm rounded-md">
                                         <div class="flex items-center gap-2">
@@ -579,11 +580,16 @@
                             </div>
 
                             <!-- Dashboard -->
-                            <a href="{{ route('member.profile') }}"
+                            @php
+                                $profileRoute = auth()->user()->hasRole('member') ? 'member.profile' : 'profile';
+                            @endphp
+
+                            <a href="{{ route($profileRoute) }}"
                                 class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-all duration-150
-      {{ request()->routeIs('member.profile')
-          ? 'bg-blue-600/10 dark:bg-gray-700 text-blue-700 dark:text-white'
-          : 'text-blue-900 dark:text-gray-100 hover:bg-blue-600/10 dark:hover:bg-gray-700' }}">
+   {{ request()->routeIs($profileRoute)
+       ? 'bg-blue-600/10 dark:bg-gray-700 text-blue-700 dark:text-white'
+       : 'text-blue-900 dark:text-gray-100 hover:bg-blue-600/10 dark:hover:bg-gray-700' }}">
+
                                 <i class="fa fa-user mr-2 text-xs opacity-80"></i> Profile
                             </a>
 

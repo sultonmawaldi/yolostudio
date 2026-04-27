@@ -36,7 +36,7 @@ class DashboardController extends Controller
             if ($user->hasRole('employee')) {
 
                 if (!$user->employee) {
-                    abort(403, 'Employee profile not found.');
+                    abort(403, 'Profil karyawan tidak ditemukan');
                 }
 
                 $query->where('employee_id', $user->employee->id);

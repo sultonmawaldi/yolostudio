@@ -1,6 +1,8 @@
 {{-- ✅ REGISTER PAGE NO HP --}}
 @extends('adminlte::auth.auth-page', ['auth_type' => 'register'])
 
+@section('title', 'Daftar')
+
 @section('adminlte_css_pre')
     <link rel="stylesheet" href="{{ asset('vendor/icheck-bootstrap/icheck-bootstrap.min.css') }}">
 @stop
@@ -19,7 +21,7 @@
 @section('auth_header')
     <div class="text-center mb-4">
         <h2 class="fw-bold mb-2 text-gradient kalcer-heading">
-            ✦ Daftar Akun Baru ✦
+            <i class="fas fa-user-plus me-2"></i> Daftar Akun Baru
         </h2>
         <p class="mb-4 fw-light" style="font-size:1rem; color:#6c757d; letter-spacing:0.5px; line-height:1.5;">
             Daftar dengan nomor HP aktif untuk mulai menggunakan layanan kami <i class="fas fa-camera me-2 text-primary"></i>
