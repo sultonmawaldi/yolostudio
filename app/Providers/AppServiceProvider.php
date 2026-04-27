@@ -9,6 +9,7 @@ use Midtrans\Config;
 use App\Models\Setting;
 use App\Models\Transaction;
 use App\Observers\TransactionObserver;
+use Illuminate\Support\Facades\Schema;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -37,7 +38,12 @@ class AppServiceProvider extends ServiceProvider
             Config::$is3ds        = (bool) config('midtrans.is_3ds', true);
         }
 
-        view()->share('setting', Setting::first());
+        /**
+         * 🛡️ FIX UTAMA: hindari error saat composer / migration / cache
+         */
+        if (!app()->runningInConsole() && Schema::hasTable('settings')) {
+            view()->share('setting', Setting::first());
+        }
 
         /**
          * 🎯 Register Transaction Observer
