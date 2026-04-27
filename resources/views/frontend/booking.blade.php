@@ -643,8 +643,17 @@
 
 
 
-
-
+    <script>
+        @if (auth()->check())
+            window.currentAuthUser = {
+                id: {{ auth()->user()->id }},
+                role: "{{ optional(auth()->user()->roles->first())->name ?? 'member' }}",
+                name: "{{ auth()->user()->name }}"
+            };
+        @else
+            window.currentAuthUser = null;
+        @endif
+    </script>
 
     <script>
         $(document).ready(function() {
@@ -2010,6 +2019,7 @@
                     saveBooking(bookingData);
                     return;
                 }
+
                 // 🔐 AUTO CASH UNTUK ADMIN / EMPLOYEE
                 if (typeof currentAuthUser !== 'undefined' && currentAuthUser &&
                     (currentAuthUser.role === 'admin' || currentAuthUser.role === 'employee')) {
